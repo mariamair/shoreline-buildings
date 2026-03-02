@@ -1,0 +1,12 @@
+# Environment variables
+.env
+
+# Dependencies
+node_modules/
+.npm
+
+# .volumes
+.volumes
+
+# MacOS
+.DS_Store
