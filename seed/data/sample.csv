@@ -1,0 +1,11 @@
+region,byggnadstyp,strandtyp,typ av område,år,Antal byggnader inom 100 meter från strand
+00 Riket,bostad,totalt,totalt,2019,40469
+01 Stockholms län,komplementbyggnad,hav,totalt,2017,29245
+0114 Upplands Väsby,ekonomibyggnad,totalt,inom formellt skyddad natur,2017,54339
+0117 Österåker,övrig byggnad,totalt,inom formellt skyddad natur,2019,67916
+0120 Värmdö,totalt,totalt,inom tätort,2020,55694
+0123 Järfälla,industri,totalt,totalt,2018,55419
+05 Östergötlands län,ekonomibyggnad,hav,totalt,2017,75753
+0509 Ödeshög,samhällsfunktion,inlandsvatten,inom formellt skyddad natur,2020,34306
+18 Örebro län,verksamhet,totalt,inom formellt skyddad natur,2018,10490
+2183 Bollnäs,industri,inlandsvatten,inom tätort,2018,22
