@@ -1,0 +1,27 @@
+{
+  "name": "shoreline_buildings_backend",
+  "version": "0.0.1",
+  "description": "Backend for the shoreline buildings application",
+  "license": "MIT",
+  "author": "Maria Mair <mm225mz@student.lnu.se>",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "dependencies": {
+    "@apollo/server": "^5.4.0",
+    "@graphql-tools/mock": "^9.1.5",
+    "@graphql-tools/schema": "^10.0.31",
+    "graphql": "^16.13.0",
+    "graphql-tag": "^2.12.6"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "dotenv": "^17.3.1",
+    "eslint": "^10.0.2",
+    "globals": "^17.4.0",
+    "nodemon": "^3.1.14"
+  }
+}
