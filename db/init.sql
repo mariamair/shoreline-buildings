@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS area_type (
     name VARCHAR(255) NOT NULL UNIQUE
 );
 
-CREATE TABLE IF NOT EXISTS shoreline_buildings (
+CREATE TABLE IF NOT EXISTS shoreline_building_count (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     region_id VARCHAR(10),
     FOREIGN KEY (region_id)
@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS shoreline_buildings (
 );
 
 -- Create indexes
-CREATE INDEX IF NOT EXISTS idx_shoreline_buildings_id ON shoreline_buildings(id);
+CREATE INDEX IF NOT EXISTS idx_shoreline_building_count_id ON shoreline_building_count(id);
 
 -- Insert category data
 INSERT INTO region_type (name) VALUES
