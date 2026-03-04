@@ -1,5 +1,7 @@
+# Use official image as a base
 FROM python:3.14-bookworm
 
+# Create working directory
 WORKDIR /app
 
 # Install dependencies
