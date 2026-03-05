@@ -1,0 +1,39 @@
+  type Query {
+    buildingCounts(limit: Int = 50, offset: Int = 0): [ShorelineBuildingCount!]!
+  }
+
+  type ShorelineBuildingCount {
+    id: Int!
+    region: Region
+    buildingType: BuildingType
+    shorelineType: ShorelineType
+    areaType: AreaType
+    year: Int!
+    buildingCount: Int
+  }
+
+  type Region {
+    id: String!
+    name: String!
+    regionType: RegionType
+  }
+
+  type RegionType {
+    id: Int!
+    name: String!
+  }
+
+  type BuildingType {
+    id: Int!
+    name: String!
+  }
+
+  type ShorelineType {
+    id: Int!
+    name: String!
+  }
+
+  type AreaType {
+    id: Int!
+    name: String!
+  }
