@@ -1,0 +1,13 @@
+package com.buildings.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class RegionType {
+    private int id;
+    private String name;
+}
