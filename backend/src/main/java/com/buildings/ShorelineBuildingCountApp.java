@@ -15,7 +15,7 @@ public class ShorelineBuildingCountApp {
     public static class HealthController {
         @GetMapping("/health")
         public String health() {
-            return "Buildings API is running!";
+            return "Building Count API is running!";
         }
     }
 }
