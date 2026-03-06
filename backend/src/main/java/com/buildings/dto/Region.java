@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Region {
-    private String id;
-    private String name;
-    private RegionType regionType;
+  private String id;
+  private String name;
+  private RegionType regionType;
 }
