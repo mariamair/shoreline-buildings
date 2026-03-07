@@ -7,12 +7,12 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class BuildingCountEntity {
+public class BuildingCountEntityDto {
   private int id;
-  private Region region;
-  private BuildingType buildingType;
-  private ShorelineType shorelineType;
-  private AreaType areaType;
+  private RegionDto region;
+  private BuildingTypeDto buildingType;
+  private ShorelineTypeDto shorelineType;
+  private AreaTypeDto areaType;
   private int year;
   private Integer buildingCount;
 }
