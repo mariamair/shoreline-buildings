@@ -3,12 +3,12 @@ package com.buildings.domain;
 public class Region {
   private String id;
   private String name;
-  private int regionTypeId;
+  private RegionType regionType;
 
-  public Region(String id, String name, int regionTypeId) {
+  public Region(String id, String name, RegionType regionType) {
     this.id = id;
     this.name = name;
-    this.regionTypeId = regionTypeId;
+    this.regionType = regionType;
   }
 
   public String getId() {
@@ -19,7 +19,11 @@ public class Region {
     return name;
   }
 
-  public int getRegionTypeId() {
-    return regionTypeId;
+  public RegionType getRegionType() {
+    return regionType;
+  }
+
+  public void setRegionType(RegionType regionType) {
+    this.regionType = regionType;
   }
 }

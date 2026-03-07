@@ -1,6 +1,7 @@
 package com.buildings.graphql.resolver;
 
 import com.buildings.dto.*;
+import com.buildings.service.RegionService;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
@@ -11,14 +12,21 @@ import java.util.List;
  */
 @Controller
 public class RegionResolver {
+  private final RegionService regionService;
+
+  public RegionResolver(RegionService regionService) {
+        this.regionService = regionService;
+    }
+
   @QueryMapping
-  public Region region(@Argument String id) {
-    MockDataGenerator mockDataGenerator = new MockDataGenerator();
-    return mockDataGenerator.generateRegion(id);
+  public RegionDto region(@Argument String id) {
+    // MockDataGenerator mockDataGenerator = new MockDataGenerator();
+    // return mockDataGenerator.generateRegion(id);
+    return regionService.getRegionById(id);
   }
 
   @QueryMapping
-  public List<Region> regions(
+  public List<RegionDto> regions(
     @Argument Integer regionType, 
     @Argument Integer limit, 
     @Argument Integer offset) {
