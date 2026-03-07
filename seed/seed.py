@@ -99,7 +99,7 @@ def load_reference_data(conn):
     
     return regions, building_types
 
-def insert_shoreline_building_count_batch(conn, csv_file, regions, building_types, batch_size=5000):
+def insert_building_count_batch(conn, csv_file, regions, building_types, batch_size=5000):
     """Insert shoreline building data in batches for better performance"""
     cur = conn.cursor()
 
@@ -153,7 +153,7 @@ def insert_shoreline_building_count_batch(conn, csv_file, regions, building_type
                     if len(batch_data) >= batch_size:
                         execute_values(
                             cur,
-                            """INSERT INTO shoreline_building_count 
+                            """INSERT INTO building_count 
                                (region_id, building_type_id, shoreline_type_id, area_type_id, year, building_count) 
                                VALUES %s""",
                             batch_data,
@@ -172,7 +172,7 @@ def insert_shoreline_building_count_batch(conn, csv_file, regions, building_type
             if batch_data:
                 execute_values(
                     cur,
-                    """INSERT INTO shoreline_building_count 
+                    """INSERT INTO building_count 
                         (region_id, building_type_id, shoreline_type_id, area_type_id, year, building_count)
                        VALUES %s""",
                     batch_data,
@@ -180,7 +180,7 @@ def insert_shoreline_building_count_batch(conn, csv_file, regions, building_type
                 )
                 conn.commit()
         
-        print(f"\n✓ Successfully inserted {row_count} rows into shoreline_building_count")
+        print(f"\n✓ Successfully inserted {row_count} rows into building_count")
         if skipped_rows > 0:
             print(f"  Skipped {skipped_rows} rows due to errors")
         
@@ -207,7 +207,7 @@ def load_building_data():
         print(f"  Loaded {len(regions)} regions, {len(building_types)} building types")
         
         print("\nInserting shoreline building data...")
-        insert_shoreline_building_count_batch(conn, csv_file, regions, building_types)
+        insert_building_count_batch(conn, csv_file, regions, building_types)
         
     finally:
         conn.close()
