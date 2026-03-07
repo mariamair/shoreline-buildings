@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ShorelineType {
+public class ShorelineTypeDto {
   private int id;
   private String name;
 }
