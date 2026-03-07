@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AreaType {
+public class AreaTypeDto {
   private int id;
   private String name;
 }
