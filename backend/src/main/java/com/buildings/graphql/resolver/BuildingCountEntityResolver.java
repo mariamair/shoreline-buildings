@@ -12,7 +12,7 @@ import java.util.List;
 @Controller
 public class BuildingCountEntityResolver {
   @QueryMapping
-  public List<BuildingCountEntity> buildingCountEntities(
+  public List<BuildingCountEntityDto> buildingCountEntities(
     @Argument Integer limit,
     @Argument Integer offset) {
     // Set defaults if null
@@ -28,7 +28,7 @@ public class BuildingCountEntityResolver {
   }
 
   @QueryMapping
-    public List<BuildingCountEntity> buildingCountEntitiesPerRegion(
+    public List<BuildingCountEntityDto> buildingCountEntitiesPerRegion(
       @Argument int regionType,
       @Argument Integer limit,
       @Argument Integer offset) {
