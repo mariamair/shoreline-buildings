@@ -1,6 +1,8 @@
 package com.buildings.graphql.resolver;
 
 import com.buildings.dto.*;
+import com.buildings.service.BuildingCountService;
+
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
@@ -11,6 +13,17 @@ import java.util.List;
  */
 @Controller
 public class BuildingCountEntityResolver {
+  private final BuildingCountService buildingCountService;
+
+  public BuildingCountEntityResolver(BuildingCountService buildingCountService) {
+    this.buildingCountService = buildingCountService;
+  }
+
+  @QueryMapping
+  public BuildingCountEntityDto buildingCountEntity(@Argument Long id) {
+    return buildingCountService.getBuildingCountById(id);
+  }
+
   @QueryMapping
   public List<BuildingCountEntityDto> buildingCountEntities(
     @Argument Integer limit,
@@ -25,6 +38,7 @@ public class BuildingCountEntityResolver {
 
     MockDataGenerator mockDataGenerator = new MockDataGenerator();
     return mockDataGenerator.generateBuildingCountEntities(limit, offset);
+    // return buildingCountService.getBuildingCountEntities(limit, offset);
   }
 
   @QueryMapping
