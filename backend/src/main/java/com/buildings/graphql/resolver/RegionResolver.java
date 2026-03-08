@@ -27,7 +27,7 @@ public class RegionResolver {
 
   @QueryMapping
   public List<RegionDto> regions(
-    @Argument Integer regionType, 
+    @Argument Integer regionTypeId, 
     @Argument Integer limit, 
     @Argument Integer offset) {
     // Set defaults if null
@@ -38,7 +38,14 @@ public class RegionResolver {
         offset = 0;
     }
 
-    MockDataGenerator mockDataGenerator = new MockDataGenerator();
-    return mockDataGenerator.generateRegions(limit, offset);
+    if (regionTypeId < 1 || regionTypeId > 3) {
+      // throw new Exception("Invalid region type");
+      System.out.println("*** Invalid region type ***");
+    }
+
+    // MockDataGenerator mockDataGenerator = new MockDataGenerator();
+    // return mockDataGenerator.generateRegions(limit, offset);
+
+    return regionService.getRegionsByType(regionTypeId); 
   }
 }

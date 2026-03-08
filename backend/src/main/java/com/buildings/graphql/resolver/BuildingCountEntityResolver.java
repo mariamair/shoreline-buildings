@@ -29,7 +29,7 @@ public class BuildingCountEntityResolver {
 
   @QueryMapping
     public List<BuildingCountEntityDto> buildingCountEntitiesPerRegion(
-      @Argument int regionType,
+      @Argument int regionTypeId,
       @Argument Integer limit,
       @Argument Integer offset) {
         // Set defaults if null
@@ -40,7 +40,7 @@ public class BuildingCountEntityResolver {
             offset = 0;
         }
 
-        if (regionType < 0 || regionType > 2) {
+        if (regionTypeId < 0 || regionTypeId > 2) {
           // throw new Exception("Invalid region type");
           System.out.println("*** Invalid region type ***");
         }

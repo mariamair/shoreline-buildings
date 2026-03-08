@@ -1,8 +1,8 @@
   type Query {
     buildingCountEntities(limit: Int = 50, offset: Int = 0): [BuildingCountEntity]
-    buildingCountEntitiesPerRegion(regionType: Int!, limit: Int = 50, offset: Int = 0): [BuildingCountEntity]
+    buildingCountEntitiesPerRegion(regionTypeId: Int!, limit: Int = 50, offset: Int = 0): [BuildingCountEntity]
     region(id: String!): Region
-    regions(regionType: Int!, limit: Int = 50, offset: Int = 0): [Region]
+    regions(regionTypeId: Int!, limit: Int = 50, offset: Int = 0): [Region]
   }
 
   type BuildingCountEntity {
