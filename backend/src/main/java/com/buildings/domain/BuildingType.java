@@ -9,7 +9,8 @@ public class BuildingType {
 
   private Set<BuildingCountEntity> buildingCountEntities = new HashSet<>();
 
-  public BuildingType(String name) {
+  public BuildingType(int id, String name) {
+    this.id = id;
     this.name = name;
   }
 

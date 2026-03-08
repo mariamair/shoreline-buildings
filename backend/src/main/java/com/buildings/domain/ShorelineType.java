@@ -9,7 +9,8 @@ public class ShorelineType {
 
   private Set<BuildingCountEntity> buildingCountEntities = new HashSet<>();
 
-  public ShorelineType(String name) {
+  public ShorelineType(int id, String name) {
+    this.id = id;
     this.name = name;
   }
 
