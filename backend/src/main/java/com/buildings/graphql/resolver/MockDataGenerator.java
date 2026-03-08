@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MockDataGenerator {
-  public RegionDto generateRegion(String id) {
-    return new RegionDto(id, "Stratford-upon-Avon", new RegionTypeDto(3, "kommun"));
+  public RegionDto generateRegion(String code) {
+    return new RegionDto(code, "Stratford-upon-Avon", new RegionTypeDto(3, "kommun"));
   }
 
   public List<RegionDto> generateRegions(Integer limit, Integer offset) {
@@ -45,7 +45,7 @@ public class MockDataGenerator {
     for (int i = startIndex; i < endIndex; i++) {
       BuildingCountEntityDto record = new BuildingCountEntityDto();
       
-      record.setId(i);
+      record.setId((long) i);
       record.setRegion(regions.get(i % regions.size()));
       record.setBuildingType(new BuildingTypeDto(i, buildingTypes[i % buildingTypes.length]));
       record.setShorelineType(new ShorelineTypeDto(i, shorelineTypes[i % shorelineTypes.length]));

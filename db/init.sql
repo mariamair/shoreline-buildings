@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS region_type (
 );
 
 CREATE TABLE IF NOT EXISTS region (
-    id VARCHAR(10) PRIMARY KEY,
+    code VARCHAR(10) PRIMARY KEY,
     name VARCHAR(255) NOT NULL UNIQUE,
     type_id INT,
     FOREIGN KEY (type_id)

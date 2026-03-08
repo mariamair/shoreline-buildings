@@ -19,8 +19,8 @@ public class RegionResolver {
     }
 
   @QueryMapping
-  public RegionDto region(@Argument String id) {
-    return regionService.getRegionById(id);
+  public RegionDto region(@Argument String code) {
+    return regionService.getRegionById(code);
   }
 
   @QueryMapping

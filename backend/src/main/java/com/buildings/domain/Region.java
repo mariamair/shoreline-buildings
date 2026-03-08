@@ -1,18 +1,18 @@
 package com.buildings.domain;
 
 public class Region {
-  private String id;
+  private String code;
   private String name;
   private RegionType regionType;
 
-  public Region(String id, String name, RegionType regionType) {
-    this.id = id;
+  public Region(String code, String name, RegionType regionType) {
+    this.code = code;
     this.name = name;
     this.regionType = regionType;
   }
 
-  public String getId() {
-    return id;
+  public String getCode() {
+    return code;
   }
 
   public String getName() {

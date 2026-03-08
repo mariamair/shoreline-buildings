@@ -4,12 +4,15 @@ import com.buildings.domain.Region;
 import com.buildings.dto.RegionDto;
 import com.buildings.dto.RegionTypeDto;
 import com.buildings.repository.RegionRepository;
+
 import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Slf4j
 public class RegionService {
   private final RegionRepository regionRepository;
   private final RegionTypeService regionTypeService;
@@ -19,14 +22,18 @@ public class RegionService {
         this.regionTypeService = regionTypeService;
     }
 
-  public RegionDto getRegionById(String id) {
-    System.out.println("Service: Start fetching region...");
-    Region region = regionRepository.findById(id)
-      .orElseThrow(() -> new EntityNotFoundException("Found no region with id " + id));
+  public RegionDto getRegionById(String code) {
+    log.info("Service: Fetching region with code '" + code + "'...");
+
+    Region region = regionRepository.findById(code)
+      .orElseThrow(() -> new EntityNotFoundException("Found no region with code '" + code + "'"));
+
     return convertToDto(region);
   }
 
   public List<RegionDto> getRegionsByType(int regionTypeId) {
+    log.info("Service: Fetching regions by region type...");
+
     if (!isValidRegionTypeId(regionTypeId)) {
       throw new IllegalArgumentException("Invalid region type");
     }
@@ -47,7 +54,7 @@ public class RegionService {
       region.getRegionType().getName());
 
     RegionDto regionDto = new RegionDto(
-      region.getId(), 
+      region.getCode(), 
       region.getName(), 
       regionTypeDto);
     return regionDto;

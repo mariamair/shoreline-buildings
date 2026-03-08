@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RegionDto {
-  private String id;
+  private String code;
   private String name;
   private RegionTypeDto regionType;
 }
