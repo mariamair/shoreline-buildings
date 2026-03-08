@@ -19,11 +19,12 @@ node_modules/
 *.drawio
 
 ### Java ###
-# Compiled class file
+# Compiled class files
 *.class
 
-# Log file
+# Log files
 *.log
+logs/
 
 # BlueJ files
 *.ctxt
@@ -54,7 +55,6 @@ release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
-# https://github.com/takari/maven-wrapper#usage-without-binary-jar
 .mvn/wrapper/maven-wrapper.jar
 
 # Eclipse m2e generated files
