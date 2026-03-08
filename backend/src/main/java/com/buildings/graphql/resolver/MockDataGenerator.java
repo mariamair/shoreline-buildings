@@ -24,6 +24,14 @@ public class MockDataGenerator {
     return regions;
   }
 
+  public BuildingCountEntityDto generateBuildingCountEntities(Long id) {
+    BuildingCountEntityDto buildingCount = new BuildingCountEntityDto();
+    buildingCount.setId(id);
+    buildingCount.setRegion(generateRegion("1980"));
+    buildingCount.setBuildingCount(33333);
+    return buildingCount;
+  }
+
   public List<BuildingCountEntityDto> generateBuildingCountEntities(Integer limit, Integer offset) {
     List<BuildingCountEntityDto> results = new ArrayList<>();
     
