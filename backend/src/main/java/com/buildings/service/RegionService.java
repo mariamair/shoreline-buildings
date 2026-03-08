@@ -12,9 +12,11 @@ import java.util.List;
 @Service
 public class RegionService {
   private final RegionRepository regionRepository;
+  private final RegionTypeService regionTypeService;
 
-  public RegionService(RegionRepository regionRepository) {
+  public RegionService(RegionRepository regionRepository, RegionTypeService regionTypeService) {
         this.regionRepository = regionRepository;
+        this.regionTypeService = regionTypeService;
     }
 
   public RegionDto getRegionById(String id) {
@@ -24,11 +26,13 @@ public class RegionService {
     return convertToDto(region);
   }
 
-  public List<RegionDto> getRegionsByType(int regionType) {
-    List<Region> regions = regionRepository.findByType(regionType);
-    if (regions.isEmpty()) {
-      throw new EntityNotFoundException("Found no regions of type " + regionType);
+  public List<RegionDto> getRegionsByType(int regionTypeId) {
+    if (!isValidRegionTypeId(regionTypeId)) {
+      throw new IllegalArgumentException("Invalid region type");
     }
+
+    List<Region> regions = regionRepository.findByType(regionTypeId);
+
     List<RegionDto> regionDtos = new ArrayList<>();
     for (Region r : regions) {
       regionDtos.add(convertToDto(r));
@@ -36,7 +40,7 @@ public class RegionService {
     return regionDtos;
   }
 
-  // Helper method for data conversion
+  // Helper methods
   private RegionDto convertToDto(Region region) {
     RegionTypeDto regionTypeDto = new RegionTypeDto(
       region.getRegionType().getId(), 
@@ -47,5 +51,10 @@ public class RegionService {
       region.getName(), 
       regionTypeDto);
     return regionDto;
+  }
+
+  private boolean isValidRegionTypeId(int regionTypeId) {
+    List<Integer> regionTypeIds = regionTypeService.getRegionTypeIds();
+    return regionTypeIds.contains(regionTypeId);
   }
 }
