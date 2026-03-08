@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BuildingCountEntityDto {
-  private int id;
+  private Long id;
   private RegionDto region;
   private BuildingTypeDto buildingType;
   private ShorelineTypeDto shorelineType;
