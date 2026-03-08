@@ -20,8 +20,6 @@ public class RegionResolver {
 
   @QueryMapping
   public RegionDto region(@Argument String id) {
-    // MockDataGenerator mockDataGenerator = new MockDataGenerator();
-    // return mockDataGenerator.generateRegion(id);
     return regionService.getRegionById(id);
   }
 
@@ -37,14 +35,6 @@ public class RegionResolver {
     if (offset == null) {
         offset = 0;
     }
-
-    if (regionTypeId < 1 || regionTypeId > 3) {
-      // throw new Exception("Invalid region type");
-      System.out.println("*** Invalid region type ***");
-    }
-
-    // MockDataGenerator mockDataGenerator = new MockDataGenerator();
-    // return mockDataGenerator.generateRegions(limit, offset);
 
     return regionService.getRegionsByType(regionTypeId); 
   }
