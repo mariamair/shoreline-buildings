@@ -2,12 +2,14 @@ package com.buildings.service;
 
 import com.buildings.domain.RegionType;
 import com.buildings.repository.RegionTypeRepository;
+import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import jakarta.persistence.EntityNotFoundException;
 
 @Service
+@Slf4j
 public class RegionTypeService {
   public final RegionTypeRepository regionTypeRepository;
 
@@ -18,6 +20,7 @@ public class RegionTypeService {
   public List<Integer> getRegionTypeIds() {
     List<Integer> regionTypeIds = regionTypeRepository.findAllRegionTypeIds();
     if (regionTypeIds.isEmpty()) {
+      log.warn("No region types available");
       throw new EntityNotFoundException("Found no region type ids");
     }
     return regionTypeIds;
