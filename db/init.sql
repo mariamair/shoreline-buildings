@@ -30,9 +30,9 @@ CREATE TABLE IF NOT EXISTS area_type (
 
 CREATE TABLE IF NOT EXISTS building_count (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    region_id VARCHAR(10),
+    region_code VARCHAR(10),
     FOREIGN KEY (region_id)
-        REFERENCES region (id)
+        REFERENCES region (code)
         ON DELETE SET NULL ON UPDATE CASCADE,
     building_type_id INT,
     FOREIGN KEY (building_type_id)
@@ -47,17 +47,17 @@ CREATE TABLE IF NOT EXISTS building_count (
         REFERENCES area_type (id)
         ON DELETE SET NULL ON UPDATE CASCADE,
     year INT NOT NULL,
-    building_count INT
+    count INT
 );
 
 -- Create indexes
 CREATE INDEX IF NOT EXISTS idx_building_count_id ON building_count(id);
-CREATE INDEX IF NOT EXISTS idx_building_count_region_id ON building_count(region_id);
+CREATE INDEX IF NOT EXISTS idx_building_count_region_code ON building_count(region_code);
 CREATE INDEX IF NOT EXISTS idx_building_count_building_type_id ON building_count(building_type_id);
 CREATE INDEX IF NOT EXISTS idx_building_count_shoreline_type_id ON building_count(shoreline_type_id);
 CREATE INDEX IF NOT EXISTS idx_building_count_area_type_id ON building_count(area_type_id);
 
-CREATE INDEX IF NOT EXISTS idx_region_id ON region(id ASC);
+CREATE INDEX IF NOT EXISTS idx_region_code ON region(code ASC);
 CREATE INDEX IF NOT EXISTS idx_region_type_id ON region(type_id);
 
 -- Insert category data
