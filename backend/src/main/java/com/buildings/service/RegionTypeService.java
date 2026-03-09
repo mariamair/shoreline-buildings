@@ -1,8 +1,10 @@
 package com.buildings.service;
 
-import java.util.List;
-import org.springframework.stereotype.Service;
+import com.buildings.domain.RegionType;
 import com.buildings.repository.RegionTypeRepository;
+import java.util.List;
+import java.util.Map;
+import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
@@ -19,5 +21,9 @@ public class RegionTypeService {
       throw new EntityNotFoundException("Found no region type ids");
     }
     return regionTypeIds;
+  }
+
+  public Map<String, RegionType> getRegionTypesByRegionCodes(List<String> regionCodes) {
+    return regionTypeRepository.findRegionTypesByRegionCodes(regionCodes);
   }
 }

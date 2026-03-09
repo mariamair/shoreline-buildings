@@ -1,15 +1,13 @@
 package com.buildings.service;
 
 import com.buildings.domain.Region;
-import com.buildings.dto.RegionDto;
-import com.buildings.dto.RegionTypeDto;
 import com.buildings.repository.RegionRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -22,46 +20,43 @@ public class RegionService {
         this.regionTypeService = regionTypeService;
     }
 
-  public RegionDto getRegionById(String code) {
-    log.info("Service: Fetching region with code '" + code + "'...");
-
-    Region region = regionRepository.findById(code)
-      .orElseThrow(() -> new EntityNotFoundException("Found no region with code '" + code + "'"));
-
-    return convertToDto(region);
+  public List<String> getAllRegionCodes() {
+    List<String> regionCodes = regionRepository.findAllRegionCodes();
+    if (regionCodes.isEmpty()) {
+      log.warn("No region codes available");
+      throw new EntityNotFoundException("Found no region codes");
+    }
+    return regionCodes;
   }
 
-  public List<RegionDto> getRegionsByType(int regionTypeId) {
-    log.info("Service: Fetching regions by region type...");
+  public Region getRegionByCode(String code) {
+    if (!isValidRegionCode(code)) {
+      log.warn(String.format("Client requested invalid region code '%s'", code));
+      throw new IllegalArgumentException("Invalid region code");
+    }
 
+    return regionRepository.findRegionByCode(code)
+      .orElseThrow(() -> new EntityNotFoundException("Found no region with code '" + code + "'"));
+  }
+
+  public List<Region> getRegionsByType(int regionTypeId, Integer limit, Integer offset) {
     if (!isValidRegionTypeId(regionTypeId)) {
+      log.warn(String.format("Client requested invalid region type '%s'", regionTypeId));
       throw new IllegalArgumentException("Invalid region type");
     }
 
-    List<Region> regions = regionRepository.findByType(regionTypeId);
-
-    List<RegionDto> regionDtos = new ArrayList<>();
-    for (Region r : regions) {
-      regionDtos.add(convertToDto(r));
-    }
-    return regionDtos;
+    return regionRepository.findRegionsByType(regionTypeId, limit, offset);
   }
 
-  // Helper methods
-  private RegionDto convertToDto(Region region) {
-    RegionTypeDto regionTypeDto = new RegionTypeDto(
-      region.getRegionType().getId(), 
-      region.getRegionType().getName());
-
-    RegionDto regionDto = new RegionDto(
-      region.getCode(), 
-      region.getName(), 
-      regionTypeDto);
-    return regionDto;
+  public Map<Long, Region> getRegionsByBuildingCountIds(List<Long> buildingCountIds) {
+    return regionRepository.findRegionsByBuildingCountIds(buildingCountIds);
   }
 
+  private boolean isValidRegionCode(String regionCode) {
+    return getAllRegionCodes().contains(regionCode);
+  }
   private boolean isValidRegionTypeId(int regionTypeId) {
-    List<Integer> regionTypeIds = regionTypeService.getRegionTypeIds();
-    return regionTypeIds.contains(regionTypeId);
+    return regionTypeService.getRegionTypeIds().contains(regionTypeId);
   }
+
 }
