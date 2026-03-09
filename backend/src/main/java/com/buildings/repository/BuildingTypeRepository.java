@@ -21,21 +21,22 @@ public class BuildingTypeRepository {
       .list();
   }
 
-  public Map<Long, BuildingType> findBuildingTypeByBuildingCountIds(List<Long> buildingCountIds) {
-    return jdbcClient.sql(
-      "SELECT b.id AS building_count_id, bt.id, bt.name " +
-      "FROM building_type bt " +
-      "JOIN building_count b ON b.building_type_id = bt.id " +
-      "WHERE b.id IN (:ids)")
-        .param("ids", buildingCountIds)
-        .query((rs, _) -> Map.entry(
-            rs.getLong("building_count_id"),
-            new BuildingType(
-              rs.getInt("id"), 
-              rs.getString("name"))
-        ))
-        .list()
-        .stream()
-        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+  public Map<Long, BuildingType> findBuildingTypesByBuildingCountIds(List<Long> buildingCountIds) {
+    return jdbcClient.sql("""
+      SELECT b.id AS building_count_id, bt.id, bt.name 
+      FROM building_type bt 
+      JOIN building_count b ON b.building_type_id = bt.id 
+      WHERE b.id IN (:ids)
+      """)
+      .param("ids", buildingCountIds)
+      .query((rs, _) -> Map.entry(
+        rs.getLong("building_count_id"),
+        new BuildingType(
+          rs.getInt("id"), 
+          rs.getString("name"))
+      ))
+      .list()
+      .stream()
+      .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
   }
 }

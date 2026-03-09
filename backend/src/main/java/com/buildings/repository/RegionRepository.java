@@ -30,10 +30,10 @@ public class RegionRepository {
       """)
       .param("code", code)
       .query((rs, _) -> new Region(
-            rs.getString("code"), 
-            rs.getString("name"), 
-            rs.getInt("type_id")
-          ))
+        rs.getString("code"), 
+        rs.getString("name"), 
+        rs.getInt("type_id")
+      ))
       .optional();
   }
 
@@ -49,10 +49,10 @@ public class RegionRepository {
       .param("limit", limit)
       .param("offset", offset)
       .query((rs, _) -> new Region(
-            rs.getString("code"), 
-            rs.getString("name"), 
-            rs.getInt("type_id")
-          ))
+        rs.getString("code"), 
+        rs.getString("name"), 
+        rs.getInt("type_id")
+      ))
       .list();
   }
 
@@ -63,16 +63,16 @@ public class RegionRepository {
       JOIN building_count b ON b.region_code = r.code 
       WHERE b.id IN (:ids)
       """)
-        .param("ids", buildingCountIds)
-        .query((rs, _) -> Map.entry(
-            rs.getLong("building_count_id"),
-            new Region(
-              rs.getString("code"), 
-              rs.getString("name"),
-              rs.getInt("type_id"))
-        ))
-        .list()
-        .stream()
-        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+      .param("ids", buildingCountIds)
+      .query((rs, _) -> Map.entry(
+        rs.getLong("building_count_id"),
+        new Region(
+          rs.getString("code"), 
+          rs.getString("name"),
+          rs.getInt("type_id"))
+      ))
+      .list()
+      .stream()
+      .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
   }
 }
