@@ -16,25 +16,19 @@ public class RegionRepository {
         this.jdbcClient = jdbcClient;
     }
 
-  public List<String> findAllRegionCodes() {
-    return jdbcClient.sql("SELECT code FROM region")
-      .query((rs, _) -> rs.getString("code"))
-      .list();
-  }
-
-    public Optional<Region> findRegionByCode(String code) {
-    return jdbcClient.sql("""
-      SELECT code, name, type_id 
-      FROM region 
-      WHERE code = :code
-      """)
-      .param("code", code)
-      .query((rs, _) -> new Region(
-        rs.getString("code"), 
-        rs.getString("name"), 
-        rs.getInt("type_id")
-      ))
-      .optional();
+  public Optional<Region> findRegionByCode(String code) {
+  return jdbcClient.sql("""
+    SELECT code, name, type_id 
+    FROM region 
+    WHERE code = :code
+    """)
+    .param("code", code)
+    .query((rs, _) -> new Region(
+      rs.getString("code"), 
+      rs.getString("name"), 
+      rs.getInt("type_id")
+    ))
+    .optional();
   }
 
   public List<Region> findRegionsByType(int regionTypeId, int limit, int offset) {
