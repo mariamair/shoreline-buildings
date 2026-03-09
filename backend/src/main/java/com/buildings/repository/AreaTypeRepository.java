@@ -24,7 +24,8 @@ public class AreaTypeRepository {
   public Map<Long, AreaType> findAreaTypeByBuildingCountIds(List<Long> buildingCountIds) {
     return jdbcClient.sql(
       "SELECT b.id AS building_count_id, at.id, at.name " +
-      "FROM area_type at JOIN building_count b ON b.area_type_id = at.id " +
+      "FROM area_type at " +
+      "JOIN building_count b ON b.area_type_id = at.id " +
       "WHERE b.id IN (:ids)")
         .param("ids", buildingCountIds)
         .query((rs, _) -> Map.entry(
