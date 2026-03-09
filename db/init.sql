@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS area_type (
 CREATE TABLE IF NOT EXISTS building_count (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     region_code VARCHAR(10),
-    FOREIGN KEY (region_id)
+    FOREIGN KEY (region_code)
         REFERENCES region (code)
         ON DELETE SET NULL ON UPDATE CASCADE,
     building_type_id INT,
