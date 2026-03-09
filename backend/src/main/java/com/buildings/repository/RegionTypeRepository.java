@@ -21,15 +21,15 @@ public class RegionTypeRepository {
       .list();
   }
 
-  public Map<String, RegionType> findRegionTypeByRegionIds(List<String> regionIds) {
+  public Map<String, RegionType> findRegionTypeByRegionCodes(List<String> regionCodes) {
     return jdbcClient.sql(
-      "SELECT r.id AS region_id, rt.id, rt.name " +
+      "SELECT r.code, rt.id, rt.name " +
       "FROM region_type rt " +
       "JOIN region r ON r.type_id = rt.id " +
-      "WHERE r.id IN (:ids)")
-        .param("ids", regionIds)
+      "WHERE r.code IN (:codes)")
+        .param("codes", regionCodes)
         .query((rs, _) -> Map.entry(
-            rs.getString("region_id"),
+            rs.getString("code"),
             new RegionType(
               rs.getInt("id"), 
               rs.getString("name"))
