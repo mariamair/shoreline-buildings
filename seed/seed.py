@@ -39,25 +39,25 @@ def populate_reference_tables(conn, csv_file):
         print(f"Inserting {len(regions_set)} regions...")
         region_data = []
         for region_str in regions_set:
-            region_id, region_name = region_str.split(' ', 1)
+            region_code, region_name = region_str.split(' ', 1)
             region_type = None
-            if region_id:
-                if region_id == "00":
+            if region_code:
+                if region_code == "00":
                     region_type = 1
-                elif len(region_id) == 2:
+                elif len(region_code) == 2:
                     region_type = 2
-                elif len(region_id) == 4:
+                elif len(region_code) == 4:
                     region_type = 3
                 else:
-                    print(f"  Warning: Could not set region_type for region_id '{region_id}'")
-                region_data.append((region_id, region_name, region_type))
+                    print(f"  Warning: Could not set region_type for region_code '{region_code}'")
+                region_data.append((region_code, region_name, region_type))
             else:
                 print(f"  Warning: Could not parse region '{region_str}'")
         
         if region_data:
             execute_values(
                 cur,
-                "INSERT INTO region (id, name, type_id) VALUES %s ON CONFLICT (id) DO NOTHING",
+                "INSERT INTO region (code, name, type_id) VALUES %s ON CONFLICT (code) DO NOTHING",
                 region_data,
                 page_size=1000
             )
@@ -88,7 +88,7 @@ def load_reference_data(conn):
     cur = conn.cursor()
     
     # Load regions (from CSV)
-    cur.execute("SELECT id, name FROM region")
+    cur.execute("SELECT code, name FROM region")
     regions = {row[1]: row[0] for row in cur.fetchall()}
     
     # Load building types (from CSV)
@@ -125,15 +125,15 @@ def insert_building_count_batch(conn, csv_file, regions, building_types, batch_s
                     shoreline_type_name = row.get('strandtyp', '').strip()
                     area_type_name = row.get('typ av område', '').strip()
                     year = int(row.get('år', 0))
-                    building_count_str = row.get('Antal byggnader inom 100 meter från strand', '').strip()
+                    count_str = row.get('Antal byggnader inom 100 meter från strand', '').strip()
 
                     # Parse building count: Replace .. and missing values with None (= NULL in database)
-                    if building_count_str == '..':
-                        building_count = None
-                    elif building_count_str:
-                        building_count = int(building_count_str)
+                    if count_str == '..':
+                        count = None
+                    elif count_str:
+                        count = int(count_str)
                     else:
-                        building_count = None
+                        count = None
                     
                     # Parse region: Keep only the name part for looking up IDs in the next step: "01 Stockholms län" -> "Stockholms län"
                     region_name = None
@@ -141,12 +141,12 @@ def insert_building_count_batch(conn, csv_file, regions, building_types, batch_s
                         region_name = region_str.split(' ', 1)[1]
                     
                     # Look up IDs
-                    region_id = regions.get(region_name) if region_name else None
+                    region_code = regions.get(region_name) if region_name else None
                     building_type_id = building_types.get(building_type_name)
                     shoreline_type_id = shoreline_types.get(shoreline_type_name)
                     area_type_id = area_types.get(area_type_name)
                     
-                    batch_data.append((region_id, building_type_id, shoreline_type_id, area_type_id, year, building_count))
+                    batch_data.append((region_code, building_type_id, shoreline_type_id, area_type_id, year, count))
                     row_count += 1
                     
                     # Insert when batch is full
@@ -154,7 +154,7 @@ def insert_building_count_batch(conn, csv_file, regions, building_types, batch_s
                         execute_values(
                             cur,
                             """INSERT INTO building_count 
-                               (region_id, building_type_id, shoreline_type_id, area_type_id, year, building_count) 
+                               (region_code, building_type_id, shoreline_type_id, area_type_id, year, count) 
                                VALUES %s""",
                             batch_data,
                             page_size=1000
@@ -173,7 +173,7 @@ def insert_building_count_batch(conn, csv_file, regions, building_types, batch_s
                 execute_values(
                     cur,
                     """INSERT INTO building_count 
-                        (region_id, building_type_id, shoreline_type_id, area_type_id, year, building_count)
+                        (region_code, building_type_id, shoreline_type_id, area_type_id, year, count)
                        VALUES %s""",
                     batch_data,
                     page_size=1000
