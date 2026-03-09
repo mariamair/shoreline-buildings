@@ -22,8 +22,4 @@ public class Region {
   public int getRegionTypeId() {
     return regionTypeId;
   }
-
-  public void setRegionType(int regionTypeId) {
-    this.regionTypeId = regionTypeId;
-  }
 }
