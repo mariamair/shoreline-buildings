@@ -2,19 +2,19 @@ package com.buildings.domain;
 
 public class BuildingCountEntity {
   private Long id;
-  private Region region;
-  private BuildingType buildingType;
-  private ShorelineType shorelineType;
-  private AreaType areaType;
+  private String regionCode;
+  private Integer buildingTypeId;
+  private Integer shorelineTypeId;
+  private Integer areaTypeId;
   private int year;
   private Integer buildingCount;
 
-  public BuildingCountEntity (Long id, Region region, BuildingType buildingType, ShorelineType shorelineType, AreaType areaType, int year, Integer buildingCount) {
+  public BuildingCountEntity (Long id, String regionCode, Integer buildingTypeId, Integer shorelineTypeId, Integer areaTypeId, int year, Integer buildingCount) {
     this.id = id;
-    this.region = region;
-    this.buildingType = buildingType;
-    this.shorelineType = shorelineType;
-    this.areaType = areaType;
+    this.regionCode = regionCode;
+    this.buildingTypeId = buildingTypeId;
+    this.shorelineTypeId = shorelineTypeId;
+    this.areaTypeId = areaTypeId;
     this.year = year;
     this.buildingCount = buildingCount;
   }
@@ -23,36 +23,36 @@ public class BuildingCountEntity {
     return id;
   }
 
-  public Region getRegion() {
-    return region;
+  public String getRegionCode() {
+    return regionCode;
   }
 
-  public void setRegion(Region region) {
-    this.region = region;
+  public void setRegionCode(String regionCode) {
+    this.regionCode = regionCode;
   }
 
-  public BuildingType getBuildingType() {
-    return buildingType;
+  public Integer getBuildingTypeId() {
+    return buildingTypeId;
   }
 
-  public void setBuildingType(BuildingType buildingType) {
-    this.buildingType = buildingType;
+  public void setBuildingType(Integer buildingTypeId) {
+    this.buildingTypeId = buildingTypeId;
   }
 
-  public ShorelineType getShorelineType() {
-    return shorelineType;
+  public Integer getShorelineTypeId() {
+    return shorelineTypeId;
   }
 
-  public void setShorelineType(ShorelineType shorelineType) {
-    this.shorelineType = shorelineType;
+  public void setShorelineType(Integer shorelineTypeId) {
+    this.shorelineTypeId = shorelineTypeId;
   }
   
-  public AreaType getAreaType() {
-    return areaType;
+  public Integer getAreaTypeId() {
+    return areaTypeId;
   }
   
-  public void setAreaType(AreaType areaType) {
-    this.areaType = areaType;
+  public void setAreaType(Integer areaTypeId) {
+    this.areaTypeId = areaTypeId;
   }
 
   public int getYear() {
