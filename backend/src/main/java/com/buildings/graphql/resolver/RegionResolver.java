@@ -1,11 +1,16 @@
 package com.buildings.graphql.resolver;
 
-import com.buildings.dto.*;
+import com.buildings.domain.Region;
+import com.buildings.domain.RegionType;
 import com.buildings.service.RegionService;
+import com.buildings.service.RegionTypeService;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.BatchMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
-import java.util.List;
 
 /**
  * GraphQL resolver for Region queries.
@@ -13,29 +18,35 @@ import java.util.List;
 @Controller
 public class RegionResolver {
   private final RegionService regionService;
+  private final RegionTypeService regionTypeService;
 
-  public RegionResolver(RegionService regionService) {
+  public RegionResolver(RegionService regionService, RegionTypeService regionTypeService) {
         this.regionService = regionService;
+        this.regionTypeService = regionTypeService;
     }
 
   @QueryMapping
-  public RegionDto region(@Argument String code) {
-    return regionService.getRegionById(code);
+  public Region region(@Argument String code) {
+    return regionService.getRegionByCode(code);
   }
 
   @QueryMapping
-  public List<RegionDto> regions(
-    @Argument Integer regionTypeId, 
+  public List<Region> regionsByType(
+    @Argument int regionTypeId, 
     @Argument Integer limit, 
     @Argument Integer offset) {
-    // Set defaults if null
-    if (limit == null) {
-        limit = 50;
-    }
-    if (offset == null) {
-        offset = 0;
-    }
-
-    return regionService.getRegionsByType(regionTypeId); 
+    return regionService.getRegionsByType(regionTypeId, limit, offset);
   }
+
+  @BatchMapping(typeName = "Region", field = "regionType")
+  public Map<Region, RegionType> regionType(List<Region> regions) {
+    List<String> codes = regions.stream().map(Region::getCode).toList();
+    Map<String, RegionType> regionTypeMap = regionTypeService.getRegionTypesByRegionCodes(codes);
+
+    return regions.stream()
+      .collect(Collectors.toMap(
+          r -> r,
+          r -> regionTypeMap.getOrDefault(r.getCode(), null)
+      ));
+    }
 }
