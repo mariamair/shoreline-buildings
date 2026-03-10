@@ -49,8 +49,6 @@ public class BuildingCountEntityResolver {
     List<BuildingCountEntity> items = buildingCountService.getAllBuildingCountEntities(filter, limit, offset);
     int totalCount = buildingCountService.getTotalCount(filter);
     boolean hasNextPage = offset + limit < totalCount;
-    System.out.println("FilterDto: " + filter);
-    System.out.println("FilterDto, AreaType: " + filter.getAreaTypeId());
 
     return new BuildingCountPageDto(items, totalCount, limit, offset, hasNextPage);
   }
