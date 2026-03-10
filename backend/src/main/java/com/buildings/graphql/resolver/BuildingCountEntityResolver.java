@@ -1,6 +1,8 @@
 package com.buildings.graphql.resolver;
 
 import com.buildings.domain.*;
+import com.buildings.dto.BuildingCountPageDto;
+import com.buildings.dto.BuildingCountFilterDto;
 import com.buildings.service.*;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.BatchMapping;
@@ -40,32 +42,17 @@ public class BuildingCountEntityResolver {
   }
 
   @QueryMapping
-  public List<BuildingCountEntity> buildingCountEntities(@Argument Integer limit, @Argument Integer offset) {
-    return buildingCountService.getAllBuildingCountEntities(limit, offset);
-  }
-
-  @QueryMapping
-  public List<BuildingCountEntity> buildingCountEntitiesPerAreaType(
-    @Argument Integer areaType,
+  public BuildingCountPageDto buildingCountEntities(
+    @Argument BuildingCountFilterDto filter,
     @Argument Integer limit, 
     @Argument Integer offset) {
-    return buildingCountService.getBuildingCountEntitiesByAreaType(areaType, limit, offset);
-  }
+    List<BuildingCountEntity> items = buildingCountService.getAllBuildingCountEntities(filter, limit, offset);
+    int totalCount = buildingCountService.getTotalCount(filter);
+    boolean hasNextPage = offset + limit < totalCount;
+    System.out.println("FilterDto: " + filter);
+    System.out.println("FilterDto, AreaType: " + filter.getAreaTypeId());
 
-  @QueryMapping
-  public List<BuildingCountEntity> buildingCountEntitiesPerBuildingType(
-    @Argument Integer buildingType,
-    @Argument Integer limit, 
-    @Argument Integer offset) {
-    return buildingCountService.getBuildingCountEntitiesByBuildingType(buildingType, limit, offset);
-  }
-
-  @QueryMapping
-  public List<BuildingCountEntity> buildingCountEntitiesPerShorelineType(
-    @Argument Integer shorelineType,
-    @Argument Integer limit, 
-    @Argument Integer offset) {
-    return buildingCountService.getBuildingCountEntitiesByShorelineType(shorelineType, limit, offset);
+    return new BuildingCountPageDto(items, totalCount, limit, offset, hasNextPage);
   }
 
   @QueryMapping

@@ -1,12 +1,23 @@
+  input BuildingCountFilter {
+    areaTypeId: Int
+    buildingTypeId: Int
+    shorelineTypeId: Int
+  }
+  
   type Query {
     buildingCountEntity(id: Int!): BuildingCountEntity
-    buildingCountEntities(limit: Int = 50, offset: Int = 0): [BuildingCountEntity]
-    buildingCountEntitiesPerAreaType(areaType: Int!, limit: Int = 50, offset: Int = 0): [BuildingCountEntity]
-    buildingCountEntitiesPerBuildingType(buildingType: Int!, limit: Int = 50, offset: Int = 0): [BuildingCountEntity]
-    buildingCountEntitiesPerShorelineType(shorelineType: Int!, limit: Int = 50, offset: Int = 0): [BuildingCountEntity]
+    buildingCountEntities(filter: BuildingCountFilter, limit: Int = 50, offset: Int = 0): BuildingCountPage
     buildingCountEntitiesPerRegion(regionCode: String!, limit: Int = 50, offset: Int = 0): [BuildingCountEntity]
     region(code: String!): Region
     regionsByType(regionTypeId: Int!, limit: Int = 50, offset: Int = 0): [Region]
+  }
+
+  type BuildingCountPage {
+    items: [BuildingCountEntity]
+    totalCount: Int
+    limit: Int
+    offset: Int
+    hasNextPage: Boolean
   }
 
   type BuildingCountEntity {

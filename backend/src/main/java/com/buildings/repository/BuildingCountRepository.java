@@ -1,10 +1,13 @@
 package com.buildings.repository;
 
 import com.buildings.domain.BuildingCountEntity;
+import com.buildings.dto.BuildingCountFilterDto;
+
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
@@ -16,7 +19,7 @@ public class BuildingCountRepository {
         id, 
         year, 
         count 
-      FROM building_count 
+      FROM building_count
       """;
 
   public BuildingCountRepository(JdbcClient jdbcClient) {
@@ -24,7 +27,7 @@ public class BuildingCountRepository {
   }
 
   public Optional<BuildingCountEntity> findBuildingCountEntityById(Long id) {
-    return jdbcClient.sql(BASE_SQL + "WHERE id = :id")
+    return jdbcClient.sql(BASE_SQL + " AND id = :id")
       .param("id", id)
       .query((rs, _) -> new BuildingCountEntity(
         rs.getLong("id"), 
@@ -32,33 +35,6 @@ public class BuildingCountRepository {
         rs.getInt("count")
       ))
       .optional();
-  }
-
-  public List<BuildingCountEntity> findBuildingCountEntitiesByAreaType(int areaTypeId, int limit, int offset) {
-    return jdbcClient.sql(BASE_SQL + "WHERE area_type_id = :areaTypeId LIMIT :limit OFFSET :offset")
-      .param("areaTypeId", areaTypeId)
-      .param("limit", limit)
-      .param("offset", offset)
-      .query(mapRowsToEntity())
-      .list();
-  }
-
-  public List<BuildingCountEntity> findBuildingCountEntitiesByBuildingType(int buildingTypeId, int limit, int offset) {
-    return jdbcClient.sql(BASE_SQL + "WHERE building_type_id = :buildingTypeId LIMIT :limit OFFSET :offset")
-      .param("buildingTypeId", buildingTypeId)
-      .param("limit", limit)
-      .param("offset", offset)
-      .query(mapRowsToEntity())
-      .list();
-  }
-
-  public List<BuildingCountEntity> findBuildingCountEntitiesByShorelineType(int shorelineTypeId, int limit, int offset) {
-    return jdbcClient.sql(BASE_SQL + "WHERE shoreline_type_id = :shorelineTypeId LIMIT :limit OFFSET :offset")
-      .param("shorelineTypeId", shorelineTypeId)
-      .param("limit", limit)
-      .param("offset", offset)
-      .query(mapRowsToEntity())
-      .list();
   }
 
   public List<BuildingCountEntity> findBuildingCountEntitiesByRegion(String regionCode, int limit, int offset) {
@@ -70,15 +46,53 @@ public class BuildingCountRepository {
       .list();
   }
 
-  public List<BuildingCountEntity> findAllBuildingCountEntities(
-    int limit, 
-    int offset) {
-      System.out.println("Repository: limit " + limit + " och offset " + offset);
-    return jdbcClient.sql(BASE_SQL + "LIMIT :limit OFFSET :offset")
-      .param("limit", limit)
-      .param("offset", offset)
+  public List<BuildingCountEntity> findAllBuildingCountEntities(BuildingCountFilterDto filter, int limit, int offset) {
+    FilterQuery filterQuery = buildFilterQuery(filter);
+    String sql = BASE_SQL 
+        + filterQuery.sql() 
+        + " ORDER BY id ASC LIMIT :limit OFFSET :offset";
+    
+    filterQuery.params()
+        .addValue("limit", limit)
+        .addValue("offset", offset);
+
+    return jdbcClient.sql(sql)
+      .paramSource(filterQuery.params())
       .query(mapRowsToEntity())
       .list();
+  }
+
+  public int countAllBuildingCountEntities(BuildingCountFilterDto filter) {
+    FilterQuery filterQuery = buildFilterQuery(filter);
+    String sql = "SELECT COUNT(*) FROM building_count" + filterQuery.sql();
+
+    return jdbcClient.sql(sql)
+        .paramSource(filterQuery.params())
+        .query(Integer.class)
+        .single();
+  }
+
+  private record FilterQuery(String sql, MapSqlParameterSource params) {}
+
+  private FilterQuery buildFilterQuery(BuildingCountFilterDto filter) {
+    StringBuilder sql = new StringBuilder(" WHERE 1=1");
+    MapSqlParameterSource params = new MapSqlParameterSource();
+
+    if (filter != null && filter.getAreaTypeId() != null) {
+        sql.append(" AND area_type_id = :areaTypeId");
+        params.addValue("areaTypeId", filter.getAreaTypeId());
+    }
+
+    if (filter != null && filter.getBuildingTypeId() != null) {
+        sql.append(" AND building_type_id = :buildingTypeId");
+        params.addValue("buildingTypeId", filter.getBuildingTypeId());
+    }
+
+    if (filter != null && filter.getShorelineTypeId() != null) {
+        sql.append(" AND shoreline_type_id = :shorelineTypeId");
+        params.addValue("shorelineTypeId", filter.getShorelineTypeId());
+    }
+    return new FilterQuery(sql.toString(), params);
   }
 
   private RowMapper<BuildingCountEntity> mapRowsToEntity() {
