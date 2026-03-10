@@ -27,7 +27,7 @@ public class BuildingCountRepository {
   }
 
   public Optional<BuildingCountEntity> findBuildingCountEntityById(Long id) {
-    return jdbcClient.sql(BASE_SQL + " AND id = :id")
+    return jdbcClient.sql(BASE_SQL + " WHERE id = :id")
       .param("id", id)
       .query((rs, _) -> new BuildingCountEntity(
         rs.getLong("id"), 
@@ -38,7 +38,7 @@ public class BuildingCountRepository {
   }
 
   public List<BuildingCountEntity> findBuildingCountEntitiesByRegion(String regionCode, int limit, int offset) {
-    return jdbcClient.sql(BASE_SQL + "WHERE region_code = :regionCode LIMIT :limit OFFSET :offset")
+    return jdbcClient.sql(BASE_SQL + " WHERE region_code = :regionCode LIMIT :limit OFFSET :offset")
       .param("regionCode", regionCode)
       .param("limit", limit)
       .param("offset", offset)
