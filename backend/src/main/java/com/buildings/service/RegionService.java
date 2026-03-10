@@ -30,6 +30,10 @@ public class RegionService {
     return regions;
   }
 
+  public int getTotalCount(int regionTypeId) {
+    return regionRepository.countAllRegions(regionTypeId);
+  }
+
   public Map<Long, Region> getRegionsByBuildingCountIds(List<Long> buildingCountIds) {
     return regionRepository.findRegionsByBuildingCountIds(buildingCountIds);
   }

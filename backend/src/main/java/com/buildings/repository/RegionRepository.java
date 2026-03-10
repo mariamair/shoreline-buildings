@@ -50,6 +50,18 @@ public class RegionRepository {
       .list();
   }
 
+  public int countAllRegions(int regionTypeId) {
+    String sql = """
+        SELECT COUNT(*) 
+        FROM region 
+        WHERE type_id = :regionTypeId
+        """;
+    return jdbcClient.sql(sql)
+    .param("regionTypeId", regionTypeId)
+    .query(Integer.class)
+    .single();
+  }
+
   public Map<Long, Region> findRegionsByBuildingCountIds(List<Long> buildingCountIds) {
     return jdbcClient.sql("""
       SELECT b.id AS building_count_id, r.code, r.name, r.type_id 

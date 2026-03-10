@@ -2,6 +2,7 @@ package com.buildings.graphql.resolver;
 
 import com.buildings.domain.Region;
 import com.buildings.domain.RegionType;
+import com.buildings.dto.RegionPageDto;
 import com.buildings.service.RegionService;
 import com.buildings.service.RegionTypeService;
 import java.util.List;
@@ -31,11 +32,15 @@ public class RegionResolver {
   }
 
   @QueryMapping
-  public List<Region> regionsByType(
+  public RegionPageDto regionsByType(
     @Argument int regionTypeId, 
     @Argument Integer limit, 
     @Argument Integer offset) {
-    return regionService.getRegionsByType(regionTypeId, limit, offset);
+      List<Region> items = regionService.getRegionsByType(regionTypeId, limit, offset);
+      int totalCount = regionService.getTotalCount(regionTypeId);
+      boolean hasNextPage = offset + limit < totalCount;
+
+      return new RegionPageDto(items, totalCount, limit, offset, hasNextPage);
   }
 
   @BatchMapping(typeName = "Region", field = "regionType")
