@@ -52,10 +52,10 @@ public class RegionRepository {
 
   public int countAllRegions(int regionTypeId) {
     String sql = """
-        SELECT COUNT(*) 
-        FROM region 
-        WHERE type_id = :regionTypeId
-        """;
+      SELECT COUNT(*) 
+      FROM region 
+      WHERE type_id = :regionTypeId
+      """;
     return jdbcClient.sql(sql)
     .param("regionTypeId", regionTypeId)
     .query(Integer.class)
