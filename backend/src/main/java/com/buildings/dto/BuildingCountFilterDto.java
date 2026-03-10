@@ -10,6 +10,7 @@ import lombok.Setter;
 @Setter
 @Builder
 public class BuildingCountFilterDto {
+  private String regionCode;
   private Integer areaTypeId;
   private Integer buildingTypeId;
   private Integer shorelineTypeId;

@@ -53,14 +53,6 @@ public class BuildingCountEntityResolver {
     return new BuildingCountPageDto(items, totalCount, limit, offset, hasNextPage);
   }
 
-  @QueryMapping
-  public List<BuildingCountEntity> buildingCountEntitiesPerRegion(
-    @Argument String regionCode,
-    @Argument Integer limit, 
-    @Argument Integer offset) {
-    return buildingCountService.getBuildingCountEntitiesByRegion(regionCode, limit, offset);
-  }
-
   @BatchMapping(typeName = "BuildingCountEntity", field = "region")
   public Map<BuildingCountEntity, Region> region(List<BuildingCountEntity> buildingCountEntities) {
     List<Long> ids = buildingCountEntities.stream().map(BuildingCountEntity::getId).toList();

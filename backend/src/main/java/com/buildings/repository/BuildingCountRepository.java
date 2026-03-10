@@ -37,15 +37,6 @@ public class BuildingCountRepository {
       .optional();
   }
 
-  public List<BuildingCountEntity> findBuildingCountEntitiesByRegion(String regionCode, int limit, int offset) {
-    return jdbcClient.sql(BASE_SQL + " WHERE region_code = :regionCode LIMIT :limit OFFSET :offset")
-      .param("regionCode", regionCode)
-      .param("limit", limit)
-      .param("offset", offset)
-      .query(mapRowsToEntity())
-      .list();
-  }
-
   public List<BuildingCountEntity> findAllBuildingCountEntities(BuildingCountFilterDto filter, int limit, int offset) {
     FilterQuery filterQuery = buildFilterQuery(filter);
     String sql = BASE_SQL 
@@ -77,6 +68,11 @@ public class BuildingCountRepository {
   private FilterQuery buildFilterQuery(BuildingCountFilterDto filter) {
     StringBuilder sql = new StringBuilder(" WHERE 1=1");
     MapSqlParameterSource params = new MapSqlParameterSource();
+
+    if (filter != null && filter.getRegionCode() != null) {
+        sql.append(" AND region_code = :regionCode");
+        params.addValue("regionCode", filter.getRegionCode());
+    }
 
     if (filter != null && filter.getAreaTypeId() != null) {
         sql.append(" AND area_type_id = :areaTypeId");

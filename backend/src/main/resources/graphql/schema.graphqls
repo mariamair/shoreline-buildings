@@ -1,4 +1,5 @@
   input BuildingCountFilter {
+    regionCode: String
     areaTypeId: Int
     buildingTypeId: Int
     shorelineTypeId: Int
@@ -7,7 +8,6 @@
   type Query {
     buildingCountEntity(id: Int!): BuildingCountEntity
     buildingCountEntities(filter: BuildingCountFilter, limit: Int = 50, offset: Int = 0): BuildingCountPage
-    buildingCountEntitiesPerRegion(regionCode: String!, limit: Int = 50, offset: Int = 0): [BuildingCountEntity]
     region(code: String!): Region
     regionsByType(regionTypeId: Int!, limit: Int = 50, offset: Int = 0): [Region]
   }
