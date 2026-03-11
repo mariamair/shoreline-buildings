@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.shorelinebuildings</groupId>
-	<artifactId>shorelinebuildings-api</artifactId>
+	<artifactId>shoreline-buildings-api</artifactId>
 	<version>1.0.0</version>
-	<name>shorelinebuildings-api</name>
+	<name>shoreline-buildings-api</name>
 	<description>GraphQL API for shoreline buildings data</description>
 	<url/>
 	<licenses>
@@ -140,32 +140,48 @@
 					<linkXRef>false</linkXRef>
 				</configuration>
       </plugin>
-			<plugin>
-				<groupId>org.eclipse.m2e</groupId>
-				<artifactId>lifecycle-mapping</artifactId>
-				<version>1.0.0</version>
-				<configuration>
-					<lifecycleMappingMetadata>
-						<pluginExecutions>
-							<pluginExecution>
-								<action>
-									<ignore />
-								</action>
-								<pluginExecutionFilter>
-									<artifactId>maven-checkstyle-plugin</artifactId>
-									<groupId>org.apache.maven.plugins</groupId>
-									<versionRange>[3.3.1,)</versionRange>
-									<goals>
-										<goal>check</goal>
-									</goals>
-									<phase>validate</phase>
-								</pluginExecutionFilter>
-							</pluginExecution>
-						</pluginExecutions>
-					</lifecycleMappingMetadata>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>eclipse-only</id>
+			<activation>
+				<property>
+					<name>m2e.version</name>
+				</property>
+			</activation>
+			<build>
+				<pluginManagement>
+					<plugins>
+						<plugin>
+							<groupId>org.eclipse.m2e</groupId>
+							<artifactId>lifecycle-mapping</artifactId>
+							<version>1.0.0</version>
+							<configuration>
+								<lifecycleMappingMetadata>
+									<pluginExecutions>
+										<pluginExecution>							
+											<action>
+												<ignore />
+											</action>
+											<pluginExecutionFilter>
+												<artifactId>maven-checkstyle-plugin</artifactId>
+												<groupId>org.apache.maven.plugins</groupId>
+												<versionRange>[3.3.1,)</versionRange>
+												<goals>
+													<goal>check</goal>
+												</goals>
+											</pluginExecutionFilter>
+										</pluginExecution>
+									</pluginExecutions>
+								</lifecycleMappingMetadata>
+							</configuration>
+						</plugin>
+					</plugins>
+				</pluginManagement>
+			</build>
+		</profile>
+  </profiles>
 
 </project>
