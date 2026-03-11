@@ -52,14 +52,10 @@ jobs:
 
       - name: Set up SSH
         run: | 
-          sudo apt-get update -y
-          sudo apt-get install -y openssh-client   
-          eval "$(ssh-agent -s)"
-          echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -H $PRODUCTION_HOST >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.PRODUCTION_HOST }} >> ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
       
       - name: Copy docker-compose files to server
@@ -74,7 +70,7 @@ jobs:
           PRODUCTION_HOST_USER: ${{ secrets.PRODUCTION_HOST_USER }}
           SESSION_SECRET: ${{ secrets.SESSION_SECRET}}
         run: |
-          ssh -tt -o StrictHostKeyChecking=no $PRODUCTION_HOST_USER@$PRODUCTION_HOST << EOF
+          ssh -v -tt -o StrictHostKeyChecking=no $PRODUCTION_HOST_USER@$PRODUCTION_HOST << EOF
             pwd && ls -la
             cat > ${{ secrets.PRODUCTION_HOST_DEPLOY_PATH }}/.env << 'ENVFILE'
               DB_NAME=${{ secrets.DB_NAME }}
