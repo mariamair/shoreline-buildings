@@ -12,6 +12,14 @@ jobs:
     permissions:
       packages: write
       contents: read
+    env:
+      DB_HOST: db
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_PORT: 5432
+      BACKEND_PORT: 8080
+      CSV_PATH: seed/data/shoreline_buildings.csv
     steps:
       - uses: actions/checkout@v4
 
