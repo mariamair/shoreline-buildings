@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.shorelinebuildings</groupId>
-	<artifactId>buildingcount-api</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>buildingcount-api</name>
+	<artifactId>shorelinebuildings-api</artifactId>
+	<version>1.0.0</version>
+	<name>shorelinebuildings-api</name>
 	<description>GraphQL API for shoreline buildings data</description>
 	<url/>
 	<licenses>
