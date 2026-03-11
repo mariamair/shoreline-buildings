@@ -1,10 +1,10 @@
 package com.buildings.domain;
 
 public class ShorelineType {
-  private int id;
-  private String name;
+  private final int id;
+  private final String name;
 
-  public ShorelineType(int id, String name) {
+  public ShorelineType(final int id, final String name) {
     this.id = id;
     this.name = name;
   }

@@ -1,11 +1,11 @@
 package com.buildings.domain;
 
 public class BuildingCountEntity {
-  private Long id;
-  private int year;
-  private Integer buildingCount;
+  private final Long id;
+  private final int year;
+  private final Integer buildingCount;
 
-  public BuildingCountEntity (Long id, int year, Integer buildingCount) {
+  public BuildingCountEntity(final Long id, final int year, final Integer buildingCount) {
     this.id = id;
     this.year = year;
     this.buildingCount = buildingCount;

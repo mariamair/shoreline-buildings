@@ -1,11 +1,11 @@
 package com.buildings.domain;
 
 public class Region {
-  private String code;
-  private String name;
-  private int regionTypeId;
+  private final String code;
+  private final String name;
+  private final int regionTypeId;
 
-  public Region(String code, String name, int regionTypeId) {
+  public Region(final String code, final String name, final int regionTypeId) {
     this.code = code;
     this.name = name;
     this.regionTypeId = regionTypeId;

@@ -1,10 +1,10 @@
 package com.buildings.domain;
 
 public class AreaType {
-  private int id;
-  private String name;  
+  private final int id;
+  private final String name;
 
-  public AreaType(int id, String name) {
+  public AreaType(final int id, final String name) {
     this.id = id;
     this.name = name;
   }

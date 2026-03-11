@@ -1,10 +1,10 @@
 package com.buildings.domain;
 
 public class BuildingType {
-  private int id;
-  private String name;
+  private final int id;
+  private final String name;
 
-  public BuildingType(int id, String name) {
+  public BuildingType(final int id, final String name) {
     this.id = id;
     this.name = name;
   }
