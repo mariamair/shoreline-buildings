@@ -17,13 +17,16 @@ jobs:
 
       - name: Create .env
         run: |
-          echo "DB_HOST=db" >> .env
-          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
-          echo "DB_USER=${{ secrets.DB_USER }}" >> .env
-          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
-          echo "DB_PORT=5432" >> .env
-          echo "BACKEND_PORT=8080" >> .env
-          echo "CSV_PATH=seed/data/shoreline_buildings.csv" >> .env
+          cat > .env << 'EOF'
+          DB_NAME=${{ secrets.DB_NAME }}
+          DB_USER=${{ secrets.DB_USER }}
+          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          DB_HOST=db
+          DB_PORT=5432
+          BACKEND_PORT=8080
+          SESSION_SECRET=${{ secrets.SESSION_SECRET }}
+          CSV_PATH=seed/data/shoreline_buildings.csv
+          EOF
 
       - name: Log in to GitHub Container Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
@@ -49,6 +52,10 @@ jobs:
 
       - name: Set up SSH
         run: | 
+          sudo apt-get update -y
+          sudo apt-get install -y openssh-client   
+          eval "$(ssh-agent -s)"
+          echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
@@ -59,7 +66,6 @@ jobs:
         run: |
           scp -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 \
           docker-compose.yml \
-          docker-compose.production.yml \
           $PRODUCTION_HOST_USER@$PRODUCTION_HOST:$PRODUCTION_HOST_DEPLOY_PATH/
 
       - name: Pull and Deploy Docker Image via SSH
@@ -70,14 +76,19 @@ jobs:
         run: |
           ssh -tt -o StrictHostKeyChecking=no $PRODUCTION_HOST_USER@$PRODUCTION_HOST << EOF
             pwd && ls -la
-            echo "SESSION_SECRET=${{ secrets.SESSION_SECRET }}" >> $PRODUCTION_HOST_DEPLOY_PATH/.env.production
+            cat > ${{ secrets.PRODUCTION_HOST_DEPLOY_PATH }}/.env << 'ENVFILE'
+              DB_NAME=${{ secrets.DB_NAME }}
+              DB_USER=${{ secrets.DB_USER }}
+              DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+              DB_HOST=db
+              DB_PORT=5432
+              BACKEND_PORT=8080
+              SESSION_SECRET=${{ secrets.SESSION_SECRET }}
+              CSV_PATH=seed/data/shoreline_buildings.csv
+              ENVFILE
             echo "${{ secrets.GITHUB_TOKEN }}" | sudo docker login ghcr.io -u "${{ github.actor }}" --password-stdin
-            sudo docker pull ghcr.io/${{ github.repository_owner }}/shorelinebuildings:latest
             cd $PRODUCTION_HOST_DEPLOY_PATH
-            sudo docker compose -p shorelinebuildings \
-            -f docker-compose.yml \
-            -f docker-compose.production.yml \
-            --env-file .env.production \
-            up -d
+            sudo docker compose pull
+            sudo docker compose up -d
             exit
           EOF
