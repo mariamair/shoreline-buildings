@@ -17,23 +17,26 @@ public class EnvConfig {
         .ignoreIfMissing()
         .load();
 
-        dotenv.entries().forEach(entry -> System.setProperty(entry.getKey(), entry.getValue()));
+        dotenv.entries().forEach(
+          entry -> System.setProperty(entry.getKey(), entry.getValue()));
     }
   }
 
   private static String findEnvFile() {
     // Start from current directory and go up
     java.nio.file.Path current = Paths.get("").toAbsolutePath();
+    final int levels = 5;
 
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < levels; i++) {
       java.nio.file.Path envFile = current.resolve(".env");
       if (Files.exists(envFile)) {
         System.out.println("Found .env at: " + envFile.getParent());
         return envFile.getParent().toString();
       }
       current = current.getParent();
-      if (current == null)
+      if (current == null) {
         break;
+      }
     }
 
     System.out.println("Warning: .env file not found");
