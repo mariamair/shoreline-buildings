@@ -26,9 +26,10 @@ public class EnvConfig {
     // Start from current directory and go up
     java.nio.file.Path current = Paths.get("").toAbsolutePath();
     final int levels = 5;
+    final String envFileName = ".env";
 
     for (int i = 0; i < levels; i++) {
-      java.nio.file.Path envFile = current.resolve(".env");
+      java.nio.file.Path envFile = current.resolve(envFileName);
       if (Files.exists(envFile)) {
         System.out.println("Found .env at: " + envFile.getParent());
         return envFile.getParent().toString();
