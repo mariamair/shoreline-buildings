@@ -197,6 +197,15 @@ def load_building_data():
     
     conn = get_db_connection()
     try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT COUNT(*) FROM building_count")
+        count = cursor.fetchone()[0]
+        cursor.close()
+        
+        if count > 0:
+            print("Database already seeded, skipping.")
+            return
+
         print(f"Reading CSV file: {csv_file}\n")
         
         print("Populating reference tables from CSV...")
