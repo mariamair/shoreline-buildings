@@ -5,8 +5,13 @@ import com.buildings.domain.RegionType;
 import com.buildings.dto.RegionPageDto;
 import com.buildings.service.RegionService;
 import com.buildings.service.RegionTypeService;
+
+import graphql.schema.DataFetchingEnvironment;
+import graphql.schema.SelectedField;
+
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.BatchMapping;
@@ -35,10 +40,23 @@ public class RegionResolver {
   public RegionPageDto regionsByType(
     @Argument int regionTypeId, 
     @Argument Integer limit, 
-    @Argument Integer offset) {
-      List<Region> items = regionService.getRegionsByType(regionTypeId, limit, offset);
-      int totalCount = regionService.getTotalCount(regionTypeId);
-      boolean hasNextPage = offset + limit < totalCount;
+    @Argument Integer offset,
+    DataFetchingEnvironment env) {
+
+    List<Region> items = regionService.getRegionsByType(regionTypeId, limit, offset);
+
+    Set<String> requestedFields = env.getSelectionSet().getFields()
+      .stream()
+      .map(SelectedField::getName)
+      .collect(Collectors.toSet());
+
+    int totalCount = 0;
+    boolean hasNextPage = false;    
+
+    if (requestedFields.contains("totalCount") || requestedFields.contains("hasNextPage")) {
+      totalCount = regionService.getTotalCount(regionTypeId);
+      hasNextPage = offset + limit < totalCount;
+    }
 
       return new RegionPageDto(items, totalCount, limit, offset, hasNextPage);
   }

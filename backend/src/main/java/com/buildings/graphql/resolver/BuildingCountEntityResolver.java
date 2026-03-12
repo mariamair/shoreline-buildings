@@ -4,12 +4,17 @@ import com.buildings.domain.*;
 import com.buildings.dto.BuildingCountPageDto;
 import com.buildings.dto.BuildingCountFilterDto;
 import com.buildings.service.*;
+
+import graphql.schema.DataFetchingEnvironment;
+import graphql.schema.SelectedField;
+
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.BatchMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -45,10 +50,23 @@ public class BuildingCountEntityResolver {
   public BuildingCountPageDto buildingCountEntities(
     @Argument BuildingCountFilterDto filter,
     @Argument Integer limit, 
-    @Argument Integer offset) {
+    @Argument Integer offset,
+    DataFetchingEnvironment env) {
+
     List<BuildingCountEntity> items = buildingCountService.getAllBuildingCountEntities(filter, limit, offset);
-    int totalCount = buildingCountService.getTotalCount(filter);
-    boolean hasNextPage = offset + limit < totalCount;
+
+    Set<String> requestedFields = env.getSelectionSet().getFields()
+      .stream()
+      .map(SelectedField::getName)
+      .collect(Collectors.toSet());
+
+    int totalCount = 0;
+    boolean hasNextPage = false;    
+
+    if (requestedFields.contains("totalCount") || requestedFields.contains("hasNextPage")) {
+      totalCount = buildingCountService.getTotalCount(filter);
+      hasNextPage = offset + limit < totalCount;
+    }
 
     return new BuildingCountPageDto(items, totalCount, limit, offset, hasNextPage);
   }
