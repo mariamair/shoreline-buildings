@@ -1,15 +1,15 @@
 package com.buildings.graphql.resolver.exception;
 
 import graphql.GraphQLError;
-import graphql.ErrorType;
 import graphql.schema.DataFetchingEnvironment;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 import org.springframework.graphql.execution.DataFetcherExceptionResolver;
 import org.springframework.stereotype.Component;
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 @Slf4j
@@ -22,9 +22,9 @@ public class GraphQLExceptionHandler implements DataFetcherExceptionResolver{
     if (exception instanceof IllegalArgumentException) {
       GraphQLError error = GraphQLError.newError()
           .message(exception.getMessage())
-          .errorType(ErrorType.ValidationError)
           .path(environment.getExecutionStepInfo().getPath())
           .location(environment.getField().getSourceLocation())
+          .extensions(Map.of("code", "BAD_USER_INPUT"))
           .build();
       
       errors.add(error);
@@ -32,9 +32,9 @@ public class GraphQLExceptionHandler implements DataFetcherExceptionResolver{
     } else if (exception instanceof EntityNotFoundException) {
       GraphQLError error = GraphQLError.newError()
           .message(exception.getMessage())
-          .errorType(ErrorType.DataFetchingException)
           .path(environment.getExecutionStepInfo().getPath())
           .location(environment.getField().getSourceLocation())
+          .extensions(Map.of("code", "NOT_FOUND"))
           .build();
       
       errors.add(error);
@@ -44,6 +44,7 @@ public class GraphQLExceptionHandler implements DataFetcherExceptionResolver{
       GraphQLError error = GraphQLError.newError()
           .message("Internal server error")
           .path(environment.getExecutionStepInfo().getPath())
+          .extensions(Map.of("code", "INTERNAL_SERVER_ERROR"))
           .build();
           
       errors.add(error);
