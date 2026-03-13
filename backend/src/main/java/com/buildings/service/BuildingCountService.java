@@ -2,6 +2,7 @@ package com.buildings.service;
 
 import com.buildings.domain.BuildingCountEntity;
 import com.buildings.dto.BuildingCountFilterDto;
+import com.buildings.dto.CreateBuildingCountEntityDto;
 import com.buildings.repository.BuildingCountRepository;
 import jakarta.persistence.EntityNotFoundException;
 
@@ -39,6 +40,10 @@ public class BuildingCountService {
 
   public int getTotalCount(BuildingCountFilterDto filter) {
     return buildingCountRepository.countBuildingCountEntities(filter);
+  }
+
+  public BuildingCountEntity createBuildingCountEntity(CreateBuildingCountEntityDto buildingCountEntity) {
+    return buildingCountRepository.saveBuildingCountEntity(buildingCountEntity);
   }
 
   private void validateFilter(BuildingCountFilterDto filter) {

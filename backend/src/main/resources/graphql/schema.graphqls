@@ -5,12 +5,37 @@
     shorelineTypeId: Int
     year: Int
   }
+
+  input CreateBuildingCountEntity {
+    regionCode: String!
+    areaTypeId: Int!
+    buildingTypeId: Int!
+    shorelineTypeId: Int!
+    year: Int!
+    buildingCount: Int!
+  }
+
+  input UpdateBuildingCountEntity {
+    id: Int!
+    regionCode: String
+    areaTypeId: Int
+    buildingTypeId: Int
+    shorelineTypeId: Int
+    year: Int
+    buildingCount: Int
+  }
   
   type Query {
     buildingCountEntity(id: Int!): BuildingCountEntity
     buildingCountEntities(filter: BuildingCountFilter, limit: Int = 50, offset: Int = 0): BuildingCountPage
     region(code: String!): Region
     regions(regionTypeId: Int, limit: Int = 50, offset: Int = 0): RegionPage
+  }
+
+  type Mutation {
+    createBuildingCountEntity(input: CreateBuildingCountEntity): BuildingCountEntity
+    updateBuildingCountEntity(input: UpdateBuildingCountEntity): BuildingCountEntity
+    deleteBuildingCountEntity(id: Int!): Boolean!
   }
 
   type BuildingCountPage {

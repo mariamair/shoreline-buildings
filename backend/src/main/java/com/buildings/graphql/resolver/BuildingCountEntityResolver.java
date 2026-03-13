@@ -2,6 +2,7 @@ package com.buildings.graphql.resolver;
 
 import com.buildings.domain.*;
 import com.buildings.dto.BuildingCountPageDto;
+import com.buildings.dto.CreateBuildingCountEntityDto;
 import com.buildings.dto.BuildingCountFilterDto;
 import com.buildings.service.*;
 
@@ -10,6 +11,7 @@ import graphql.schema.SelectedField;
 
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.BatchMapping;
+import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
 import java.util.List;
@@ -117,5 +119,11 @@ public class BuildingCountEntityResolver {
         b -> b,
         b -> shorelineTypeMap.getOrDefault(b.getId(), null)
       ));
+  }
+
+  @MutationMapping
+  public BuildingCountEntity createBuildingCountEntity(
+    @Argument CreateBuildingCountEntityDto input) {
+    return buildingCountService.createBuildingCountEntity(input);
   }
 }
