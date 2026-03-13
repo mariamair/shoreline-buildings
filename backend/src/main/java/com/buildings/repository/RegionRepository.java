@@ -24,7 +24,13 @@ public class RegionRepository {
 
   public RegionRepository(JdbcClient jdbcClient) {
         this.jdbcClient = jdbcClient;
-    }
+  }
+
+  public List<String> findAllRegionCodes() {
+    return jdbcClient.sql("SELECT code FROM region")
+      .query((rs, _) -> rs.getString("code"))
+      .list();
+  }
 
   public Optional<Region> findRegionByCode(String code) {
   return jdbcClient.sql(BASE_SQL + " WHERE code = :code")
@@ -33,8 +39,7 @@ public class RegionRepository {
     .optional();
   }
 
-
-  public List<Region> findAllRegions(Integer regionTypeId, int limit, int offset) {
+  public List<Region> findRegions(Integer regionTypeId, int limit, int offset) {
     FilterQuery filterQuery = buildFilterQuery(regionTypeId);
     String sql = BASE_SQL 
       + filterQuery.sql() 
