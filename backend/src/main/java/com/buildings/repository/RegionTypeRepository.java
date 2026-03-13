@@ -15,7 +15,7 @@ public class RegionTypeRepository {
     this.jdbcClient = jdbcClient;
   }
 
-  public List<Integer> findAllRegionTypeIds() {
+  public List<Integer> findRegionTypeIds() {
     return jdbcClient.sql("SELECT id FROM region_type")
       .query((rs, _) -> rs.getInt("id"))
       .list();

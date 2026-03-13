@@ -15,7 +15,7 @@ public class BuildingTypeRepository {
     this.jdbcClient = jdbcClient;
   }
 
-  public List<Integer> findAllBuildingTypeIds() {
+  public List<Integer> findBuildingTypeIds() {
     return jdbcClient.sql("SELECT id FROM building_type")
       .query((rs, _) -> rs.getInt("id"))
       .list();

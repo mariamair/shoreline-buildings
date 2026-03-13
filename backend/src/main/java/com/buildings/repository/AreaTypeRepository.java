@@ -15,7 +15,7 @@ public class AreaTypeRepository {
     this.jdbcClient = jdbcClient;
   }
 
-  public List<Integer> findAllAreaTypeIds() {
+  public List<Integer> findAreaTypeIds() {
     return jdbcClient.sql("SELECT id FROM area_type")
       .query((rs, _) -> rs.getInt("id"))
       .list();

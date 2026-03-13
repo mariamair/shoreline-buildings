@@ -31,7 +31,7 @@ public class BuildingCountRepository {
       .optional();
   }
 
-  public List<BuildingCountEntity> findAllBuildingCountEntities(BuildingCountFilterDto filter, int limit, int offset) {
+  public List<BuildingCountEntity> findBuildingCountEntities(BuildingCountFilterDto filter, int limit, int offset) {
     FilterQuery filterQuery = buildFilterQuery(filter);
     String sql = BASE_SQL 
       + filterQuery.sql() 
@@ -47,7 +47,7 @@ public class BuildingCountRepository {
       .list();
   }
 
-  public int countAllBuildingCountEntities(BuildingCountFilterDto filter) {
+  public int countBuildingCountEntities(BuildingCountFilterDto filter) {
     FilterQuery filterQuery = buildFilterQuery(filter);
     String sql = "SELECT COUNT(*) FROM building_count" 
       + filterQuery.sql();

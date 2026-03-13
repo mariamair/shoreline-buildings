@@ -26,7 +26,7 @@ public class RegionRepository {
         this.jdbcClient = jdbcClient;
   }
 
-  public List<String> findAllRegionCodes() {
+  public List<String> findRegionCodes() {
     return jdbcClient.sql("SELECT code FROM region")
       .query((rs, _) -> rs.getString("code"))
       .list();
@@ -55,7 +55,7 @@ public class RegionRepository {
       .list();
   }
 
-  public int countAllRegions(Integer regionTypeId) {
+  public int countRegions(Integer regionTypeId) {
     FilterQuery filterQuery = buildFilterQuery(regionTypeId);
     String sql = "SELECT COUNT(*) FROM region" 
       + filterQuery.sql();

@@ -43,7 +43,7 @@ public class RegionResolver {
     @Argument Integer offset,
     DataFetchingEnvironment env) {
 
-    List<Region> items = regionService.getAllRegions(regionTypeId, limit, offset);
+    List<Region> items = regionService.getRegions(regionTypeId, limit, offset);
 
     Set<String> requestedFields = env.getSelectionSet().getFields()
       .stream()

@@ -53,7 +53,7 @@ public class BuildingCountEntityResolver {
     @Argument Integer offset,
     DataFetchingEnvironment env) {
 
-    List<BuildingCountEntity> items = buildingCountService.getAllBuildingCountEntities(filter, limit, offset);
+    List<BuildingCountEntity> items = buildingCountService.getBuildingCountEntities(filter, limit, offset);
 
     Set<String> requestedFields = env.getSelectionSet().getFields()
       .stream()

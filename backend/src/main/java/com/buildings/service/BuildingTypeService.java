@@ -15,7 +15,7 @@ public class BuildingTypeService {
   }
 
   public List<Integer> getBuildingTypeIds() {
-    List<Integer> buildingTypeIds = buildingTypeRepository.findAllBuildingTypeIds();
+    List<Integer> buildingTypeIds = buildingTypeRepository.findBuildingTypeIds();
     return buildingTypeIds;
   }
 

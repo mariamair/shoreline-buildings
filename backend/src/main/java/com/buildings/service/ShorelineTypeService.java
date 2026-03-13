@@ -15,7 +15,7 @@ public class ShorelineTypeService {
   }
 
   public List<Integer> getShorelineTypeIds() {
-    List<Integer> shorelineTypeIds = shorelineTypeRepository.findAllShorelineTypeIds();
+    List<Integer> shorelineTypeIds = shorelineTypeRepository.findShorelineTypeIds();
     return shorelineTypeIds;
   }
 

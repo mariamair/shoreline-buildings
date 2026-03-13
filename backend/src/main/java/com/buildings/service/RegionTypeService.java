@@ -15,7 +15,7 @@ public class RegionTypeService {
   }
 
   public List<Integer> getRegionTypeIds() {
-    List<Integer> regionTypeIds = regionTypeRepository.findAllRegionTypeIds();
+    List<Integer> regionTypeIds = regionTypeRepository.findRegionTypeIds();
     return regionTypeIds;
   }
 

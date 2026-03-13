@@ -30,15 +30,15 @@ public class BuildingCountService {
       .orElseThrow(() -> new EntityNotFoundException(String.format("Found no building count entity with id '%d'", id)));
   }
 
-  public List<BuildingCountEntity> getAllBuildingCountEntities(BuildingCountFilterDto filter, Integer limit, Integer offset) {
+  public List<BuildingCountEntity> getBuildingCountEntities(BuildingCountFilterDto filter, Integer limit, Integer offset) {
     if (filter != null) {
       validateFilter(filter);
     }
-    return buildingCountRepository.findAllBuildingCountEntities(filter, limit, offset);
+    return buildingCountRepository.findBuildingCountEntities(filter, limit, offset);
   }
 
   public int getTotalCount(BuildingCountFilterDto filter) {
-    return buildingCountRepository.countAllBuildingCountEntities(filter);
+    return buildingCountRepository.countBuildingCountEntities(filter);
   }
 
   private void validateFilter(BuildingCountFilterDto filter) {

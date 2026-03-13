@@ -18,7 +18,7 @@ public class RegionService {
     }
   
   public List<String> getRegionCodes() {
-    List<String> regionCodes = regionRepository.findAllRegionCodes();
+    List<String> regionCodes = regionRepository.findRegionCodes();
     if (regionCodes.isEmpty()) {
       log.warn("No region codes available");
       throw new EntityNotFoundException("Found no region codes");
@@ -31,7 +31,7 @@ public class RegionService {
       .orElseThrow(() -> new EntityNotFoundException(String.format("Found no region with code '%s'", code)));
   }
 
-  public List<Region> getAllRegions(Integer regionTypeId, Integer limit, Integer offset) {
+  public List<Region> getRegions(Integer regionTypeId, Integer limit, Integer offset) {
     List<Region> regions = regionRepository.findRegions(regionTypeId, limit, offset);
 
     if (regions.isEmpty()) {
@@ -42,7 +42,7 @@ public class RegionService {
   }
 
   public int getTotalCount(Integer regionTypeId) {
-    return regionRepository.countAllRegions(regionTypeId);
+    return regionRepository.countRegions(regionTypeId);
   }
 
   public Map<Long, Region> getRegionsByBuildingCountIds(List<Long> buildingCountIds) {

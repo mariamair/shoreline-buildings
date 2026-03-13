@@ -15,7 +15,7 @@ public class ShorelineTypeRepository {
     this.jdbcClient = jdbcClient;
   }
 
-  public List<Integer> findAllShorelineTypeIds() {
+  public List<Integer> findShorelineTypeIds() {
     return jdbcClient.sql("SELECT id FROM shoreline_type")
       .query((rs, _) -> rs.getInt("id"))
       .list();

@@ -15,7 +15,7 @@ public class AreaTypeService {
   }
 
   public List<Integer> getAreaTypeIds() {
-    List<Integer> areaTypeIds = areaTypeRepository.findAllAreaTypeIds();
+    List<Integer> areaTypeIds = areaTypeRepository.findAreaTypeIds();
     return areaTypeIds;
   }
 
