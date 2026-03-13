@@ -3,6 +3,7 @@
     areaTypeId: Int
     buildingTypeId: Int
     shorelineTypeId: Int
+    year: Int
   }
   
   type Query {

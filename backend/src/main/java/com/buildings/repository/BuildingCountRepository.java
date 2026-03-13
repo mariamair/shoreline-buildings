@@ -24,6 +24,12 @@ public class BuildingCountRepository {
     this.jdbcClient = jdbcClient;
   }
 
+  public List<Integer> getYears() {
+    return jdbcClient.sql("SELECT DISTINCT year FROM building_count")
+      .query((rs, _) -> rs.getInt("year"))
+      .list();
+  }
+
   public Optional<BuildingCountEntity> findBuildingCountEntityById(Long id) {
     return jdbcClient.sql(BASE_SQL + " WHERE id = :id")
       .param("id", id)

@@ -72,6 +72,13 @@ public class BuildingCountService {
       }
     }
 
+    if (filter.getYear() != null) {
+      int year = filter.getYear();
+      if (!buildingCountRepository.getYears().contains(year)) {
+        errors.add(String.format("'%d' is not a valid year", year));
+      }
+    }
+
     if (!errors.isEmpty()) {
       throw new IllegalArgumentException("Invalid filter value(s): " +  String.join("; ", errors));
     }

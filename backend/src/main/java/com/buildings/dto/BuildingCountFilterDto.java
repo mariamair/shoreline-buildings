@@ -14,4 +14,5 @@ public class BuildingCountFilterDto {
   private Integer areaTypeId;
   private Integer buildingTypeId;
   private Integer shorelineTypeId;
+  private Integer year;
 }
