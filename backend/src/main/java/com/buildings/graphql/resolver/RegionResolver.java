@@ -37,13 +37,13 @@ public class RegionResolver {
   }
 
   @QueryMapping
-  public RegionPageDto regionsByType(
-    @Argument int regionTypeId, 
+  public RegionPageDto regions(
+    @Argument Integer regionTypeId, 
     @Argument Integer limit, 
     @Argument Integer offset,
     DataFetchingEnvironment env) {
 
-    List<Region> items = regionService.getRegionsByType(regionTypeId, limit, offset);
+    List<Region> items = regionService.getAllRegions(regionTypeId, limit, offset);
 
     Set<String> requestedFields = env.getSelectionSet().getFields()
       .stream()

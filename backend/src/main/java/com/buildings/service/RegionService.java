@@ -20,8 +20,8 @@ public class RegionService {
       .orElseThrow(() -> new EntityNotFoundException(String.format("Found no region with code '%s'", code)));
   }
 
-  public List<Region> getRegionsByType(int regionTypeId, Integer limit, Integer offset) {
-    List<Region> regions = regionRepository.findRegionsByType(regionTypeId, limit, offset);
+  public List<Region> getAllRegions(Integer regionTypeId, Integer limit, Integer offset) {
+    List<Region> regions = regionRepository.findAllRegions(regionTypeId, limit, offset);
 
     if (regions.isEmpty()) {
       throw new EntityNotFoundException(String.format("Found no regions with type id '%d'", regionTypeId));
@@ -30,7 +30,7 @@ public class RegionService {
     return regions;
   }
 
-  public int getTotalCount(int regionTypeId) {
+  public int getTotalCount(Integer regionTypeId) {
     return regionRepository.countAllRegions(regionTypeId);
   }
 

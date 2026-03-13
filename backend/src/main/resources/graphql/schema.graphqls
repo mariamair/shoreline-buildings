@@ -9,7 +9,7 @@
     buildingCountEntity(id: Int!): BuildingCountEntity
     buildingCountEntities(filter: BuildingCountFilter, limit: Int = 50, offset: Int = 0): BuildingCountPage
     region(code: String!): Region
-    regionsByType(regionTypeId: Int!, limit: Int = 50, offset: Int = 0): RegionPage
+    regions(regionTypeId: Int, limit: Int = 50, offset: Int = 0): RegionPage
   }
 
   type BuildingCountPage {
