@@ -47,7 +47,8 @@ CREATE TABLE IF NOT EXISTS building_count (
         REFERENCES area_type (id)
         ON DELETE SET NULL ON UPDATE CASCADE,
     year INT NOT NULL,
-    count INT
+    count INT,
+    created_at TIMESTAMP (2) WITH TIME ZONE DEFAULT NOW() NOT NULL
 );
 
 -- Create indexes

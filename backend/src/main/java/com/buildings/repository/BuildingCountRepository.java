@@ -17,7 +17,8 @@ public class BuildingCountRepository {
       SELECT 
         id, 
         year, 
-        count 
+        count,
+        created_at 
       FROM building_count
       """;
 
@@ -71,7 +72,7 @@ public class BuildingCountRepository {
         (region_code, area_type_id, building_type_id, shoreline_type_id, year, count) 
       VALUES 
         (:regionCode, :areaTypeId, :buildingTypeId, :shorelineTypeId, :year, :count)
-      RETURNING id
+      RETURNING id, year, count, created_at
       """;
 
     MapSqlParameterSource params = new MapSqlParameterSource()
@@ -82,16 +83,15 @@ public class BuildingCountRepository {
       .addValue("year", buildingCountEntity.getYear())
       .addValue("count", buildingCountEntity.getBuildingCount());
 
-    Long generatedId = jdbcClient.sql(sql)
+    return jdbcClient.sql(sql)
       .paramSource(params)
-      .query(Long.class)
+      .query((rs, rowNum) -> new BuildingCountEntity(
+        rs.getLong("id"),
+        rs.getInt("year"),
+        rs.getInt("count"),
+        rs.getTimestamp("created_at")
+      ))
       .single();
-
-    return new BuildingCountEntity(
-      generatedId,
-      buildingCountEntity.getYear(),
-      buildingCountEntity.getBuildingCount()
-    );
   }
 
   private record FilterQuery(String sql, MapSqlParameterSource params) {}
@@ -126,7 +126,8 @@ public class BuildingCountRepository {
     return (rs, _) -> new BuildingCountEntity(
       rs.getLong("id"), 
       rs.getInt("year"), 
-      rs.getInt("count")
+      rs.getInt("count"),
+      rs.getTimestamp("created_at")
     );
   }
 }

@@ -62,6 +62,7 @@
     areaType: AreaType
     year: Int!
     buildingCount: Int
+    createdAt: String
   }
 
   type Region {
