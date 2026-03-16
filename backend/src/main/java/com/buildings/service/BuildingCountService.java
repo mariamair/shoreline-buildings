@@ -5,12 +5,13 @@ import com.buildings.dto.BuildingCountFilterDto;
 import com.buildings.dto.BuildingCountEntityDto;
 import com.buildings.repository.BuildingCountRepository;
 import jakarta.persistence.EntityNotFoundException;
-
 import java.util.ArrayList;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class BuildingCountService {
   private final BuildingCountRepository buildingCountRepository;
   private final RegionService regionService;
@@ -48,6 +49,15 @@ public class BuildingCountService {
 
   public BuildingCountEntity updateBuildingCountEntity(Long id, BuildingCountEntityDto buildingCountEntity) {
     return buildingCountRepository.updateBuildingCountEntity(id, buildingCountEntity);
+  }
+
+  public boolean deleteBuildingCountEntity(Long id) {
+    int rowsAffected = buildingCountRepository.deleteBuildingCountEntity(id);
+
+    if (rowsAffected > 1) {
+      throw new IllegalStateException(String.format("Expected to delete 1 row, but deleted %d rows for id %d", rowsAffected, id));
+    }
+    return rowsAffected == 1;
   }
 
   private void validateFilter(BuildingCountFilterDto filter) {

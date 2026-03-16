@@ -89,6 +89,7 @@ public class BuildingCountRepository {
       .query(mapRowsToEntity())
       .single();
   }
+  
   public BuildingCountEntity updateBuildingCountEntity(Long id, BuildingCountEntityDto buildingCountEntity) {
     FilterQuery updateQuery = buildUpdateQuery(buildingCountEntity);
     String sql = "UPDATE building_count SET updated_at = CURRENT_TIMESTAMP" 
@@ -102,6 +103,14 @@ public class BuildingCountRepository {
       .paramSource(updateQuery.params)
       .query(mapRowsToEntity())
       .single();
+  }
+
+  public Integer deleteBuildingCountEntity(Long id) {
+    String sql = "DELETE FROM building_count WHERE id = :id"; 
+
+    return jdbcClient.sql(sql)
+      .param("id", id)
+      .update();
   }
 
   private record FilterQuery(String sql, MapSqlParameterSource params) {}

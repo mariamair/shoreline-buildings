@@ -133,4 +133,9 @@ public class BuildingCountEntityResolver {
     @Argument BuildingCountEntityDto input) {
     return buildingCountService.updateBuildingCountEntity(id, input);
   }
+
+  @MutationMapping
+  public boolean deleteBuildingCountEntity(@Argument Long id) {
+    return buildingCountService.deleteBuildingCountEntity(id);
+  }
 }

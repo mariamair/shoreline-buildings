@@ -29,6 +29,16 @@ public class GraphQLExceptionHandler implements DataFetcherExceptionResolver{
       
       errors.add(error);
 
+    } else if (exception instanceof IllegalStateException) {
+      GraphQLError error = GraphQLError.newError()
+          .message(exception.getMessage())
+          .path(environment.getExecutionStepInfo().getPath())
+          .location(environment.getField().getSourceLocation())
+          .extensions(Map.of("code", "CONFLICT"))
+          .build();
+      
+      errors.add(error);
+      
     } else if (exception instanceof EntityNotFoundException) {
       GraphQLError error = GraphQLError.newError()
           .message(exception.getMessage())
