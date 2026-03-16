@@ -2,7 +2,7 @@ package com.buildings.repository;
 
 import com.buildings.domain.BuildingCountEntity;
 import com.buildings.dto.BuildingCountFilterDto;
-import com.buildings.dto.CreateBuildingCountEntityDto;
+import com.buildings.dto.BuildingCountEntityDto;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.jdbc.core.RowMapper;
@@ -18,7 +18,8 @@ public class BuildingCountRepository {
         id, 
         year, 
         count,
-        created_at 
+        created_at,
+        updated_at 
       FROM building_count
       """;
 
@@ -66,13 +67,13 @@ public class BuildingCountRepository {
       .single();
   }
 
-  public BuildingCountEntity saveBuildingCountEntity(CreateBuildingCountEntityDto buildingCountEntity) {
+  public BuildingCountEntity saveBuildingCountEntity(BuildingCountEntityDto buildingCountEntity) {
     String sql = """
       INSERT INTO building_count 
         (region_code, area_type_id, building_type_id, shoreline_type_id, year, count) 
       VALUES 
         (:regionCode, :areaTypeId, :buildingTypeId, :shorelineTypeId, :year, :count)
-      RETURNING id, year, count, created_at
+      RETURNING id, year, count, created_at, updated_at
       """;
 
     MapSqlParameterSource params = new MapSqlParameterSource()
@@ -85,12 +86,21 @@ public class BuildingCountRepository {
 
     return jdbcClient.sql(sql)
       .paramSource(params)
-      .query((rs, rowNum) -> new BuildingCountEntity(
-        rs.getLong("id"),
-        rs.getInt("year"),
-        rs.getInt("count"),
-        rs.getTimestamp("created_at")
-      ))
+      .query(mapRowsToEntity())
+      .single();
+  }
+  public BuildingCountEntity updateBuildingCountEntity(Long id, BuildingCountEntityDto buildingCountEntity) {
+    FilterQuery updateQuery = buildUpdateQuery(buildingCountEntity);
+    String sql = "UPDATE building_count SET updated_at = CURRENT_TIMESTAMP" 
+      + updateQuery.sql()
+      + " WHERE id = :id RETURNING id, year, count, created_at, updated_at";
+
+    updateQuery.params()
+      .addValue("id", id);
+
+    return jdbcClient.sql(sql)
+      .paramSource(updateQuery.params)
+      .query(mapRowsToEntity())
       .single();
   }
 
@@ -121,13 +131,49 @@ public class BuildingCountRepository {
     }
     return new FilterQuery(sql.toString(), params);
   }
+  private FilterQuery buildUpdateQuery(BuildingCountEntityDto buildingCountEntity) {
+    StringBuilder sql = new StringBuilder("");
+    MapSqlParameterSource params = new MapSqlParameterSource();
+
+    if (buildingCountEntity != null && buildingCountEntity.getRegionCode() != null) {
+      sql.append(", region_code = :regionCode");
+      params.addValue("regionCode", buildingCountEntity.getRegionCode());
+    }
+
+    if (buildingCountEntity != null && buildingCountEntity.getAreaTypeId() != null) {
+      sql.append(", area_type_id = :areaTypeId");
+      params.addValue("areaTypeId", buildingCountEntity.getAreaTypeId());
+    }
+
+    if (buildingCountEntity != null && buildingCountEntity.getBuildingTypeId() != null) {
+      sql.append(", building_type_id = :buildingTypeId");
+      params.addValue("buildingTypeId", buildingCountEntity.getBuildingTypeId());
+    }
+
+    if (buildingCountEntity != null && buildingCountEntity.getShorelineTypeId() != null) {
+      sql.append(", shoreline_type_id = :shorelineTypeId");
+      params.addValue("shorelineTypeId", buildingCountEntity.getShorelineTypeId());
+    }
+
+    if (buildingCountEntity != null && buildingCountEntity.getYear() != null) {
+      sql.append(", year = :year");
+      params.addValue("year", buildingCountEntity.getYear());
+    }
+
+    if (buildingCountEntity != null && buildingCountEntity.getBuildingCount() != null) {
+      sql.append(", count = :count");
+      params.addValue("count", buildingCountEntity.getBuildingCount());
+    }
+    return new FilterQuery(sql.toString(), params);
+  }
 
   private RowMapper<BuildingCountEntity> mapRowsToEntity() {
     return (rs, _) -> new BuildingCountEntity(
       rs.getLong("id"), 
       rs.getInt("year"), 
       rs.getInt("count"),
-      rs.getTimestamp("created_at")
+      rs.getTimestamp("created_at"),
+      rs.getTimestamp("updated_at")
     );
   }
 }

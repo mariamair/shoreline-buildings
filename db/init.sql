@@ -48,7 +48,8 @@ CREATE TABLE IF NOT EXISTS building_count (
         ON DELETE SET NULL ON UPDATE CASCADE,
     year INT NOT NULL,
     count INT,
-    created_at TIMESTAMP (2) WITH TIME ZONE DEFAULT NOW() NOT NULL
+    created_at TIMESTAMP (2) WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMP (2) WITH TIME ZONE DEFAULT NOW() NOT NULL
 );
 
 -- Create indexes

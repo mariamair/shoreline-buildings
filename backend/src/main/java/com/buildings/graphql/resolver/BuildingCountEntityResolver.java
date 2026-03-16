@@ -2,7 +2,7 @@ package com.buildings.graphql.resolver;
 
 import com.buildings.domain.*;
 import com.buildings.dto.BuildingCountPageDto;
-import com.buildings.dto.CreateBuildingCountEntityDto;
+import com.buildings.dto.BuildingCountEntityDto;
 import com.buildings.dto.BuildingCountFilterDto;
 import com.buildings.service.*;
 
@@ -123,7 +123,14 @@ public class BuildingCountEntityResolver {
 
   @MutationMapping
   public BuildingCountEntity createBuildingCountEntity(
-    @Argument CreateBuildingCountEntityDto input) {
+    @Argument BuildingCountEntityDto input) {
     return buildingCountService.createBuildingCountEntity(input);
+  }
+
+  @MutationMapping
+  public BuildingCountEntity updateBuildingCountEntity(
+    @Argument Long id,
+    @Argument BuildingCountEntityDto input) {
+    return buildingCountService.updateBuildingCountEntity(id, input);
   }
 }

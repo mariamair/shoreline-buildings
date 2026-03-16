@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class CreateBuildingCountEntityDto {
+public class BuildingCountEntityDto {
   private String regionCode;
   private Integer areaTypeId;
   private Integer buildingTypeId;
