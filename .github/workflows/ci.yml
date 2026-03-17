@@ -35,11 +35,11 @@ jobs:
     name: Checkstyle
     runs-on: ubuntu-latest
     needs: [detect-changes]
-    if: needs.detect-changes.outputs.backend == 'true' || github.event.before == '0000000000000000000000000000000000000000'
     steps:
       - uses: actions/checkout@v5
 
       - name: Set up JDK
+        if: needs.detect-changes.outputs.backend == 'true' || github.event.before == '0000000000000000000000000000000000000000'
         uses: actions/setup-java@v5
         with:
           java-version: '25'
@@ -47,6 +47,7 @@ jobs:
 
       - name: Run Checkstyle
         working-directory: backend
+        if: needs.detect-changes.outputs.backend == 'true' || github.event.before == '0000000000000000000000000000000000000000'
         run: mvn checkstyle:check 
 
   build:
@@ -146,7 +147,6 @@ jobs:
     name: Deploy to Production
     runs-on: ubuntu-latest
     needs: [lint-backend, test]
-    if: always() && !failure() && !cancelled()
     steps:
       - name: Deploy reminder
         run: echo "Build and tests passed. Please run ./deploy.sh to deploy to production."
