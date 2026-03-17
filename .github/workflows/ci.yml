@@ -106,8 +106,8 @@ jobs:
       - name: Run Newman tests
         uses: anthonyvscode/newman-action@v1
         with:
-          collection: ShorelineBuildingsAPI.postman_collection.json
-          environment: ci.postman_environment.json
+          collection: tests/api-tests/ShorelineBuildingsAPI.postman_collection.json
+          environment: tests/api-tests/ci.postman_environment.json
           reporters: cli
 
       - name: Tear down services
