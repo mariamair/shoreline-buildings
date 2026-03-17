@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 public class BuildingTypeRepository {
   private final JdbcClient jdbcClient;
 
-  public BuildingTypeRepository(JdbcClient jdbcClient) {
+  public BuildingTypeRepository(final JdbcClient jdbcClient) {
     this.jdbcClient = jdbcClient;
   }
 
@@ -21,18 +21,18 @@ public class BuildingTypeRepository {
       .list();
   }
 
-  public Map<Long, BuildingType> findBuildingTypesByBuildingCountIds(List<Long> buildingCountIds) {
+  public Map<Long, BuildingType> findBuildingTypesByBuildingCountIds(final List<Long> buildingCountIds) {
     return jdbcClient.sql("""
-      SELECT b.id AS building_count_id, bt.id, bt.name 
-      FROM building_type bt 
-      JOIN building_count b ON b.building_type_id = bt.id 
+      SELECT b.id AS building_count_id, bt.id, bt.name
+      FROM building_type bt
+      JOIN building_count b ON b.building_type_id = bt.id
       WHERE b.id IN (:ids)
       """)
       .param("ids", buildingCountIds)
       .query((rs, _) -> Map.entry(
         rs.getLong("building_count_id"),
         new BuildingType(
-          rs.getInt("id"), 
+          rs.getInt("id"),
           rs.getString("name"))
       ))
       .list()

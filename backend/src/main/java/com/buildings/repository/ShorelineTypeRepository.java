@@ -11,28 +11,28 @@ import org.springframework.stereotype.Repository;
 public class ShorelineTypeRepository {
   private final JdbcClient jdbcClient;
 
-  public ShorelineTypeRepository(JdbcClient jdbcClient) {
+  public ShorelineTypeRepository(final JdbcClient jdbcClient) {
     this.jdbcClient = jdbcClient;
   }
 
   public List<Integer> findShorelineTypeIds() {
     return jdbcClient.sql("SELECT id FROM shoreline_type")
-      .query((rs, _) -> rs.getInt("id"))
-      .list();
+        .query((rs, _) -> rs.getInt("id"))
+        .list();
   }
 
-  public Map<Long, ShorelineType> findShorelineTypesByBuildingCountIds(List<Long> buildingCountIds) {
+  public Map<Long, ShorelineType> findShorelineTypesByBuildingCountIds(final List<Long> buildingCountIds) {
     return jdbcClient.sql("""
-      SELECT b.id AS building_count_id, st.id, st.name 
-      FROM shoreline_type st 
-      JOIN building_count b ON b.shoreline_type_id = st.id 
+      SELECT b.id AS building_count_id, st.id, st.name
+      FROM shoreline_type st
+      JOIN building_count b ON b.shoreline_type_id = st.id
       WHERE b.id IN (:ids)
       """)
       .param("ids", buildingCountIds)
       .query((rs, _) -> Map.entry(
         rs.getLong("building_count_id"),
         new ShorelineType(
-          rs.getInt("id"), 
+          rs.getInt("id"),
           rs.getString("name"))
       ))
       .list()

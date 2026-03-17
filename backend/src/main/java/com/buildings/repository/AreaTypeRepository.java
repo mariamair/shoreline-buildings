@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 public class AreaTypeRepository {
   private final JdbcClient jdbcClient;
 
-  public AreaTypeRepository(JdbcClient jdbcClient) {
+  public AreaTypeRepository(final JdbcClient jdbcClient) {
     this.jdbcClient = jdbcClient;
   }
 
@@ -21,18 +21,18 @@ public class AreaTypeRepository {
       .list();
   }
 
-  public Map<Long, AreaType> findAreaTypesByBuildingCountIds(List<Long> buildingCountIds) {
+  public Map<Long, AreaType> findAreaTypesByBuildingCountIds(final List<Long> buildingCountIds) {
     return jdbcClient.sql("""
-      SELECT b.id AS building_count_id, at.id, at.name 
-      FROM area_type at 
-      JOIN building_count b ON b.area_type_id = at.id 
+      SELECT b.id AS building_count_id, at.id, at.name
+      FROM area_type at
+      JOIN building_count b ON b.area_type_id = at.id
       WHERE b.id IN (:ids)
       """)
       .param("ids", buildingCountIds)
       .query((rs, _) -> Map.entry(
         rs.getLong("building_count_id"),
         new AreaType(
-          rs.getInt("id"), 
+          rs.getInt("id"),
           rs.getString("name"))
       ))
       .list()

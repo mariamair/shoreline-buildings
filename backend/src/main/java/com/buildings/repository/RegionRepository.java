@@ -13,16 +13,16 @@ import java.util.stream.Collectors;
 @Repository
 public class RegionRepository {
   private final JdbcClient jdbcClient;
-  private final String BASE_SQL = """
-      SELECT 
-        code, 
-        name, 
-        type_id 
+  private final String baseSql = """
+      SELECT
+        code,
+        name,
+        type_id
       FROM region
       """;
 
 
-  public RegionRepository(JdbcClient jdbcClient) {
+  public RegionRepository(final JdbcClient jdbcClient) {
         this.jdbcClient = jdbcClient;
   }
 
@@ -32,19 +32,19 @@ public class RegionRepository {
       .list();
   }
 
-  public Optional<Region> findRegionByCode(String code) {
-  return jdbcClient.sql(BASE_SQL + " WHERE code = :code")
+  public Optional<Region> findRegionByCode(final String code) {
+  return jdbcClient.sql(baseSql + " WHERE code = :code")
     .param("code", code)
     .query(mapRowsToEntity())
     .optional();
   }
 
-  public List<Region> findRegions(Integer regionTypeId, int limit, int offset) {
+  public List<Region> findRegions(final Integer regionTypeId, final int limit, final int offset) {
     FilterQuery filterQuery = buildFilterQuery(regionTypeId);
-    String sql = BASE_SQL 
-      + filterQuery.sql() 
+    String sql = baseSql
+      + filterQuery.sql()
       + " ORDER BY code ASC LIMIT :limit OFFSET :offset";
-    
+
     filterQuery.params()
       .addValue("limit", limit)
       .addValue("offset", offset);
@@ -55,9 +55,9 @@ public class RegionRepository {
       .list();
   }
 
-  public int countRegions(Integer regionTypeId) {
+  public int countRegions(final Integer regionTypeId) {
     FilterQuery filterQuery = buildFilterQuery(regionTypeId);
-    String sql = "SELECT COUNT(*) FROM region" 
+    String sql = "SELECT COUNT(*) FROM region"
       + filterQuery.sql();
 
     return jdbcClient.sql(sql)
@@ -66,18 +66,18 @@ public class RegionRepository {
     .single();
   }
 
-  public Map<Long, Region> findRegionsByBuildingCountIds(List<Long> buildingCountIds) {
+  public Map<Long, Region> findRegionsByBuildingCountIds(final List<Long> buildingCountIds) {
     return jdbcClient.sql("""
-      SELECT b.id AS building_count_id, r.code, r.name, r.type_id 
-      FROM region r 
-      JOIN building_count b ON b.region_code = r.code 
+      SELECT b.id AS building_count_id, r.code, r.name, r.type_id
+      FROM region r
+      JOIN building_count b ON b.region_code = r.code
       WHERE b.id IN (:ids)
       """)
       .param("ids", buildingCountIds)
       .query((rs, _) -> Map.entry(
         rs.getLong("building_count_id"),
         new Region(
-          rs.getString("code"), 
+          rs.getString("code"),
           rs.getString("name"),
           rs.getInt("type_id"))
       ))
@@ -86,9 +86,9 @@ public class RegionRepository {
       .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
   }
 
-  private record FilterQuery(String sql, MapSqlParameterSource params) {}
+  private record FilterQuery(String sql, MapSqlParameterSource params) { }
 
-  private FilterQuery buildFilterQuery(Integer regionTypeId) {
+  private FilterQuery buildFilterQuery(final Integer regionTypeId) {
     StringBuilder sql = new StringBuilder(" ");
     MapSqlParameterSource params = new MapSqlParameterSource();
 
@@ -102,7 +102,7 @@ public class RegionRepository {
 
   private RowMapper<Region> mapRowsToEntity() {
     return (rs, _) -> new Region(
-      rs.getString("code"), 
+      rs.getString("code"),
       rs.getString("name"),
       rs.getInt("type_id")
     );

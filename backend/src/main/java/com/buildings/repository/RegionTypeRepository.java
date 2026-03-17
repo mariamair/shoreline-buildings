@@ -11,28 +11,28 @@ import org.springframework.stereotype.Repository;
 public class RegionTypeRepository {
     private final JdbcClient jdbcClient;
 
-  public RegionTypeRepository(JdbcClient jdbcClient) {
+  public RegionTypeRepository(final JdbcClient jdbcClient) {
     this.jdbcClient = jdbcClient;
   }
 
   public List<Integer> findRegionTypeIds() {
     return jdbcClient.sql("SELECT id FROM region_type")
-      .query((rs, _) -> rs.getInt("id"))
-      .list();
+        .query((rs, _) -> rs.getInt("id"))
+        .list();
   }
 
-  public Map<String, RegionType> findRegionTypesByRegionCodes(List<String> regionCodes) {
+  public Map<String, RegionType> findRegionTypesByRegionCodes(final List<String> regionCodes) {
     return jdbcClient.sql("""
-      SELECT r.code, rt.id, rt.name 
-      FROM region_type rt 
-      JOIN region r ON r.type_id = rt.id 
+      SELECT r.code, rt.id, rt.name
+      FROM region_type rt
+      JOIN region r ON r.type_id = rt.id
       WHERE r.code IN (:codes)
       """)
         .param("codes", regionCodes)
         .query((rs, _) -> Map.entry(
             rs.getString("code"),
             new RegionType(
-              rs.getInt("id"), 
+              rs.getInt("id"),
               rs.getString("name"))
         ))
         .list()

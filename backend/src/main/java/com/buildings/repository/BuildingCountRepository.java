@@ -14,109 +14,111 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class BuildingCountRepository {
   private final JdbcClient jdbcClient;
-  private final String BASE_SQL = """
-      SELECT 
-        id, 
-        year, 
+  private final String baseSql = """
+      SELECT
+        id,
+        year,
         count,
         created_at,
-        updated_at 
+        updated_at
       FROM building_count
       """;
 
-  public BuildingCountRepository(JdbcClient jdbcClient) {
+  public BuildingCountRepository(final JdbcClient jdbcClient) {
     this.jdbcClient = jdbcClient;
   }
 
   public List<Integer> getYears() {
     return jdbcClient.sql("SELECT DISTINCT year FROM building_count")
-      .query((rs, _) -> rs.getInt("year"))
-      .list();
+        .query((rs, _) -> rs.getInt("year"))
+        .list();
   }
 
-  public Optional<BuildingCountEntity> findBuildingCountEntityById(Long id) {
-    return jdbcClient.sql(BASE_SQL + " WHERE id = :id")
-      .param("id", id)
-      .query(mapRowsToEntity())
-      .optional();
+  public Optional<BuildingCountEntity> findBuildingCountEntityById(final Long id) {
+    return jdbcClient.sql(baseSql + " WHERE id = :id")
+        .param("id", id)
+        .query(mapRowsToEntity())
+        .optional();
   }
 
-  public List<BuildingCountEntity> findBuildingCountEntities(BuildingCountFilterDto filter, int limit, int offset) {
+  public List<BuildingCountEntity> findBuildingCountEntities(final BuildingCountFilterDto filter, final int limit,
+      final int offset) {
     FilterQuery filterQuery = buildFilterQuery(filter);
-    String sql = BASE_SQL 
-      + filterQuery.sql() 
-      + " ORDER BY id ASC LIMIT :limit OFFSET :offset";
-    
+    String sql = baseSql
+        + filterQuery.sql()
+        + " ORDER BY id ASC LIMIT :limit OFFSET :offset";
+
     filterQuery.params()
-      .addValue("limit", limit)
-      .addValue("offset", offset);
+        .addValue("limit", limit)
+        .addValue("offset", offset);
 
     return jdbcClient.sql(sql)
-      .paramSource(filterQuery.params())
-      .query(mapRowsToEntity())
-      .list();
+        .paramSource(filterQuery.params())
+        .query(mapRowsToEntity())
+        .list();
   }
 
-  public int countBuildingCountEntities(BuildingCountFilterDto filter) {
+  public int countBuildingCountEntities(final BuildingCountFilterDto filter) {
     FilterQuery filterQuery = buildFilterQuery(filter);
-    String sql = "SELECT COUNT(*) FROM building_count" 
-      + filterQuery.sql();
+    String sql = "SELECT COUNT(*) FROM building_count"
+        + filterQuery.sql();
 
     return jdbcClient.sql(sql)
-      .paramSource(filterQuery.params())
-      .query(Integer.class)
-      .single();
+        .paramSource(filterQuery.params())
+        .query(Integer.class)
+        .single();
   }
 
-  public BuildingCountEntity saveBuildingCountEntity(BuildingCountEntityDto buildingCountEntity) {
+  public BuildingCountEntity saveBuildingCountEntity(final BuildingCountEntityDto buildingCountEntity) {
     String sql = """
-      INSERT INTO building_count 
-        (region_code, area_type_id, building_type_id, shoreline_type_id, year, count) 
-      VALUES 
-        (:regionCode, :areaTypeId, :buildingTypeId, :shorelineTypeId, :year, :count)
-      RETURNING id, year, count, created_at, updated_at
-      """;
+        INSERT INTO building_count
+          (region_code, area_type_id, building_type_id, shoreline_type_id, year, count)
+        VALUES
+          (:regionCode, :areaTypeId, :buildingTypeId, :shorelineTypeId, :year, :count)
+        RETURNING id, year, count, created_at, updated_at
+        """;
 
     MapSqlParameterSource params = new MapSqlParameterSource()
-      .addValue("regionCode", buildingCountEntity.getRegionCode())
-      .addValue("areaTypeId", buildingCountEntity.getAreaTypeId())
-      .addValue("buildingTypeId", buildingCountEntity.getBuildingTypeId())
-      .addValue("shorelineTypeId", buildingCountEntity.getShorelineTypeId())
-      .addValue("year", buildingCountEntity.getYear())
-      .addValue("count", buildingCountEntity.getBuildingCount());
+        .addValue("regionCode", buildingCountEntity.getRegionCode())
+        .addValue("areaTypeId", buildingCountEntity.getAreaTypeId())
+        .addValue("buildingTypeId", buildingCountEntity.getBuildingTypeId())
+        .addValue("shorelineTypeId", buildingCountEntity.getShorelineTypeId())
+        .addValue("year", buildingCountEntity.getYear())
+        .addValue("count", buildingCountEntity.getBuildingCount());
 
     return jdbcClient.sql(sql)
-      .paramSource(params)
-      .query(mapRowsToEntity())
-      .single();
+        .paramSource(params)
+        .query(mapRowsToEntity())
+        .single();
   }
-  
-  public BuildingCountEntity updateBuildingCountEntity(Long id, BuildingCountContent buildingCountEntity) {
+
+  public BuildingCountEntity updateBuildingCountEntity(final Long id, final BuildingCountContent buildingCountEntity) {
     FilterQuery updateQuery = buildUpdateQuery(buildingCountEntity);
-    String sql = "UPDATE building_count SET updated_at = CURRENT_TIMESTAMP" 
-      + updateQuery.sql()
-      + " WHERE id = :id RETURNING id, year, count, created_at, updated_at";
+    String sql = "UPDATE building_count SET updated_at = CURRENT_TIMESTAMP"
+        + updateQuery.sql()
+        + " WHERE id = :id RETURNING id, year, count, created_at, updated_at";
 
     updateQuery.params()
-      .addValue("id", id);
+        .addValue("id", id);
 
     return jdbcClient.sql(sql)
-      .paramSource(updateQuery.params)
-      .query(mapRowsToEntity())
-      .single();
+        .paramSource(updateQuery.params)
+        .query(mapRowsToEntity())
+        .single();
   }
 
-  public Integer deleteBuildingCountEntity(Long id) {
-    String sql = "DELETE FROM building_count WHERE id = :id"; 
+  public Integer deleteBuildingCountEntity(final Long id) {
+    String sql = "DELETE FROM building_count WHERE id = :id";
 
     return jdbcClient.sql(sql)
-      .param("id", id)
-      .update();
+        .param("id", id)
+        .update();
   }
 
-  private record FilterQuery(String sql, MapSqlParameterSource params) {}
+  private record FilterQuery(String sql, MapSqlParameterSource params) {
+  }
 
-  private FilterQuery buildFilterQuery(BuildingCountFilterDto filter) {
+  private FilterQuery buildFilterQuery(final BuildingCountFilterDto filter) {
     StringBuilder sql = new StringBuilder(" WHERE 1=1");
     MapSqlParameterSource params = new MapSqlParameterSource();
 
@@ -141,7 +143,8 @@ public class BuildingCountRepository {
     }
     return new FilterQuery(sql.toString(), params);
   }
-  private FilterQuery buildUpdateQuery(BuildingCountContent buildingCountEntity) {
+
+  private FilterQuery buildUpdateQuery(final BuildingCountContent buildingCountEntity) {
     StringBuilder sql = new StringBuilder("");
     MapSqlParameterSource params = new MapSqlParameterSource();
 
@@ -179,8 +182,8 @@ public class BuildingCountRepository {
 
   private RowMapper<BuildingCountEntity> mapRowsToEntity() {
     return (rs, _) -> new BuildingCountEntity(
-      rs.getLong("id"), 
-      rs.getInt("year"), 
+      rs.getLong("id"),
+      rs.getInt("year"),
       rs.getInt("count"),
       rs.getTimestamp("created_at"),
       rs.getTimestamp("updated_at")
