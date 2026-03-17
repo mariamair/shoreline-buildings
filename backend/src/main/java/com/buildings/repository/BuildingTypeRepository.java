@@ -3,6 +3,7 @@ package com.buildings.repository;
 import com.buildings.domain.BuildingType;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
@@ -18,6 +19,25 @@ public class BuildingTypeRepository {
   public List<Integer> findBuildingTypeIds() {
     return jdbcClient.sql("SELECT id FROM building_type")
       .query((rs, _) -> rs.getInt("id"))
+      .list();
+  }
+
+  public Optional<BuildingType> findBuildingTypeById(final Integer id) {
+    return jdbcClient.sql("SELECT id, name FROM building_type WHERE id = :id")
+      .param("id", id)
+      .query((rs, _) -> new BuildingType(
+        rs.getInt("id"),
+        rs.getString("name")
+      ))
+      .optional();
+  }
+
+  public List<BuildingType> findBuildingTypes() {
+    return jdbcClient.sql("SELECT id, name FROM building_type")
+      .query((rs, _) -> new BuildingType(
+        rs.getInt("id"),
+        rs.getString("name")
+      ))
       .list();
   }
 

@@ -29,6 +29,8 @@
     buildingCountEntities(filter: BuildingCountFilter, limit: Int = 50, offset: Int = 0): BuildingCountPage
     region(code: String!): Region
     regions(regionTypeId: Int, limit: Int = 50, offset: Int = 0): RegionPage
+    buildingType(id: Int!): BuildingType
+    buildingTypes: [BuildingType]
   }
 
   type Mutation {
