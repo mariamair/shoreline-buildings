@@ -9,7 +9,12 @@ public class BuildingCountEntity {
   private final Date createdAt;
   private final Date updatedAt;
 
-  public BuildingCountEntity(final Long id, final int year, final Integer buildingCount, final Date createdAt, final Date updatedAt) {
+  public BuildingCountEntity(
+    final Long id,
+    final int year,
+    final Integer buildingCount,
+    final Date createdAt,
+    final Date updatedAt) {
     this.id = id;
     this.year = year;
     this.buildingCount = buildingCount;

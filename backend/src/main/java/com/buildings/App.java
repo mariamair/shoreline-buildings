@@ -6,7 +6,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @SpringBootApplication
-public class App {
+public final class App {
+  private App() {
+    // Private constructor to prevent instantiation
+  }
   public static void main(final String[] args) {
     SpringApplication.run(App.class, args);
   }
