@@ -111,15 +111,6 @@ jobs:
             sleep 2
           done
 
-      - name: Debug network
-        run: |
-          echo "=== Docker containers ==="
-          docker compose ps
-          echo "=== Test GraphQL endpoint ==="
-          curl -v -X POST http://localhost:8080/api/graphql \
-            -H "Content-Type: application/json" \
-            -d '{"query": "{ __typename }"}'
-
       - name: Install Newman
         run: npm install -g newman
 
@@ -127,8 +118,7 @@ jobs:
         run: |
           newman run tests/api-tests/ShorelineBuildingsAPI.postman_collection.json \
             --environment tests/api-tests/ci.postman_environment.json \
-            --reporters cli \
-            --verbose
+            --reporters cli
 
       - name: Tear down services
         if: always()
