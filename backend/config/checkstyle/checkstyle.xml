@@ -179,9 +179,7 @@
       <property name="severity" value="ignore"/>
     </module>
     <module name="FinalClass"/>
-    <module name="HideUtilityClassConstructor">
-      <property name="ignoreClassPattern" value="App"/>
-    </module>
+    <module name="HideUtilityClassConstructor"/>
     <module name="InterfaceIsType"/>
     <module name="VisibilityModifier"/>
 
