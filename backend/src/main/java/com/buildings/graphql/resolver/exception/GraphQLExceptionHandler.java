@@ -13,10 +13,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class GraphQLExceptionHandler implements DataFetcherExceptionResolver{
-  
+public class GraphQLExceptionHandler implements DataFetcherExceptionResolver {
+
   @Override
-  public Mono<List<GraphQLError>> resolveException(Throwable exception, DataFetchingEnvironment environment) {
+  public Mono<List<GraphQLError>> resolveException(final Throwable exception,
+      final DataFetchingEnvironment environment) {
     List<GraphQLError> errors = new ArrayList<>();
 
     if (exception instanceof IllegalArgumentException) {
@@ -26,7 +27,7 @@ public class GraphQLExceptionHandler implements DataFetcherExceptionResolver{
           .location(environment.getField().getSourceLocation())
           .extensions(Map.of("code", "BAD_USER_INPUT"))
           .build();
-      
+
       errors.add(error);
 
     } else if (exception instanceof IllegalStateException) {
@@ -36,9 +37,9 @@ public class GraphQLExceptionHandler implements DataFetcherExceptionResolver{
           .location(environment.getField().getSourceLocation())
           .extensions(Map.of("code", "CONFLICT"))
           .build();
-      
+
       errors.add(error);
-      
+
     } else if (exception instanceof EntityNotFoundException) {
       GraphQLError error = GraphQLError.newError()
           .message(exception.getMessage())
@@ -46,7 +47,7 @@ public class GraphQLExceptionHandler implements DataFetcherExceptionResolver{
           .location(environment.getField().getSourceLocation())
           .extensions(Map.of("code", "NOT_FOUND"))
           .build();
-      
+
       errors.add(error);
 
     } else {
@@ -56,7 +57,7 @@ public class GraphQLExceptionHandler implements DataFetcherExceptionResolver{
           .path(environment.getExecutionStepInfo().getPath())
           .extensions(Map.of("code", "INTERNAL_SERVER_ERROR"))
           .build();
-          
+
       errors.add(error);
     }
 
