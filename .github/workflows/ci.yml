@@ -120,12 +120,15 @@ jobs:
             -H "Content-Type: application/json" \
             -d '{"query": "{ __typename }"}'
 
+      - name: Install Newman
+        run: npm install -g newman
+
       - name: Run Newman tests
-        uses: anthonyvscode/newman-action@v1
-        with:
-          collection: tests/api-tests/ShorelineBuildingsAPI.postman_collection.json
-          environment: tests/api-tests/ci.postman_environment.json
-          reporters: cli
+        run: |
+          newman run tests/api-tests/ShorelineBuildingsAPI.postman_collection.json \
+            --environment tests/api-tests/postman/ci.postman_environment.json \
+            --reporters cli \
+            --verbose
 
       - name: Tear down services
         if: always()
