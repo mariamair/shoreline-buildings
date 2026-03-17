@@ -26,43 +26,43 @@ public class RegionResolver {
   private final RegionService regionService;
   private final RegionTypeService regionTypeService;
 
-  public RegionResolver(RegionService regionService, RegionTypeService regionTypeService) {
-        this.regionService = regionService;
-        this.regionTypeService = regionTypeService;
-    }
+  public RegionResolver(final RegionService regionService, final RegionTypeService regionTypeService) {
+    this.regionService = regionService;
+    this.regionTypeService = regionTypeService;
+  }
 
   @QueryMapping
-  public Region region(@Argument String code) {
+  public Region region(@Argument final String code) {
     return regionService.getRegionByCode(code);
   }
 
   @QueryMapping
   public RegionPageDto regions(
-    @Argument Integer regionTypeId, 
-    @Argument Integer limit, 
-    @Argument Integer offset,
-    DataFetchingEnvironment env) {
+      @Argument final Integer regionTypeId,
+      @Argument final Integer limit,
+      @Argument final Integer offset,
+      final DataFetchingEnvironment env) {
 
     List<Region> items = regionService.getRegions(regionTypeId, limit, offset);
 
     Set<String> requestedFields = env.getSelectionSet().getFields()
-      .stream()
-      .map(SelectedField::getName)
-      .collect(Collectors.toSet());
+        .stream()
+        .map(SelectedField::getName)
+        .collect(Collectors.toSet());
 
     int totalCount = 0;
-    boolean hasNextPage = false;    
+    boolean hasNextPage = false;
 
     if (requestedFields.contains("totalCount") || requestedFields.contains("hasNextPage")) {
       totalCount = regionService.getTotalCount(regionTypeId);
       hasNextPage = offset + limit < totalCount;
     }
 
-      return new RegionPageDto(items, totalCount, limit, offset, hasNextPage);
+    return new RegionPageDto(items, totalCount, limit, offset, hasNextPage);
   }
 
   @BatchMapping(typeName = "Region", field = "regionType")
-  public Map<Region, RegionType> regionType(List<Region> regions) {
+  public Map<Region, RegionType> regionType(final List<Region> regions) {
     List<String> codes = regions.stream().map(Region::getCode).toList();
     Map<String, RegionType> regionTypeMap = regionTypeService.getRegionTypesByRegionCodes(codes);
 

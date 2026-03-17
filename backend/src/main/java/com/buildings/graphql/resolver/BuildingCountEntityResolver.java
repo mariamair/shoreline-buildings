@@ -1,11 +1,19 @@
 package com.buildings.graphql.resolver;
 
-import com.buildings.domain.*;
+import com.buildings.domain.AreaType;
+import com.buildings.domain.BuildingCountEntity;
+import com.buildings.domain.BuildingType;
+import com.buildings.domain.Region;
+import com.buildings.domain.ShorelineType;
 import com.buildings.dto.BuildingCountPageDto;
 import com.buildings.dto.BuildingCountContent;
 import com.buildings.dto.BuildingCountEntityDto;
 import com.buildings.dto.BuildingCountFilterDto;
-import com.buildings.service.*;
+import com.buildings.service.AreaTypeService;
+import com.buildings.service.BuildingCountService;
+import com.buildings.service.RegionService;
+import com.buildings.service.BuildingTypeService;
+import com.buildings.service.ShorelineTypeService;
 
 import graphql.schema.DataFetchingEnvironment;
 import graphql.schema.SelectedField;
@@ -32,11 +40,11 @@ public class BuildingCountEntityResolver {
   private final ShorelineTypeService shorelineTypeService;
 
   public BuildingCountEntityResolver(
-    BuildingCountService buildingCountService, 
-    RegionService regionService, 
-    AreaTypeService areaTypeService, 
-    BuildingTypeService buildingTypeService, 
-    ShorelineTypeService shorelineTypeService) {
+    final BuildingCountService buildingCountService,
+    final RegionService regionService,
+    final AreaTypeService areaTypeService,
+    final BuildingTypeService buildingTypeService,
+    final ShorelineTypeService shorelineTypeService) {
     this.buildingCountService = buildingCountService;
     this.regionService = regionService;
     this.areaTypeService = areaTypeService;
@@ -45,26 +53,26 @@ public class BuildingCountEntityResolver {
   }
 
   @QueryMapping
-  public BuildingCountEntity buildingCountEntity(@Argument Long id) {
+  public BuildingCountEntity buildingCountEntity(@Argument final Long id) {
     return buildingCountService.getBuildingCountEntityById(id);
   }
 
   @QueryMapping
   public BuildingCountPageDto buildingCountEntities(
-    @Argument BuildingCountFilterDto filter,
-    @Argument Integer limit, 
-    @Argument Integer offset,
-    DataFetchingEnvironment env) {
+      @Argument final BuildingCountFilterDto filter,
+      @Argument final Integer limit,
+      @Argument final Integer offset,
+      final DataFetchingEnvironment env) {
 
     List<BuildingCountEntity> items = buildingCountService.getBuildingCountEntities(filter, limit, offset);
 
     Set<String> requestedFields = env.getSelectionSet().getFields()
-      .stream()
-      .map(SelectedField::getName)
-      .collect(Collectors.toSet());
+        .stream()
+        .map(SelectedField::getName)
+        .collect(Collectors.toSet());
 
     int totalCount = 0;
-    boolean hasNextPage = false;    
+    boolean hasNextPage = false;
 
     if (requestedFields.contains("totalCount") || requestedFields.contains("hasNextPage")) {
       totalCount = buildingCountService.getTotalCount(filter);
@@ -75,68 +83,64 @@ public class BuildingCountEntityResolver {
   }
 
   @BatchMapping(typeName = "BuildingCountEntity", field = "region")
-  public Map<BuildingCountEntity, Region> region(List<BuildingCountEntity> buildingCountEntities) {
+  public Map<BuildingCountEntity, Region> region(final List<BuildingCountEntity> buildingCountEntities) {
     List<Long> ids = buildingCountEntities.stream().map(BuildingCountEntity::getId).toList();
     Map<Long, Region> regionMap = regionService.getRegionsByBuildingCountIds(ids);
 
     return buildingCountEntities.stream()
-      .collect(Collectors.toMap(
-        b -> b,
-        b -> regionMap.getOrDefault(b.getId(), null)
-      ));
+        .collect(Collectors.toMap(
+            b -> b,
+            b -> regionMap.getOrDefault(b.getId(), null)));
   }
 
   @BatchMapping(typeName = "BuildingCountEntity", field = "areaType")
-  public Map<BuildingCountEntity, AreaType> areaType(List<BuildingCountEntity> buildingCountEntities) {
+  public Map<BuildingCountEntity, AreaType> areaType(final List<BuildingCountEntity> buildingCountEntities) {
     List<Long> ids = buildingCountEntities.stream().map(BuildingCountEntity::getId).toList();
     Map<Long, AreaType> areaTypeMap = areaTypeService.getAreaTypesByBuildingCountIds(ids);
 
     return buildingCountEntities.stream()
-      .collect(Collectors.toMap(
-        b -> b,
-        b -> areaTypeMap.getOrDefault(b.getId(), null)
-      ));
+        .collect(Collectors.toMap(
+            b -> b,
+            b -> areaTypeMap.getOrDefault(b.getId(), null)));
   }
 
   @BatchMapping(typeName = "BuildingCountEntity", field = "buildingType")
-  public Map<BuildingCountEntity, BuildingType> buildingType(List<BuildingCountEntity> buildingCountEntities) {
+  public Map<BuildingCountEntity, BuildingType> buildingType(final List<BuildingCountEntity> buildingCountEntities) {
     List<Long> ids = buildingCountEntities.stream().map(BuildingCountEntity::getId).toList();
     Map<Long, BuildingType> buildingTypeMap = buildingTypeService.getBuildingTypesByBuildingCountIds(ids);
 
     return buildingCountEntities.stream()
-      .collect(Collectors.toMap(
-        b -> b,
-        b -> buildingTypeMap.getOrDefault(b.getId(), null)
-      ));
+        .collect(Collectors.toMap(
+            b -> b,
+            b -> buildingTypeMap.getOrDefault(b.getId(), null)));
   }
 
   @BatchMapping(typeName = "BuildingCountEntity", field = "shorelineType")
-  public Map<BuildingCountEntity, ShorelineType> shorelineType(List<BuildingCountEntity> buildingCountEntities) {
+  public Map<BuildingCountEntity, ShorelineType> shorelineType(final List<BuildingCountEntity> buildingCountEntities) {
     List<Long> ids = buildingCountEntities.stream().map(BuildingCountEntity::getId).toList();
     Map<Long, ShorelineType> shorelineTypeMap = shorelineTypeService.getShorelineTypesByBuildingCountIds(ids);
 
     return buildingCountEntities.stream()
-      .collect(Collectors.toMap(
-        b -> b,
-        b -> shorelineTypeMap.getOrDefault(b.getId(), null)
-      ));
+        .collect(Collectors.toMap(
+            b -> b,
+            b -> shorelineTypeMap.getOrDefault(b.getId(), null)));
   }
 
   @MutationMapping
   public BuildingCountEntity createBuildingCountEntity(
-    @Argument BuildingCountEntityDto input) {
+      @Argument final BuildingCountEntityDto input) {
     return buildingCountService.createBuildingCountEntity(input);
   }
 
   @MutationMapping
   public BuildingCountEntity updateBuildingCountEntity(
-    @Argument Long id,
-    @Argument BuildingCountContent input) {
+      @Argument final Long id,
+      @Argument final BuildingCountContent input) {
     return buildingCountService.updateBuildingCountEntity(id, input);
   }
 
   @MutationMapping
-  public boolean deleteBuildingCountEntity(@Argument Long id) {
+  public boolean deleteBuildingCountEntity(@Argument final Long id) {
     return buildingCountService.deleteBuildingCountEntity(id);
   }
 }
