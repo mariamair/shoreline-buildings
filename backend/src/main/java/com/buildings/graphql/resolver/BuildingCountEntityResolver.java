@@ -7,7 +7,6 @@ import com.buildings.domain.Region;
 import com.buildings.domain.ShorelineType;
 import com.buildings.dto.BuildingCountPageDto;
 import com.buildings.dto.BuildingCountContent;
-import com.buildings.dto.BuildingCountEntityDto;
 import com.buildings.dto.BuildingCountFilterDto;
 import com.buildings.service.AreaTypeService;
 import com.buildings.service.BuildingCountService;
@@ -128,7 +127,7 @@ public class BuildingCountEntityResolver {
 
   @MutationMapping
   public BuildingCountEntity createBuildingCountEntity(
-      @Argument final BuildingCountEntityDto input) {
+      @Argument final BuildingCountContent input) {
     return buildingCountService.createBuildingCountEntity(input);
   }
 

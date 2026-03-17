@@ -3,7 +3,6 @@ package com.buildings.repository;
 import com.buildings.domain.BuildingCountEntity;
 import com.buildings.dto.BuildingCountFilterDto;
 import com.buildings.dto.BuildingCountContent;
-import com.buildings.dto.BuildingCountEntityDto;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.jdbc.core.RowMapper;
@@ -69,7 +68,7 @@ public class BuildingCountRepository {
         .single();
   }
 
-  public BuildingCountEntity saveBuildingCountEntity(final BuildingCountEntityDto buildingCountEntity) {
+  public BuildingCountEntity saveBuildingCountEntity(final BuildingCountContent buildingCountEntity) {
     String sql = """
         INSERT INTO building_count
           (region_code, area_type_id, building_type_id, shoreline_type_id, year, count)
@@ -79,12 +78,12 @@ public class BuildingCountRepository {
         """;
 
     MapSqlParameterSource params = new MapSqlParameterSource()
-        .addValue("regionCode", buildingCountEntity.getRegionCode())
-        .addValue("areaTypeId", buildingCountEntity.getAreaTypeId())
-        .addValue("buildingTypeId", buildingCountEntity.getBuildingTypeId())
-        .addValue("shorelineTypeId", buildingCountEntity.getShorelineTypeId())
-        .addValue("year", buildingCountEntity.getYear())
-        .addValue("count", buildingCountEntity.getBuildingCount());
+        .addValue("regionCode", buildingCountEntity.regionCode())
+        .addValue("areaTypeId", buildingCountEntity.areaTypeId())
+        .addValue("buildingTypeId", buildingCountEntity.buildingTypeId())
+        .addValue("shorelineTypeId", buildingCountEntity.shorelineTypeId())
+        .addValue("year", buildingCountEntity.year())
+        .addValue("count", buildingCountEntity.buildingCount());
 
     return jdbcClient.sql(sql)
         .paramSource(params)
