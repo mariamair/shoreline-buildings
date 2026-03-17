@@ -1,0 +1,1145 @@
+{
+  "info": {
+    "_postman_id": "55f4ce9a-6332-48df-98f3-bc94c7621a31",
+    "name": "ShorelineBuildingsAPI",
+    "description": "Test documentation for the Shoreline Buildings GraphQL API.  \nPublic URL: [https://cu3156.camp.lnu.se/api/graphql](https://cu3156.camp.lnu.se/api/graphiql?path=/api/graphql)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "39898331"
+  },
+  "item": [
+    {
+      "name": "Building Count Entities - Read operations",
+      "item": [
+        {
+          "name": "Response time",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();",
+                  "",
+                  "pm.test(\"Response time is less than 600ms\", () => {",
+                  "  pm.expect(pm.response.responseTime).to.be.below(600);",
+                  "});",
+                  "",
+                  "pm.test(\"Content-Type is application/json\", () => {",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "});",
+                  "",
+                  "pm.test('Response contains data', () => {",
+                  "    pm.expect(response.data).to.have.property(\"buildingCountEntities\")",
+                  "});",
+                  "",
+                  "pm.test(\"All entities have a valid buildingCount\", () => {",
+                  "    const entities = response.data.buildingCountEntities.items;",
+                  "    ",
+                  "    entities.forEach((entity) => {",
+                  "        pm.expect(entity).to.have.property('buildingCount');",
+                  "        pm.expect(entity.buildingCount).to.be.a('number');",
+                  "    });",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "query BuildingCountEntities {\n    buildingCountEntities(limit: 500) {\n        totalCount\n        limit\n        offset\n        hasNextPage\n        items {\n            id\n            year\n            buildingCount\n            region {\n                code\n                name\n                regionType {\n                    id\n                    name\n                }\n            }\n            buildingType {\n                id\n                name\n            }\n            shorelineType {\n                id\n                name\n            }\n            areaType {\n                id\n                name\n            }\n        }\n    }\n}\n",
+                "variables": ""
+              }
+            },
+            "url": {
+              "raw": "{{queryUrl}}",
+              "host": [
+                "{{queryUrl}}"
+              ]
+            },
+            "description": "Check that response time for 500 entities with all fields is less than 600ms."
+          },
+          "response": []
+        },
+        {
+          "name": "Get building count entities",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Content-Type is application/json\", () => {",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "});",
+                  "",
+                  "pm.test(\"Response has correct status code: 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const response = pm.response.json();",
+                  "",
+                  "pm.test('Response contains data', () => {",
+                  "    pm.expect(response).to.have.property(\"data\")",
+                  "});",
+                  "",
+                  "const entities = response.data.buildingCountEntities.items;",
+                  "",
+                  "pm.test(\"All entities have a valid id\", () => {",
+                  "    entities.forEach((entity) => {",
+                  "        pm.expect(entity).to.have.property('id');",
+                  "        pm.expect(entity.id).to.be.a('number');",
+                  "    })",
+                  "});",
+                  "",
+                  "pm.test(\"All entities have a valid year\", () => {",
+                  "    entities.forEach((entity) => {",
+                  "        pm.expect(entity).to.have.property('year');",
+                  "        pm.expect(entity.year).to.be.a('number');",
+                  "    })",
+                  "});",
+                  "",
+                  "pm.test(\"All entities have a valid building count\", () => {",
+                  "    entities.forEach((entity) => {",
+                  "        pm.expect(entity).to.have.property('buildingCount');",
+                  "        pm.expect(entity.buildingCount).to.be.a('number');",
+                  "    })",
+                  "});",
+                  "",
+                  "pm.test(\"All entities have a valid region\", () => {",
+                  "    entities.forEach((entity) => {",
+                  "        pm.expect(entity).to.have.property('region');",
+                  "        pm.expect(entity.region).to.be.a('object');",
+                  "        pm.expect(entity.region).to.have.property('code')",
+                  "        pm.expect(entity.region.code).to.be.a('string')",
+                  "        pm.expect(entity.region).to.have.property('name')",
+                  "        pm.expect(entity.region.name).to.be.a('string')",
+                  "        pm.expect(entity.region).to.have.property('regionType')",
+                  "        pm.expect(entity.region.regionType).to.be.a('object')",
+                  "        pm.expect(entity.region.regionType).to.have.property('id');",
+                  "        pm.expect(entity.region.regionType.id).to.be.a('number')",
+                  "        pm.expect(entity.region.regionType).to.have.property('name');",
+                  "        pm.expect(entity.region.regionType.name).to.be.a('string')",
+                  "    })",
+                  "});",
+                  "",
+                  "pm.test(\"All entities have a valid building type\", () => {",
+                  "    entities.forEach((entity) => {",
+                  "        pm.expect(entity).to.have.property('buildingType');",
+                  "        pm.expect(entity.buildingType).to.be.a('object');",
+                  "        pm.expect(entity.buildingType).to.have.property('id');",
+                  "        pm.expect(entity.buildingType.id).to.be.a('number')",
+                  "        pm.expect(entity.buildingType).to.have.property('name');",
+                  "        pm.expect(entity.buildingType.name).to.be.a('string')",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"All entities have a valid shoreline type\", () => {",
+                  "    entities.forEach((entity) => {",
+                  "        pm.expect(entity).to.have.property('shorelineType');",
+                  "        pm.expect(entity.shorelineType).to.be.a('object');",
+                  "        pm.expect(entity.shorelineType).to.have.property('id');",
+                  "        pm.expect(entity.shorelineType.id).to.be.a('number')",
+                  "        pm.expect(entity.shorelineType).to.have.property('name');",
+                  "        pm.expect(entity.shorelineType.name).to.be.a('string')",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"All entities have a valid area type\", () => {",
+                  "    entities.forEach((entity) => {",
+                  "        pm.expect(entity).to.have.property('areaType');",
+                  "        pm.expect(entity.areaType).to.be.a('object');",
+                  "        pm.expect(entity.areaType).to.have.property('id');",
+                  "        pm.expect(entity.areaType.id).to.be.a('number')",
+                  "        pm.expect(entity.areaType).to.have.property('name');",
+                  "        pm.expect(entity.areaType.name).to.be.a('string')",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "query BuildingCountEntities {\n    buildingCountEntities {\n        items {\n            id\n            year\n            buildingCount\n            region {\n                code\n                name\n                regionType {\n                    id\n                    name\n                }\n            }\n            buildingType {\n                id\n                name\n            }\n            shorelineType {\n                id\n                name\n            }\n            areaType {\n                id\n                name\n            }\n        }\n        totalCount\n        limit\n        offset\n        hasNextPage\n    }\n}\n",
+                "variables": ""
+              }
+            },
+            "url": {
+              "raw": "{{queryUrl}}",
+              "host": [
+                "{{queryUrl}}"
+              ]
+            },
+            "description": "Fetch building counts entities with all fields.\n\n- Use default limit and offset.\n    \n- Use no filters.\n    \n- Validate all fields."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Building Count Entities - Create, Update and Delete operations",
+      "item": [
+        {
+          "name": "Get total count",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Content-Type is application/json\", () => {",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "});",
+                  "",
+                  "pm.test(\"Response has correct status code: 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const response = pm.response.json();",
+                  "",
+                  "pm.test('Response contains data', () => {",
+                  "    pm.expect(response).to.have.property(\"data\")",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains total count\", () => {",
+                  "    pm.expect(response.data.buildingCountEntities).to.have.property(\"totalCount\");",
+                  "});",
+                  "",
+                  "pm.collectionVariables.set(\"totalCount\", response.data.buildingCountEntities.totalCount);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "query BuildingCountEntities {\n    buildingCountEntities {\n        totalCount\n    }\n}\n",
+                "variables": ""
+              }
+            },
+            "url": {
+              "raw": "{{queryUrl}}",
+              "host": [
+                "{{queryUrl}}"
+              ]
+            },
+            "description": "Fetch building counts entities with all fields.\n\n- Use default limit and offset.\n    \n- Use no filters.\n    \n- Validate all fields."
+          },
+          "response": []
+        },
+        {
+          "name": "Create entity",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const min = 1;",
+                  "",
+                  "const generatedAreaTypeId = Math.floor(Math.random() * (3 - min + 1)) + min;",
+                  "pm.collectionVariables.set(\"areaTypeId\", generatedAreaTypeId);",
+                  "",
+                  "const generatedBuildingTypeId = Math.floor(Math.random() * (8 - min + 1)) + min;",
+                  "pm.collectionVariables.set(\"buildingTypeId\", generatedBuildingTypeId);",
+                  "",
+                  "const generatedShorelineTypeId = Math.floor(Math.random() * (3 - min + 1)) + min;",
+                  "pm.collectionVariables.set(\"shorelineTypeId\", generatedShorelineTypeId);",
+                  "",
+                  "const regionCodes = [\"24\", \"2401\", \"2403\", \"2404\", \"2409\", \"2417\", \"2418\", \"2421\", \"2422\", \"2425\", \"2460\", \"2462\", \"2463\", \"2480\", \"2481\", \"2482\"];",
+                  "const generatedRegionCode = regionCodes[Math.floor(Math.random() * regionCodes.length)];",
+                  "pm.collectionVariables.set(\"regionCode\", generatedRegionCode);",
+                  "",
+                  "const year = 2026;",
+                  "pm.collectionVariables.set(\"year\", year);",
+                  "",
+                  "const minCount = 10000;",
+                  "const maxCount = 30000;",
+                  "const generatedBuildingCount = Math.floor(Math.random() * (maxCount - minCount + 1)) + minCount;",
+                  "pm.collectionVariables.set(\"buildingCount\", generatedBuildingCount);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Content-Type is application/json\", () => {",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "});",
+                  "",
+                  "pm.test(\"Response has correct status code: 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const response = pm.response.json();",
+                  "",
+                  "pm.test(\"Response contains data\", () => {",
+                  "    pm.expect(response).to.have.property(\"data\")",
+                  "});",
+                  "",
+                  "const entity = response.data.createBuildingCountEntity;",
+                  "",
+                  "pm.test(\"Response contains created building count entity\", () => {",
+                  "    pm.expect(entity.region.code).to.equal(pm.variables.get(\"regionCode\"));",
+                  "    pm.expect(entity.areaType.id).to.equal(pm.variables.get(\"areaTypeId\"));",
+                  "    pm.expect(entity.buildingType.id).to.equal(pm.variables.get(\"buildingTypeId\"));",
+                  "    pm.expect(entity.shorelineType.id).to.equal(pm.variables.get(\"shorelineTypeId\"));",
+                  "    pm.expect(entity.year).to.equal(pm.variables.get(\"year\"));",
+                  "    pm.expect(entity.buildingCount).to.equal(pm.variables.get(\"buildingCount\"));",
+                  "});",
+                  "",
+                  "pm.collectionVariables.set(\"id\", entity.id);",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "mutation CreateMutation($regionCode: String! \n            $areaTypeId: Int!\n            $buildingTypeId: Int! \n            $shorelineTypeId: Int! \n            $year: Int!\n            $buildingCount: Int!) {\n    createBuildingCountEntity (\n        input: {\n            regionCode: $regionCode, \n            areaTypeId: $areaTypeId, \n            buildingTypeId: $buildingTypeId, \n            shorelineTypeId: $shorelineTypeId, \n            year: $year, \n            buildingCount: $buildingCount}\n    ){\n        id\n        year\n        buildingCount\n        region {\n            code\n            name\n            regionType {\n                id\n                name\n            }\n        }\n        buildingType {\n            id\n            name\n        }\n        shorelineType {\n            id\n            name\n        }\n        areaType {\n            id\n            name\n        }\n    }\n}\n",
+                "variables": "{\n    \"regionCode\": \"{{regionCode}}\", \n    \"areaTypeId\": {{areaTypeId}}, \n    \"buildingTypeId\": {{buildingTypeId}}, \n    \"shorelineTypeId\": {{shorelineTypeId}}, \n    \"year\": {{year}}, \n    \"buildingCount\": {{buildingCount}}\n}"
+              }
+            },
+            "url": {
+              "raw": "{{queryUrl}}",
+              "host": [
+                "{{queryUrl}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get new total count",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Content-Type is application/json\", () => {",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "});",
+                  "",
+                  "pm.test(\"Response has correct status code: 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const response = pm.response.json();",
+                  "",
+                  "pm.test('Response contains data', () => {",
+                  "    pm.expect(response).to.have.property(\"data\")",
+                  "});",
+                  "",
+                  "const totalCount = pm.collectionVariables.get(\"totalCount\");",
+                  "",
+                  "pm.test(\"Response contains total count\", () => {",
+                  "    pm.expect(response.data.buildingCountEntities).to.have.property(\"totalCount\");",
+                  "    pm.expect(response.data.buildingCountEntities.totalCount).to.equal(totalCount + 1);",
+                  "});",
+                  "",
+                  "pm.collectionVariables.set(\"newTotalCount\", response.data.buildingCountEntities.totalCount);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "query BuildingCountEntities {\n    buildingCountEntities {\n        totalCount\n    }\n}\n",
+                "variables": ""
+              }
+            },
+            "url": {
+              "raw": "{{queryUrl}}",
+              "host": [
+                "{{queryUrl}}"
+              ]
+            },
+            "description": "Fetch building counts entities with all fields.\n\n- Use default limit and offset.\n    \n- Use no filters.\n    \n- Validate all fields."
+          },
+          "response": []
+        },
+        {
+          "name": "Get created entity",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Content-Type is application/json\", () => {",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "});",
+                  "",
+                  "pm.test(\"Response has correct status code: 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const response = pm.response.json();",
+                  "",
+                  "pm.test(\"Response contains data\", () => {",
+                  "    pm.expect(response).to.have.property(\"data\")",
+                  "});",
+                  "",
+                  "const entity = response.data.buildingCountEntity;",
+                  "",
+                  "pm.test(\"Response contains latest created building count entity\", () => {",
+                  "    pm.expect(entity).to.have.property(\"id\");",
+                  "    pm.expect(entity.region.code).to.equal(pm.variables.get(\"regionCode\"));",
+                  "    pm.expect(entity.areaType.id).to.equal(pm.variables.get(\"areaTypeId\"));",
+                  "    pm.expect(entity.buildingType.id).to.equal(pm.variables.get(\"buildingTypeId\"));",
+                  "    pm.expect(entity.shorelineType.id).to.equal(pm.variables.get(\"shorelineTypeId\"));",
+                  "    pm.expect(entity.year).to.equal(pm.variables.get(\"year\"));",
+                  "    pm.expect(entity.buildingCount).to.equal(pm.variables.get(\"buildingCount\"));",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "query buildingCountEntity($id: Int!) {\nbuildingCountEntity(id: $id) {\n    id\n    region {\n      code\n      name\n      regionType {\n        id\n        name\n      }\n    }\n    areaType {\n      id\n      name\n    }\n    buildingType {\n      id\n      name\n    }\n    shorelineType {\n      id\n      name\n    }\n    buildingCount\n    year\n    createdAt\n    updatedAt\n  }\n}",
+                "variables": "{\n    \"id\": {{id}}\n}"
+              }
+            },
+            "url": {
+              "raw": "{{queryUrl}}",
+              "host": [
+                "{{queryUrl}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update entity",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const regionCodes = [\"24\", \"2401\", \"2403\", \"2404\", \"2409\", \"2417\", \"2418\", \"2421\", \"2422\", \"2425\", \"2460\", \"2462\", \"2463\", \"2480\", \"2481\", \"2482\"];",
+                  "const generatedRegionCode = regionCodes[Math.floor(Math.random() * regionCodes.length)];",
+                  "pm.collectionVariables.set(\"newRegionCode\", generatedRegionCode);",
+                  "",
+                  "const newYear = 2027;",
+                  "pm.collectionVariables.set(\"newYear\", newYear);",
+                  "",
+                  "const generatedBuildingCount = pm.collectionVariables.get(\"buildingCount\") + 10000;",
+                  "pm.collectionVariables.set(\"newBuildingCount\", generatedBuildingCount);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Content-Type is application/json\", () => {",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "});",
+                  "",
+                  "pm.test(\"Response has correct status code: 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const response = pm.response.json();",
+                  "",
+                  "pm.test(\"Response contains data\", () => {",
+                  "    pm.expect(response).to.have.property(\"data\")",
+                  "});",
+                  "",
+                  "const entity = response.data.updateBuildingCountEntity;",
+                  "",
+                  "pm.test(\"Response contains created building count entity\", () => {",
+                  "    pm.expect(entity.region.code).to.equal(pm.variables.get(\"newRegionCode\"));",
+                  "    pm.expect(entity.areaType.id).to.equal(pm.variables.get(\"areaTypeId\"));",
+                  "    pm.expect(entity.buildingType.id).to.equal(pm.variables.get(\"buildingTypeId\"));",
+                  "    pm.expect(entity.shorelineType.id).to.equal(pm.variables.get(\"shorelineTypeId\"));",
+                  "    pm.expect(entity.year).to.equal(pm.variables.get(\"newYear\"));",
+                  "    pm.expect(entity.buildingCount).to.equal(pm.variables.get(\"newBuildingCount\"));",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "mutation UpdateMutation($id: Int!\n            $newRegionCode: String! \n            $newYear: Int! \n            $newBuildingCount: Int!) {\n   updateBuildingCountEntity(id: $id, \n    input: {\n        regionCode: $newRegionCode,\n        year: $newYear,\n        buildingCount: $newBuildingCount}) \n        {\n    id\n    region {\n      code\n      name\n    }\n    areaType {\n      id\n      name\n    }\n    buildingType {\n      id\n      name\n    }\n    shorelineType {\n      id\n      name\n    }\n    buildingCount\n    year\n    createdAt\n    updatedAt\n  }\n}",
+                "variables": "{\n    \"id\": {{id}},\n    \"newRegionCode\": \"{{newRegionCode}}\", \n    \"newYear\": {{newYear}}, \n    \"newBuildingCount\": {{newBuildingCount}}\n}"
+              }
+            },
+            "url": {
+              "raw": "{{queryUrl}}",
+              "host": [
+                "{{queryUrl}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete entity",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Content-Type is application/json\", () => {",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "});",
+                  "",
+                  "pm.test(\"Response has correct status code: 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const response = pm.response.json();",
+                  "",
+                  "pm.test(\"Response contains data\", () => {",
+                  "    pm.expect(response).to.have.property(\"data\")",
+                  "});",
+                  "",
+                  "pm.test(\"Entity was deleted\", () => {",
+                  "    pm.expect(response.data.deleteBuildingCountEntity).to.equal(true);",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "mutation DeleteMutation($id: Int!) {\n   deleteBuildingCountEntity(id: $id) \n}",
+                "variables": "{\n    \"id\": {{id}}\n}"
+              }
+            },
+            "url": {
+              "raw": "{{queryUrl}}",
+              "host": [
+                "{{queryUrl}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get entities without deleted one",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Content-Type is application/json\", () => {",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "});",
+                  "",
+                  "pm.test(\"Response has correct status code: 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const response = pm.response.json();",
+                  "",
+                  "pm.test('Response contains data', () => {",
+                  "    pm.expect(response).to.have.property(\"data\")",
+                  "});",
+                  "",
+                  "const entities = response.data.buildingCountEntities.items;",
+                  "",
+                  "pm.test(\"Response does not contain deleted entity\", () => {",
+                  "    entities.forEach((entity) => {",
+                  "        pm.expect(entity).to.have.property('id');",
+                  "        pm.expect(entity.id).to.not.equal(pm.collectionVariables.get(\"id\"));",
+                  "    })",
+                  "});",
+                  "",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const deletedEntityLimit = 10;",
+                  "pm.collectionVariables.set(\"deletedEntityLimit\", deletedEntityLimit);",
+                  "",
+                  "const deletedEntityOffset = pm.collectionVariables.get(\"newTotalCount\") - (deletedEntityLimit - 2);",
+                  "pm.collectionVariables.set(\"deletedEntityOffset\", deletedEntityOffset);",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "query BuildingCountEntities ($limit: Int!, $offset: Int!) {\n    buildingCountEntities (limit: $limit, offset: $offset ) {\n        items {\n            id\n            year\n            buildingCount\n        }\n        totalCount\n        limit\n        offset\n        hasNextPage\n    }\n}\n",
+                "variables": "{\n    \"limit\": {{deletedEntityLimit}},\n    \"offset\": {{deletedEntityOffset}}\n}"
+              }
+            },
+            "url": {
+              "raw": "{{queryUrl}}",
+              "host": [
+                "{{queryUrl}}"
+              ]
+            },
+            "description": "Fetch building counts entities with all fields.\n\n- Use default limit and offset.\n    \n- Use no filters.\n    \n- Validate all fields."
+          },
+          "response": []
+        }
+      ],
+      "auth": {
+        "type": "bearer",
+        "bearer": [
+          {
+            "key": "token",
+            "value": "{{jwt}}",
+            "type": "string"
+          }
+        ]
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Building Count entities - Invalid input",
+      "item": [
+        {
+          "name": "Get building count entities with invalid input",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Content-Type is application/json\", () => {",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "});",
+                  "",
+                  "pm.test(\"Response has status code 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const response = pm.response.json();",
+                  "",
+                  "pm.test('Response contains errors', () => {",
+                  "    pm.expect(response).to.have.property(\"errors\")",
+                  "});",
+                  "",
+                  "pm.test('Response contains error message', () => {",
+                  "    pm.expect(response.errors[0]).to.have.property(\"message\")",
+                  "    pm.expect(response.errors[0].message).to.contain(\"Invalid filter value(s)\")",
+                  "    pm.expect(response.errors[0].message).to.contain(\"is not a valid region code\")",
+                  "    pm.expect(response.errors[0].message).to.contain(\"is not a valid area type\")",
+                  "    pm.expect(response.errors[0].message).to.contain(\"is not a valid building type\")",
+                  "    pm.expect(response.errors[0].message).to.contain(\"is not a valid shoreline type\")",
+                  "    pm.expect(response.errors[0].message).to.contain(\"is not a valid year\")",
+                  "});",
+                  "",
+                  "pm.test('Response contains no data', () => {",
+                  "    pm.expect(response.data.buildingCountEntities).to.be.null",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const invalidAreaTypeId = 51;",
+                  "pm.collectionVariables.set(\"invalidAreaTypeId\", invalidAreaTypeId);",
+                  "",
+                  "const invalidBuildingTypeId = 52;",
+                  "pm.collectionVariables.set(\"invalidBuildingTypeId\", invalidBuildingTypeId);",
+                  "",
+                  "const invalidShorelineTypeId = 53;",
+                  "pm.collectionVariables.set(\"invalidShorelineTypeId\", invalidShorelineTypeId);",
+                  "",
+                  "const invalidRegionCode = \"99\";",
+                  "pm.collectionVariables.set(\"invalidRegionCode\", invalidRegionCode);",
+                  "",
+                  "const invalidYear = 20;",
+                  "pm.collectionVariables.set(\"invalidYear\", invalidYear);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "query BuildingCountEntities($regionCode: String! \n            $areaTypeId: Int!\n            $buildingTypeId: Int! \n            $shorelineTypeId: Int! \n            $year: Int!) {\n    buildingCountEntities(\n        filter: {\n            regionCode: $regionCode\n            areaTypeId: $areaTypeId\n            buildingTypeId: $buildingTypeId\n            shorelineTypeId: $shorelineTypeId\n            year: $year\n        }\n    ) {\n        items {\n            id\n            year\n            buildingCount\n            region {\n                code\n                name\n                regionType {\n                    id\n                    name\n                }\n            }\n            buildingType {\n                id\n                name\n            }\n            shorelineType {\n                id\n                name\n            }\n            areaType {\n                id\n                name\n            }\n        }\n        totalCount\n        limit\n        offset\n        hasNextPage\n    }\n}\n",
+                "variables": "{\n    \"regionCode\": \"{{invalidRegionCode}}\", \n    \"areaTypeId\": {{invalidAreaTypeId}}, \n    \"buildingTypeId\": {{invalidBuildingTypeId}}, \n    \"shorelineTypeId\": {{invalidShorelineTypeId}}, \n    \"year\": {{invalidYear}}\n}"
+              }
+            },
+            "url": {
+              "raw": "{{queryUrl}}",
+              "host": [
+                "{{queryUrl}}"
+              ]
+            },
+            "description": "Fetch building count entities with invalid input for all filter variables.\n\nUse default limit and offset."
+          },
+          "response": []
+        },
+        {
+          "name": "Create entity with invalid values",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const invalidAreaTypeId = 51;",
+                  "pm.collectionVariables.set(\"invalidAreaTypeId\", invalidAreaTypeId);",
+                  "",
+                  "const invalidBuildingTypeId = 52;",
+                  "pm.collectionVariables.set(\"invalidBuildingTypeId\", invalidBuildingTypeId);",
+                  "",
+                  "const invalidShorelineTypeId = 53;",
+                  "pm.collectionVariables.set(\"invalidShorelineTypeId\", invalidShorelineTypeId);",
+                  "",
+                  "const invalidRegionCode = \"99\";",
+                  "pm.collectionVariables.set(\"invalidRegionCode\", invalidRegionCode);",
+                  "",
+                  "const invalidYear = 20;",
+                  "pm.collectionVariables.set(\"invalidYear\", invalidYear);",
+                  "",
+                  "const minCount = 10000;",
+                  "const maxCount = 30000;",
+                  "const generatedBuildingCount = Math.floor(Math.random() * (maxCount - minCount + 1)) + minCount;",
+                  "pm.collectionVariables.set(\"buildingCount\", generatedBuildingCount);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Content-Type is application/json\", () => {",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "});",
+                  "",
+                  "pm.test(\"Response has status code 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const response = pm.response.json();",
+                  "",
+                  "pm.test('Response contains errors', () => {",
+                  "    pm.expect(response).to.have.property(\"errors\")",
+                  "});",
+                  "",
+                  "pm.test('Response contains error message', () => {",
+                  "    pm.expect(response.errors[0]).to.have.property(\"message\")",
+                  "});",
+                  "",
+                  "pm.test('Response contains no data', () => {",
+                  "    pm.expect(response.data.createBuildingCountEntity).to.be.null",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "mutation CreateMutation($regionCode: String! \n            $areaTypeId: Int!\n            $buildingTypeId: Int! \n            $shorelineTypeId: Int! \n            $year: Int!\n            $buildingCount: Int!) {\n    createBuildingCountEntity (\n        input: {\n            regionCode: $regionCode, \n            areaTypeId: $areaTypeId, \n            buildingTypeId: $buildingTypeId, \n            shorelineTypeId: $shorelineTypeId, \n            year: $year, \n            buildingCount: $buildingCount}\n    ){\n        id\n        year\n        buildingCount\n        region {\n            code\n            name\n            regionType {\n                id\n                name\n            }\n        }\n        buildingType {\n            id\n            name\n        }\n        shorelineType {\n            id\n            name\n        }\n        areaType {\n            id\n            name\n        }\n    }\n}\n",
+                "variables": "{\n    \"regionCode\": \"{{invalidRegionCode}}\", \n    \"areaTypeId\": {{invalidAreaTypeId}}, \n    \"buildingTypeId\": {{invalidBuildingTypeId}}, \n    \"shorelineTypeId\": {{invalidShorelineTypeId}}, \n    \"year\": {{invalidYear}}, \n    \"buildingCount\": {{buildingCount}}\n}"
+              }
+            },
+            "url": {
+              "raw": "{{queryUrl}}",
+              "host": [
+                "{{queryUrl}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "auth": {
+        "type": "bearer",
+        "bearer": [
+          {
+            "key": "token",
+            "value": "{{jwt}}",
+            "type": "string"
+          }
+        ]
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Regions",
+      "item": [
+        {
+          "name": "Response time",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Response time is less than 600ms\", () => {",
+                  "  pm.expect(pm.response.responseTime).to.be.below(600);",
+                  "});",
+                  "",
+                  "pm.test(\"Content-Type is application/json\", () => {",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "});",
+                  "",
+                  "const response = pm.response.json();",
+                  "",
+                  "pm.test('Response contains data', function () {",
+                  "    pm.expect(response.data).to.have.property(\"regions\")",
+                  "});",
+                  "",
+                  "pm.test(\"All entities have a region code\", () => {",
+                  "    const entities = response.data.regions.items;",
+                  "    ",
+                  "    entities.forEach((entity) => {",
+                  "        pm.expect(entity).to.have.property('code');",
+                  "        pm.expect(entity.code).to.be.a('string');",
+                  "    });",
+                  "});",
+                  "",
+                  "",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "query Regions {\n    regions {\n        items {\n            code\n            name\n            regionType {\n                id\n                name\n            }\n        }\n        totalCount\n        limit\n        offset\n        hasNextPage\n    }\n}\n",
+                "variables": ""
+              }
+            },
+            "url": {
+              "raw": "{{queryUrl}}",
+              "host": [
+                "{{queryUrl}}"
+              ]
+            },
+            "description": "Check that response time for all regions with all fields is less than 600ms.  \nUse limit 500 to get all 312 regions."
+          },
+          "response": []
+        },
+        {
+          "name": "Get regions",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Content-Type is application/json\", () => {",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "});",
+                  "",
+                  "pm.test(\"Response has correct status code\", () => {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const response = pm.response.json();",
+                  "",
+                  "pm.test('Response contains data', function () {",
+                  "    pm.expect(response).to.have.property(\"data\")",
+                  "});",
+                  "",
+                  "pm.test('Response contains regions', function () {",
+                  "    pm.expect(response.data).to.have.property(\"regions\")",
+                  "});",
+                  "",
+                  "pm.test(\"All regions have valid properties\", () => {",
+                  "    const regions = response.data.regions.items;",
+                  "    ",
+                  "    regions.forEach((region) => {",
+                  "        pm.expect(region).to.have.property('code');",
+                  "        pm.expect(region.code).to.be.a('string');",
+                  "        pm.expect(region).to.have.property('name');",
+                  "        pm.expect(region.name).to.be.a('string');",
+                  "        pm.expect(region).to.have.property('regionType');",
+                  "        pm.expect(region.regionType).to.be.a('object');",
+                  "        pm.expect(region.regionType).to.have.property('id');",
+                  "        pm.expect(region.regionType.id).to.be.a('number');",
+                  "        pm.expect(region.regionType).to.have.property('name');",
+                  "        pm.expect(region.regionType.name).to.be.a('string');",
+                  "    });",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "query Regions {\n    regions {\n        items {\n            code\n            name\n            regionType {\n                id\n                name\n            }\n        }\n        totalCount\n        limit\n        offset\n        hasNextPage\n    }\n}\n",
+                "variables": ""
+              }
+            },
+            "url": {
+              "raw": "{{queryUrl}}",
+              "host": [
+                "{{queryUrl}}"
+              ]
+            },
+            "description": "Fetch regions with all fields. Use default limit and offset."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "id",
+      "value": ""
+    },
+    {
+      "key": "areaTypeId",
+      "value": ""
+    },
+    {
+      "key": "regionCode",
+      "value": ""
+    },
+    {
+      "key": "buildingTypeId",
+      "value": ""
+    },
+    {
+      "key": "shorelineTypeId",
+      "value": ""
+    },
+    {
+      "key": "year",
+      "value": ""
+    },
+    {
+      "key": "buildingCount",
+      "value": ""
+    },
+    {
+      "key": "newRegionCode",
+      "value": ""
+    },
+    {
+      "key": "newYear",
+      "value": ""
+    },
+    {
+      "key": "newBuildingCount",
+      "value": ""
+    },
+    {
+      "key": "deletedEntityLimit",
+      "value": ""
+    },
+    {
+      "key": "deletedEntityOffset",
+      "value": ""
+    },
+    {
+      "key": "totalCount",
+      "value": ""
+    },
+    {
+      "key": "newTotalCount",
+      "value": ""
+    },
+    {
+      "key": "invalidAreaTypeId",
+      "value": ""
+    },
+    {
+      "key": "invalidBuildingTypeId",
+      "value": ""
+    },
+    {
+      "key": "invalidShorelineTypeId",
+      "value": ""
+    },
+    {
+      "key": "invalidRegionCode",
+      "value": ""
+    },
+    {
+      "key": "invalidYear",
+      "value": ""
+    }
+  ]
+}
