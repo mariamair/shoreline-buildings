@@ -2,6 +2,7 @@ package com.buildings.service;
 
 import com.buildings.domain.BuildingCountEntity;
 import com.buildings.dto.BuildingCountFilterDto;
+import com.buildings.dto.BuildingCountContent;
 import com.buildings.dto.BuildingCountEntityDto;
 import com.buildings.repository.BuildingCountRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -47,7 +48,7 @@ public class BuildingCountService {
     return buildingCountRepository.saveBuildingCountEntity(buildingCountEntity);
   }
 
-  public BuildingCountEntity updateBuildingCountEntity(Long id, BuildingCountEntityDto buildingCountEntity) {
+  public BuildingCountEntity updateBuildingCountEntity(Long id, BuildingCountContent buildingCountEntity) {
     return buildingCountRepository.updateBuildingCountEntity(id, buildingCountEntity);
   }
 
@@ -66,7 +67,7 @@ public class BuildingCountService {
     if (filter.getRegionCode() != null) {
       String regionCode = filter.getRegionCode();
       if (!regionService.getRegionCodes().contains(regionCode)) {
-        errors.add(String.format("%s' is not a valid region code", regionCode));
+        errors.add(String.format("'%s' is not a valid region code", regionCode));
       }
     }
 

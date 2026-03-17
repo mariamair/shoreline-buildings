@@ -2,6 +2,7 @@ package com.buildings.repository;
 
 import com.buildings.domain.BuildingCountEntity;
 import com.buildings.dto.BuildingCountFilterDto;
+import com.buildings.dto.BuildingCountContent;
 import com.buildings.dto.BuildingCountEntityDto;
 import java.util.List;
 import java.util.Optional;
@@ -90,7 +91,7 @@ public class BuildingCountRepository {
       .single();
   }
   
-  public BuildingCountEntity updateBuildingCountEntity(Long id, BuildingCountEntityDto buildingCountEntity) {
+  public BuildingCountEntity updateBuildingCountEntity(Long id, BuildingCountContent buildingCountEntity) {
     FilterQuery updateQuery = buildUpdateQuery(buildingCountEntity);
     String sql = "UPDATE building_count SET updated_at = CURRENT_TIMESTAMP" 
       + updateQuery.sql()
@@ -140,38 +141,38 @@ public class BuildingCountRepository {
     }
     return new FilterQuery(sql.toString(), params);
   }
-  private FilterQuery buildUpdateQuery(BuildingCountEntityDto buildingCountEntity) {
+  private FilterQuery buildUpdateQuery(BuildingCountContent buildingCountEntity) {
     StringBuilder sql = new StringBuilder("");
     MapSqlParameterSource params = new MapSqlParameterSource();
 
-    if (buildingCountEntity != null && buildingCountEntity.getRegionCode() != null) {
+    if (buildingCountEntity != null && buildingCountEntity.regionCode() != null) {
       sql.append(", region_code = :regionCode");
-      params.addValue("regionCode", buildingCountEntity.getRegionCode());
+      params.addValue("regionCode", buildingCountEntity.regionCode());
     }
 
-    if (buildingCountEntity != null && buildingCountEntity.getAreaTypeId() != null) {
+    if (buildingCountEntity != null && buildingCountEntity.areaTypeId() != null) {
       sql.append(", area_type_id = :areaTypeId");
-      params.addValue("areaTypeId", buildingCountEntity.getAreaTypeId());
+      params.addValue("areaTypeId", buildingCountEntity.areaTypeId());
     }
 
-    if (buildingCountEntity != null && buildingCountEntity.getBuildingTypeId() != null) {
+    if (buildingCountEntity != null && buildingCountEntity.buildingTypeId() != null) {
       sql.append(", building_type_id = :buildingTypeId");
-      params.addValue("buildingTypeId", buildingCountEntity.getBuildingTypeId());
+      params.addValue("buildingTypeId", buildingCountEntity.buildingTypeId());
     }
 
-    if (buildingCountEntity != null && buildingCountEntity.getShorelineTypeId() != null) {
+    if (buildingCountEntity != null && buildingCountEntity.shorelineTypeId() != null) {
       sql.append(", shoreline_type_id = :shorelineTypeId");
-      params.addValue("shorelineTypeId", buildingCountEntity.getShorelineTypeId());
+      params.addValue("shorelineTypeId", buildingCountEntity.shorelineTypeId());
     }
 
-    if (buildingCountEntity != null && buildingCountEntity.getYear() != null) {
+    if (buildingCountEntity != null && buildingCountEntity.year() != null) {
       sql.append(", year = :year");
-      params.addValue("year", buildingCountEntity.getYear());
+      params.addValue("year", buildingCountEntity.year());
     }
 
-    if (buildingCountEntity != null && buildingCountEntity.getBuildingCount() != null) {
+    if (buildingCountEntity != null && buildingCountEntity.buildingCount() != null) {
       sql.append(", count = :count");
-      params.addValue("count", buildingCountEntity.getBuildingCount());
+      params.addValue("count", buildingCountEntity.buildingCount());
     }
     return new FilterQuery(sql.toString(), params);
   }
