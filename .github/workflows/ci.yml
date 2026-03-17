@@ -103,6 +103,14 @@ jobs:
       - name: Start services
         run: docker compose up -d --wait
 
+      - name: Wait for backend to be ready
+        run: |
+          for i in {1..30}; do
+            curl -sf http://localhost:8080/api/health && break
+            echo "Waiting for backend... ($i/30)"
+            sleep 2
+          done
+
       - name: Run Newman tests
         uses: anthonyvscode/newman-action@v1
         with:
