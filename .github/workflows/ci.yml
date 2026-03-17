@@ -6,9 +6,35 @@ on:
   pull_request:
 
 jobs:
-  build:
-    name: Build and Push Docker Image
+  detect-changes:
+    name: Detect Changed Services
     runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      db: ${{ steps.filter.outputs.db }}
+      seed: ${{ steps.filter.outputs.seed }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Detect changes
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            backend:
+              - 'backend/**'
+              - 'docker-compose.yml'
+            db:
+              - 'db/**'
+              - 'docker-compose.yml'
+            seed:
+              - 'seed/**'
+              - 'docker-compose.yml'
+
+  build:
+    name: Build and Push Docker Images
+    runs-on: ubuntu-latest
+    needs: [detect-changes]
     permissions:
       packages: write
       contents: read
@@ -31,17 +57,28 @@ jobs:
       - name: Log in to GitHub Container Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-      - name: Build Docker image
-        run: docker compose build
+      - name: Build and push backend
+        if: needs.detect-changes.outputs.backend == 'true' || github.event.before == '0000000000000000000000000000000000000000'
+        run: |
+          docker compose build backend
+          docker compose push backend
 
-      - name: Push Docker image to GHCR
-        run: docker compose push
+      - name: Build and push db
+        if: needs.detect-changes.outputs.db == 'true' || github.event.before == '0000000000000000000000000000000000000000'
+        run: |
+          docker compose build db
+          docker compose push db
+
+      - name: Build and push seed
+        if: needs.detect-changes.outputs.seed == 'true' || github.event.before == '0000000000000000000000000000000000000000'
+        run: |
+          docker compose build seed
+          docker compose push seed
 
   deploy:
     name: Deploy to Production
     runs-on: ubuntu-latest
-    needs: [build ]
+    needs: [build]
     steps:
       - name: Deploy reminder
         run: echo "Build and tests passed. Please run ./deploy.sh to deploy to production."
-
