@@ -126,7 +126,7 @@ jobs:
       - name: Run Newman tests
         run: |
           newman run tests/api-tests/ShorelineBuildingsAPI.postman_collection.json \
-            --environment tests/api-tests/postman/ci.postman_environment.json \
+            --environment tests/api-tests/ci.postman_environment.json \
             --reporters cli \
             --verbose
 
