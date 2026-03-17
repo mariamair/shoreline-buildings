@@ -13,10 +13,10 @@ import org.springframework.stereotype.Service;
 public class RegionService {
   private final RegionRepository regionRepository;
 
-  public RegionService(RegionRepository regionRepository) {
+  public RegionService(final RegionRepository regionRepository) {
     this.regionRepository = regionRepository;
-    }
-  
+  }
+
   public List<String> getRegionCodes() {
     List<String> regionCodes = regionRepository.findRegionCodes();
     if (regionCodes.isEmpty()) {
@@ -26,12 +26,12 @@ public class RegionService {
     return regionCodes;
   }
 
-  public Region getRegionByCode(String code) {
+  public Region getRegionByCode(final String code) {
     return regionRepository.findRegionByCode(code)
-      .orElseThrow(() -> new EntityNotFoundException(String.format("Found no region with code '%s'", code)));
+        .orElseThrow(() -> new EntityNotFoundException(String.format("Found no region with code '%s'", code)));
   }
 
-  public List<Region> getRegions(Integer regionTypeId, Integer limit, Integer offset) {
+  public List<Region> getRegions(final Integer regionTypeId, final Integer limit, final Integer offset) {
     List<Region> regions = regionRepository.findRegions(regionTypeId, limit, offset);
 
     if (regions.isEmpty()) {
@@ -41,11 +41,11 @@ public class RegionService {
     return regions;
   }
 
-  public int getTotalCount(Integer regionTypeId) {
+  public int getTotalCount(final Integer regionTypeId) {
     return regionRepository.countRegions(regionTypeId);
   }
 
-  public Map<Long, Region> getRegionsByBuildingCountIds(List<Long> buildingCountIds) {
+  public Map<Long, Region> getRegionsByBuildingCountIds(final List<Long> buildingCountIds) {
     return regionRepository.findRegionsByBuildingCountIds(buildingCountIds);
   }
 }

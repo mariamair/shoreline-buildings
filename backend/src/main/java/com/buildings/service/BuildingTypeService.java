@@ -8,9 +8,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class BuildingTypeService {
-  public final BuildingTypeRepository buildingTypeRepository;
+  private final BuildingTypeRepository buildingTypeRepository;
 
-  public BuildingTypeService(BuildingTypeRepository buildingTypeRepository) {
+  public BuildingTypeService(final BuildingTypeRepository buildingTypeRepository) {
     this.buildingTypeRepository = buildingTypeRepository;
   }
 
@@ -19,7 +19,7 @@ public class BuildingTypeService {
     return buildingTypeIds;
   }
 
-  public Map<Long, BuildingType> getBuildingTypesByBuildingCountIds(List<Long> buildingCountIds) {
+  public Map<Long, BuildingType> getBuildingTypesByBuildingCountIds(final List<Long> buildingCountIds) {
     return buildingTypeRepository.findBuildingTypesByBuildingCountIds(buildingCountIds);
   }
 }

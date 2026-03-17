@@ -8,9 +8,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AreaTypeService {
-  public final AreaTypeRepository areaTypeRepository;
+  private final AreaTypeRepository areaTypeRepository;
 
-  public AreaTypeService(AreaTypeRepository areaTypeRepository) {
+  public AreaTypeService(final AreaTypeRepository areaTypeRepository) {
     this.areaTypeRepository = areaTypeRepository;
   }
 
@@ -19,7 +19,7 @@ public class AreaTypeService {
     return areaTypeIds;
   }
 
-  public Map<Long, AreaType> getAreaTypesByBuildingCountIds(List<Long> buildingCountIds) {
+  public Map<Long, AreaType> getAreaTypesByBuildingCountIds(final List<Long> buildingCountIds) {
     return areaTypeRepository.findAreaTypesByBuildingCountIds(buildingCountIds);
   }
 }

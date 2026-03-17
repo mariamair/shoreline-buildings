@@ -8,9 +8,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ShorelineTypeService {
-  public final ShorelineTypeRepository shorelineTypeRepository;
+  private final ShorelineTypeRepository shorelineTypeRepository;
 
-  public ShorelineTypeService(ShorelineTypeRepository shorelineTypeRepository) {
+  public ShorelineTypeService(final ShorelineTypeRepository shorelineTypeRepository) {
     this.shorelineTypeRepository = shorelineTypeRepository;
   }
 
@@ -19,7 +19,7 @@ public class ShorelineTypeService {
     return shorelineTypeIds;
   }
 
-  public Map<Long, ShorelineType> getShorelineTypesByBuildingCountIds(List<Long> buildingCountIds) {
+  public Map<Long, ShorelineType> getShorelineTypesByBuildingCountIds(final List<Long> buildingCountIds) {
     return shorelineTypeRepository.findShorelineTypesByBuildingCountIds(buildingCountIds);
   }
 }

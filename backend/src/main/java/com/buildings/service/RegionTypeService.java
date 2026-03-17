@@ -8,9 +8,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class RegionTypeService {
-  public final RegionTypeRepository regionTypeRepository;
+  private final RegionTypeRepository regionTypeRepository;
 
-  public RegionTypeService(RegionTypeRepository regionTypeRepository) {
+  public RegionTypeService(final RegionTypeRepository regionTypeRepository) {
     this.regionTypeRepository = regionTypeRepository;
   }
 
@@ -19,7 +19,7 @@ public class RegionTypeService {
     return regionTypeIds;
   }
 
-  public Map<String, RegionType> getRegionTypesByRegionCodes(List<String> regionCodes) {
+  public Map<String, RegionType> getRegionTypesByRegionCodes(final List<String> regionCodes) {
     return regionTypeRepository.findRegionTypesByRegionCodes(regionCodes);
   }
 }
