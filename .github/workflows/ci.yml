@@ -111,6 +111,15 @@ jobs:
             sleep 2
           done
 
+      - name: Debug network
+        run: |
+          echo "=== Docker containers ==="
+          docker compose ps
+          echo "=== Test GraphQL endpoint ==="
+          curl -v -X POST http://localhost:8080/api/graphql \
+            -H "Content-Type: application/json" \
+            -d '{"query": "{ __typename }"}'
+
       - name: Run Newman tests
         uses: anthonyvscode/newman-action@v1
         with:
