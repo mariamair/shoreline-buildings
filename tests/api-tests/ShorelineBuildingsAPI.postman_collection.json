@@ -53,7 +53,7 @@
             "body": {
               "mode": "graphql",
               "graphql": {
-                "query": "query BuildingCountEntities {\n    buildingCountEntities(limit: 500) {\n        totalCount\n        limit\n        offset\n        hasNextPage\n        items {\n            id\n            year\n            buildingCount\n            region {\n                code\n                name\n                regionType {\n                    id\n                    name\n                }\n            }\n            buildingType {\n                id\n                name\n            }\n            shorelineType {\n                id\n                name\n            }\n            areaType {\n                id\n                name\n            }\n        }\n    }\n}\n",
+                "query": "query BuildingCountEntities {\n    buildingCountEntities(limit: 500) {\n        totalCount\n        limit\n        offset\n        hasNextPage\n        items {\n            id\n            year\n            buildingCount\n            region {\n                code\n                name\n                regionType {\n                    id\n                    name\n                }\n            }\n            areaType {\n                id\n                name\n            }\n            buildingType {\n                id\n                name\n            }\n            shorelineType {\n                id\n                name\n            }\n            createdAt\n            updatedAt\n        }\n    }\n}\n",
                 "variables": ""
               }
             },
@@ -63,7 +63,7 @@
                 "{{queryUrl}}"
               ]
             },
-            "description": "Check that response time for 500 entities with all fields is less than 600ms."
+            "description": "Check that response time for 500 entities with all fields is less than 1000ms."
           },
           "response": []
         },
@@ -159,6 +159,15 @@
                   "        pm.expect(entity.areaType).to.have.property('name');",
                   "        pm.expect(entity.areaType.name).to.be.a('string')",
                   "    });",
+                  "});",
+                  "",
+                  "pm.test(\"All entities have timestamps\", () => {",
+                  "    entities.forEach((entity) => {",
+                  "        pm.expect(entity).to.have.property('createdAt');",
+                  "        pm.expect(entity.createdAt).to.be.a('string');",
+                  "        pm.expect(entity).to.have.property('updatedAt');",
+                  "        pm.expect(entity.updatedAt).to.be.a('string')",
+                  "    });",
                   "});"
                 ],
                 "type": "text/javascript",
@@ -173,7 +182,7 @@
             "body": {
               "mode": "graphql",
               "graphql": {
-                "query": "query BuildingCountEntities {\n    buildingCountEntities {\n        items {\n            id\n            year\n            buildingCount\n            region {\n                code\n                name\n                regionType {\n                    id\n                    name\n                }\n            }\n            buildingType {\n                id\n                name\n            }\n            shorelineType {\n                id\n                name\n            }\n            areaType {\n                id\n                name\n            }\n        }\n        totalCount\n        limit\n        offset\n        hasNextPage\n    }\n}\n",
+                "query": "query BuildingCountEntities {\n    buildingCountEntities {\n        items {\n            id\n            year\n            buildingCount\n            region {\n                code\n                name\n                regionType {\n                    id\n                    name\n                }\n            }\n            areaType {\n                id\n                name\n            }\n            buildingType {\n                id\n                name\n            }\n            shorelineType {\n                id\n                name\n            }\n            createdAt\n            updatedAt\n        }\n        totalCount\n        limit\n        offset\n        hasNextPage\n    }\n}\n",
                 "variables": ""
               }
             },
@@ -186,8 +195,138 @@
             "description": "Fetch building counts entities with all fields.\n\n- Use default limit and offset.\n    \n- Use no filters.\n    \n- Validate all fields."
           },
           "response": []
+        },
+        {
+          "name": "Get building count entity by id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Content-Type is application/json\", () => {",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "});",
+                  "",
+                  "pm.test(\"Response has correct status code: 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const response = pm.response.json();",
+                  "",
+                  "pm.test('Response contains data', () => {",
+                  "    pm.expect(response).to.have.property(\"data\")",
+                  "});",
+                  "",
+                  "const entity = response.data.buildingCountEntity;",
+                  "",
+                  "pm.test(\"Entity has a valid id\", () => {",
+                  "    pm.expect(entity).to.have.property('id');",
+                  "    pm.expect(entity.id).to.be.a('number');",
+                  "});",
+                  "",
+                  "pm.test(\"Entity has a valid year\", () => {",
+                  "    pm.expect(entity).to.have.property('year');",
+                  "    pm.expect(entity.year).to.be.a('number');",
+                  "});",
+                  "",
+                  "pm.test(\"Entity has a valid building count\", () => {",
+                  "    pm.expect(entity).to.have.property('buildingCount');",
+                  "    pm.expect(entity.buildingCount).to.be.a('number');",
+                  "});",
+                  "",
+                  "pm.test(\"Entity has a valid region\", () => {",
+                  "    pm.expect(entity).to.have.property('region');",
+                  "    pm.expect(entity.region).to.be.a('object');",
+                  "    pm.expect(entity.region).to.have.property('code')",
+                  "    pm.expect(entity.region.code).to.be.a('string')",
+                  "    pm.expect(entity.region).to.have.property('name')",
+                  "    pm.expect(entity.region.name).to.be.a('string')",
+                  "    pm.expect(entity.region).to.have.property('regionType')",
+                  "    pm.expect(entity.region.regionType).to.be.a('object')",
+                  "    pm.expect(entity.region.regionType).to.have.property('id');",
+                  "    pm.expect(entity.region.regionType.id).to.be.a('number')",
+                  "    pm.expect(entity.region.regionType).to.have.property('name');",
+                  "    pm.expect(entity.region.regionType.name).to.be.a('string')",
+                  "});",
+                  "",
+                  "pm.test(\"Entity has a valid area type\", () => {",
+                  "    pm.expect(entity).to.have.property('areaType');",
+                  "    pm.expect(entity.areaType).to.be.a('object');",
+                  "    pm.expect(entity.areaType).to.have.property('id');",
+                  "    pm.expect(entity.areaType.id).to.be.a('number')",
+                  "    pm.expect(entity.areaType).to.have.property('name');",
+                  "    pm.expect(entity.areaType.name).to.be.a('string')",
+                  "});",
+                  "",
+                  "pm.test(\"Entity has a valid building type\", () => {",
+                  "    pm.expect(entity).to.have.property('buildingType');",
+                  "    pm.expect(entity.buildingType).to.be.a('object');",
+                  "    pm.expect(entity.buildingType).to.have.property('id');",
+                  "    pm.expect(entity.buildingType.id).to.be.a('number')",
+                  "    pm.expect(entity.buildingType).to.have.property('name');",
+                  "    pm.expect(entity.buildingType.name).to.be.a('string')",
+                  "});",
+                  "",
+                  "pm.test(\"Entity has a valid shoreline type\", () => {",
+                  "    pm.expect(entity).to.have.property('shorelineType');",
+                  "    pm.expect(entity.shorelineType).to.be.a('object');",
+                  "    pm.expect(entity.shorelineType).to.have.property('id');",
+                  "    pm.expect(entity.shorelineType.id).to.be.a('number')",
+                  "    pm.expect(entity.shorelineType).to.have.property('name');",
+                  "    pm.expect(entity.shorelineType.name).to.be.a('string')",
+                  "});",
+                  "",
+                  "pm.test(\"Entity has timestamps\", () => {",
+                  "    pm.expect(entity).to.have.property('createdAt');",
+                  "    pm.expect(entity.createdAt).to.be.a('string');",
+                  "    pm.expect(entity).to.have.property('updatedAt');",
+                  "    pm.expect(entity.updatedAt).to.be.a('string')",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const min = 1;",
+                  "const max = 130000;",
+                  "",
+                  "const generatedEntityId = Math.floor(Math.random() * (max - min + 1)) + min;",
+                  "pm.collectionVariables.set(\"entityId\", generatedEntityId);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "query BuildingCountEntity($id: Int!) {\n    buildingCountEntity(id: $id) {\n            id\n    year\n    buildingCount\n    region {\n      code\n      name\n      regionType {\n        id\n        name\n      }\n    }\n    areaType {\n      id\n      name\n    }\n    buildingType {\n      id\n      name\n    }\n    shorelineType {\n      id\n      name\n    }\n    createdAt\n    updatedAt\n  }\n}\n",
+                "variables": "{\n    \"id\": {{entityId}}\n}"
+              }
+            },
+            "url": {
+              "raw": "{{queryUrl}}",
+              "host": [
+                "{{queryUrl}}"
+              ]
+            },
+            "description": "Fetch one building count entity.\n\n- Use randomly picked id.\n    \n- Validate all fields."
+          },
+          "response": []
         }
-      ]
+      ],
+      "description": "Requests that test the read operations on building count entities."
     },
     {
       "name": "Building Count Entities - Create, Update and Delete operations",
@@ -275,10 +414,10 @@
                   "pm.collectionVariables.set(\"shorelineTypeId\", generatedShorelineTypeId);",
                   "",
                   "const regionCodes = [\"24\", \"2401\", \"2403\", \"2404\", \"2409\", \"2417\", \"2418\", \"2421\", \"2422\", \"2425\", \"2460\", \"2462\", \"2463\", \"2480\", \"2481\", \"2482\"];",
-                  "const generatedRegionCode = regionCodes[Math.floor(Math.random() * regionCodes.length)];",
-                  "pm.collectionVariables.set(\"regionCode\", generatedRegionCode);",
+                  "const randomRegionCode = regionCodes[Math.floor(Math.random() * regionCodes.length)];",
+                  "pm.collectionVariables.set(\"regionCode\", randomRegionCode);",
                   "",
-                  "const currentYear = new Date().getFullYear();",
+                  "const currentYear = new Date().getFullYear()",
                   "const year = currentYear - 2;",
                   "pm.collectionVariables.set(\"year\", year);",
                   "",
@@ -486,8 +625,8 @@
                   "const generatedRegionCode = regionCodes[Math.floor(Math.random() * regionCodes.length)];",
                   "pm.collectionVariables.set(\"newRegionCode\", generatedRegionCode);",
                   "",
-                  "const currentYear = new Date().getFullYear();",
-                  "const newYear = currentYear - 1;",
+                  "const currentYear = new Date().getFullYear()",
+                  "const year = currentYear - 1;",
                   "pm.collectionVariables.set(\"newYear\", newYear);",
                   "",
                   "const generatedBuildingCount = pm.collectionVariables.get(\"buildingCount\") + 10000;",
@@ -690,6 +829,7 @@
           "response": []
         }
       ],
+      "description": "Requests that test the create, update and delete operations on building count entities.\n\n- Authorization with JWT is required.",
       "auth": {
         "type": "bearer",
         "bearer": [
@@ -729,7 +869,7 @@
       "name": "Building Count entities - Invalid input",
       "item": [
         {
-          "name": "Get building count entities with invalid input",
+          "name": "Get building count entities with invalid filter values",
           "event": [
             {
               "listen": "test",
@@ -809,7 +949,7 @@
                 "{{queryUrl}}"
               ]
             },
-            "description": "Fetch building count entities with invalid input for all filter variables.\n\nUse default limit and offset."
+            "description": "Try to fetch building count entities with invalid filter values.\n\n- Use invalid input for all filter variables that have boundaries.\n    \n- Use default limit and offset.\n    \n- Validate error message."
           },
           "response": []
         },
@@ -865,6 +1005,7 @@
                   "",
                   "pm.test('Response contains error message', () => {",
                   "    pm.expect(response.errors[0]).to.have.property(\"message\")",
+                  "    pm.expect(response.errors[0].message).to.contain(\"Invalid input value(s)\")",
                   "});",
                   "",
                   "pm.test('Response contains no data', () => {",
@@ -892,11 +1033,13 @@
               "host": [
                 "{{queryUrl}}"
               ]
-            }
+            },
+            "description": "Try to create a new building count entity with invalid values.\n\n- Use invalid values for all input variables that have boundaries.\n    \n- Validate error message."
           },
           "response": []
         }
       ],
+      "description": "Requests that test invalid read and create operations on building count entities.",
       "auth": {
         "type": "bearer",
         "bearer": [
@@ -956,12 +1099,12 @@
                   "    pm.expect(response.data).to.have.property(\"regions\")",
                   "});",
                   "",
-                  "pm.test(\"All entities have a region code\", () => {",
-                  "    const entities = response.data.regions.items;",
+                  "pm.test(\"All regions have a region code\", () => {",
+                  "    const regions = response.data.regions.items;",
                   "    ",
-                  "    entities.forEach((entity) => {",
-                  "        pm.expect(entity).to.have.property('code');",
-                  "        pm.expect(entity.code).to.be.a('string');",
+                  "    regions.forEach((region) => {",
+                  "        pm.expect(region).to.have.property('code');",
+                  "        pm.expect(region.code).to.be.a('string');",
                   "    });",
                   "});",
                   "",
@@ -990,7 +1133,7 @@
                 "{{queryUrl}}"
               ]
             },
-            "description": "Check that response time for all regions with all fields is less than 600ms.  \nUse limit 500 to get all 312 regions."
+            "description": "Check that response time for all regions with all fields is less than 600ms.\n\n- Use limit 500 to get all 312 regions.\n    \n- Validate all fields."
           },
           "response": []
         },
@@ -1041,6 +1184,17 @@
                 "packages": {},
                 "requests": {}
               }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
             }
           ],
           "request": {
@@ -1059,11 +1213,295 @@
                 "{{queryUrl}}"
               ]
             },
-            "description": "Fetch regions with all fields. Use default limit and offset."
+            "description": "Fetch regions with all fields.\n\n- Use default limit and offset.\n    \n- Validate all fields."
+          },
+          "response": []
+        },
+        {
+          "name": "Get region by region code",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Content-Type is application/json\", () => {",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "});",
+                  "",
+                  "pm.test(\"Response has correct status code\", () => {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const response = pm.response.json();",
+                  "",
+                  "pm.test('Response contains data', function () {",
+                  "    pm.expect(response).to.have.property(\"data\")",
+                  "});",
+                  "",
+                  "pm.test('Response contains region', function () {",
+                  "    pm.expect(response.data).to.have.property(\"region\")",
+                  "});",
+                  "",
+                  "pm.test(\"Region has valid properties\", () => {",
+                  "    const region = response.data.region;",
+                  "    pm.expect(region).to.have.property('code');",
+                  "    pm.expect(region.code).to.be.a('string');",
+                  "    pm.expect(region).to.have.property('name');",
+                  "    pm.expect(region.name).to.be.a('string');",
+                  "    pm.expect(region).to.have.property('regionType');",
+                  "    pm.expect(region.regionType).to.be.a('object');",
+                  "    pm.expect(region.regionType).to.have.property('id');",
+                  "    pm.expect(region.regionType.id).to.be.a('number');",
+                  "    pm.expect(region.regionType).to.have.property('name');",
+                  "    pm.expect(region.regionType.name).to.be.a('string');",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const regionCodes = [\"24\", \"2401\", \"2403\", \"2404\", \"2409\", \"2417\", \"2418\", \"2421\", \"2422\", \"2425\", \"2460\", \"2462\", \"2463\", \"2480\", \"2481\", \"2482\"];",
+                  "const randomRegionCode = regionCodes[Math.floor(Math.random() * regionCodes.length)];",
+                  "pm.collectionVariables.set(\"regionCode\", randomRegionCode);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "query Region($regionCode: String!) {\n    region(code: $regionCode) {\n        code\n        name\n        regionType {\n            id\n            name\n        }\n    }\n}\n",
+                "variables": "{\n    \"regionCode\": \"{{regionCode}}\"\n}"
+              }
+            },
+            "url": {
+              "raw": "{{queryUrl}}",
+              "host": [
+                "{{queryUrl}}"
+              ]
+            },
+            "description": "Fetch one region.\n\n- Use randomly picked region code.\n    \n- Validate all fields."
           },
           "response": []
         }
-      ]
+      ],
+      "description": "Requests that test the read operations on regions."
+    },
+    {
+      "name": "Building Types",
+      "item": [
+        {
+          "name": "Response time",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Response time is less than 600ms\", () => {",
+                  "  pm.expect(pm.response.responseTime).to.be.below(600);",
+                  "});",
+                  "",
+                  "pm.test(\"Content-Type is application/json\", () => {",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "});",
+                  "",
+                  "const response = pm.response.json();",
+                  "",
+                  "pm.test('Response contains data', function () {",
+                  "    pm.expect(response.data).to.have.property(\"buildingTypes\")",
+                  "});",
+                  "",
+                  "pm.test(\"All building types have valid properties\", () => {",
+                  "    const buildingTypes = response.data.buildingTypes;",
+                  "    ",
+                  "    buildingTypes.forEach((type) => {",
+                  "        pm.expect(type).to.have.property('id');",
+                  "        pm.expect(type.id).to.be.a('number');",
+                  "        pm.expect(type).to.have.property('name');",
+                  "        pm.expect(type.name).to.be.a('string');",
+                  "    });",
+                  "});",
+                  "",
+                  "",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "query BuildingTypes {\n    buildingTypes {\n        id\n        name\n  }\n}\n",
+                "variables": ""
+              }
+            },
+            "url": {
+              "raw": "{{queryUrl}}",
+              "host": [
+                "{{queryUrl}}"
+              ]
+            },
+            "description": "Check that response time for all building types with all fields is less than 600ms."
+          },
+          "response": []
+        },
+        {
+          "name": "Get building types",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Content-Type is application/json\", () => {",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "});",
+                  "",
+                  "pm.test(\"Response has correct status code\", () => {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const response = pm.response.json();",
+                  "",
+                  "pm.test('Response contains data', function () {",
+                  "    pm.expect(response).to.have.property(\"data\")",
+                  "});",
+                  "",
+                  "pm.test('Response contains building types', function () {",
+                  "    pm.expect(response.data).to.have.property(\"buildingTypes\")",
+                  "});",
+                  "",
+                  "pm.test(\"All building types have valid properties\", () => {",
+                  "    const buildingTypes = response.data.buildingTypes;",
+                  "    ",
+                  "    buildingTypes.forEach((type) => {",
+                  "        pm.expect(type).to.have.property('id');",
+                  "        pm.expect(type.id).to.be.a('number');",
+                  "        pm.expect(type).to.have.property('name');",
+                  "        pm.expect(type.name).to.be.a('string');",
+                  "    });",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "query BuildingTypes {\n    buildingTypes {\n        id\n        name\n  }\n}\n",
+                "variables": ""
+              }
+            },
+            "url": {
+              "raw": "{{queryUrl}}",
+              "host": [
+                "{{queryUrl}}"
+              ]
+            },
+            "description": "Fetch building types with all fields.\n\n- No limit and offset because of the low number of building types."
+          },
+          "response": []
+        },
+        {
+          "name": "Get building type by id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Content-Type is application/json\", () => {",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "});",
+                  "",
+                  "pm.test(\"Response has correct status code\", () => {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const response = pm.response.json();",
+                  "",
+                  "pm.test('Response contains data', function () {",
+                  "    pm.expect(response).to.have.property(\"data\")",
+                  "});",
+                  "",
+                  "pm.test('Response contains building type', function () {",
+                  "    pm.expect(response.data).to.have.property(\"buildingType\")",
+                  "});",
+                  "",
+                  "pm.test(\"Building type has valid properties\", () => {",
+                  "    pm.expect(response.data.buildingType).to.have.property('id');",
+                  "    pm.expect(response.data.buildingType.id).to.be.a('number');",
+                  "    pm.expect(response.data.buildingType).to.have.property('name');",
+                  "    pm.expect(response.data.buildingType.name).to.be.a('string');",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const min = 1;",
+                  "const max = 8;",
+                  "",
+                  "const generatedBuildingTypeId = Math.floor(Math.random() * (max - min + 1)) + min;",
+                  "pm.collectionVariables.set(\"buildingTypeId\", generatedBuildingTypeId);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "query BuildingTypes($id: Int!) {\n    buildingType(id: $id) {\n        id\n        name\n  }\n}\n",
+                "variables": "{\n    \"id\": {{buildingTypeId}}\n}"
+              }
+            },
+            "url": {
+              "raw": "{{queryUrl}}",
+              "host": [
+                "{{queryUrl}}"
+              ]
+            },
+            "description": "Fetch one building type.\n\n- Use randomly picked id.\n    \n- Validate fields."
+          },
+          "response": []
+        }
+      ],
+      "description": "Requests that test the read operations on building types."
     }
   ],
   "variable": [
@@ -1141,6 +1579,10 @@
     },
     {
       "key": "invalidYear",
+      "value": ""
+    },
+    {
+      "key": "entityId",
       "value": ""
     }
   ]
