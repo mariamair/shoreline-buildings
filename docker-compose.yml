@@ -21,8 +21,6 @@ services:
 
   backend:
     image: ghcr.io/mariamair/shorelinebuildings/backend:latest
-    build:
-      context: ./backend
     env_file:
       - .env
     environment:
@@ -39,9 +37,6 @@ services:
 
   seed:
     image: ghcr.io/mariamair/shorelinebuildings/seed:latest
-    build:
-      context: ./seed
-      dockerfile: Dockerfile
     environment:
       DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@db:${DB_PORT}/${DB_NAME}
       CSV_PATH: ${CSV_PATH}

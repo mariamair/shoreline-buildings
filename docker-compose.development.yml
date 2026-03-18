@@ -1,0 +1,12 @@
+services:  
+  db:
+
+  backend:
+    build:
+      context: ./backend
+
+  seed:
+    build:
+      context: ./seed
+      dockerfile: Dockerfile
+
