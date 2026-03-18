@@ -77,7 +77,7 @@ jobs:
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Build and push backend
-        if: needs.detect-changes.outputs.backend == 'true' || github.event.before == '0000000000000000000000000000000000000000'
+        if: needs.detect-changes.outputs.backend == 'true'
         run: |
           docker compose build backend
           docker compose push backend
