@@ -57,6 +57,8 @@ jobs:
     permissions:
       packages: write
       contents: read
+    env:
+      COMPOSE_FILE: docker-compose.yml:docker-compose.development.yml
     steps:
       - uses: actions/checkout@v5
 
