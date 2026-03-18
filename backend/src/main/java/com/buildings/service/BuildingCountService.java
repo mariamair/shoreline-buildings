@@ -1,7 +1,6 @@
 package com.buildings.service;
 
 import com.buildings.domain.BuildingCountEntity;
-import com.buildings.dto.BuildingCountFilterDto;
 import com.buildings.dto.BuildingCountContent;
 import com.buildings.repository.BuildingCountRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -38,7 +37,7 @@ public class BuildingCountService {
   }
 
   public List<BuildingCountEntity> getBuildingCountEntities(
-      final BuildingCountFilterDto filter,
+      final BuildingCountContent filter,
       final Integer limit,
       final Integer offset) {
     if (filter != null) {
@@ -47,7 +46,7 @@ public class BuildingCountService {
     return buildingCountRepository.findBuildingCountEntities(filter, limit, offset);
   }
 
-  public int getTotalCount(final BuildingCountFilterDto filter) {
+  public int getTotalCount(final BuildingCountContent filter) {
     return buildingCountRepository.countBuildingCountEntities(filter);
   }
 
@@ -71,39 +70,39 @@ public class BuildingCountService {
     return rowsAffected == 1;
   }
 
-  private void validateFilter(final BuildingCountFilterDto filter) {
+  private void validateFilter(final BuildingCountContent filter) {
     List<String> errors = new ArrayList<>();
 
-    if (filter.getRegionCode() != null) {
-      String regionCode = filter.getRegionCode();
+    if (filter.regionCode() != null) {
+      String regionCode = filter.regionCode();
       if (!regionService.getRegionCodes().contains(regionCode)) {
         errors.add(String.format("'%s' is not a valid region code", regionCode));
       }
     }
 
-    if (filter.getAreaTypeId() != null) {
-      int areaTypeId = filter.getAreaTypeId();
+    if (filter.areaTypeId() != null) {
+      int areaTypeId = filter.areaTypeId();
       if (!areaTypeService.getAreaTypeIds().contains(areaTypeId)) {
         errors.add(String.format("'%d' is not a valid area type", areaTypeId));
       }
     }
 
-    if (filter.getBuildingTypeId() != null) {
-      int buildingTypeId = filter.getBuildingTypeId();
+    if (filter.buildingTypeId() != null) {
+      int buildingTypeId = filter.buildingTypeId();
       if (!buildingTypeService.getBuildingTypeIds().contains(buildingTypeId)) {
         errors.add(String.format("'%d' is not a valid building type", buildingTypeId));
       }
     }
 
-    if (filter.getShorelineTypeId() != null) {
-      int shorelineTypeId = filter.getShorelineTypeId();
+    if (filter.shorelineTypeId() != null) {
+      int shorelineTypeId = filter.shorelineTypeId();
       if (!shorelineTypeService.getShorelineTypeIds().contains(shorelineTypeId)) {
         errors.add(String.format("'%d' is not a valid shoreline type", shorelineTypeId));
       }
     }
 
-    if (filter.getYear() != null) {
-      int year = filter.getYear();
+    if (filter.year() != null) {
+      int year = filter.year();
       if (!buildingCountRepository.getYears().contains(year)) {
         errors.add(String.format("'%d' is not a valid year", year));
       }

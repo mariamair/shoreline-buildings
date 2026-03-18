@@ -1,7 +1,6 @@
 package com.buildings.repository;
 
 import com.buildings.domain.BuildingCountEntity;
-import com.buildings.dto.BuildingCountFilterDto;
 import com.buildings.dto.BuildingCountContent;
 import java.util.List;
 import java.util.Optional;
@@ -40,7 +39,7 @@ public class BuildingCountRepository {
         .optional();
   }
 
-  public List<BuildingCountEntity> findBuildingCountEntities(final BuildingCountFilterDto filter, final int limit,
+  public List<BuildingCountEntity> findBuildingCountEntities(final BuildingCountContent filter, final int limit,
       final int offset) {
     FilterQuery filterQuery = buildFilterQuery(filter);
     String sql = baseSql
@@ -57,7 +56,7 @@ public class BuildingCountRepository {
         .list();
   }
 
-  public int countBuildingCountEntities(final BuildingCountFilterDto filter) {
+  public int countBuildingCountEntities(final BuildingCountContent filter) {
     FilterQuery filterQuery = buildFilterQuery(filter);
     String sql = "SELECT COUNT(*) FROM building_count"
         + filterQuery.sql();
@@ -117,28 +116,28 @@ public class BuildingCountRepository {
   private record FilterQuery(String sql, MapSqlParameterSource params) {
   }
 
-  private FilterQuery buildFilterQuery(final BuildingCountFilterDto filter) {
+  private FilterQuery buildFilterQuery(final BuildingCountContent filter) {
     StringBuilder sql = new StringBuilder(" WHERE 1=1");
     MapSqlParameterSource params = new MapSqlParameterSource();
 
-    if (filter != null && filter.getRegionCode() != null) {
+    if (filter != null && filter.regionCode() != null) {
       sql.append(" AND region_code = :regionCode");
-      params.addValue("regionCode", filter.getRegionCode());
+      params.addValue("regionCode", filter.regionCode());
     }
 
-    if (filter != null && filter.getAreaTypeId() != null) {
+    if (filter != null && filter.areaTypeId() != null) {
       sql.append(" AND area_type_id = :areaTypeId");
-      params.addValue("areaTypeId", filter.getAreaTypeId());
+      params.addValue("areaTypeId", filter.areaTypeId());
     }
 
-    if (filter != null && filter.getBuildingTypeId() != null) {
+    if (filter != null && filter.buildingTypeId() != null) {
       sql.append(" AND building_type_id = :buildingTypeId");
-      params.addValue("buildingTypeId", filter.getBuildingTypeId());
+      params.addValue("buildingTypeId", filter.buildingTypeId());
     }
 
-    if (filter != null && filter.getShorelineTypeId() != null) {
+    if (filter != null && filter.shorelineTypeId() != null) {
       sql.append(" AND shoreline_type_id = :shorelineTypeId");
-      params.addValue("shorelineTypeId", filter.getShorelineTypeId());
+      params.addValue("shorelineTypeId", filter.shorelineTypeId());
     }
     return new FilterQuery(sql.toString(), params);
   }
