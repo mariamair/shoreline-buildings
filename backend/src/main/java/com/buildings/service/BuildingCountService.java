@@ -79,7 +79,7 @@ public class BuildingCountService {
   public BuildingCountEntity updateBuildingCountEntity(final Long id, final BuildingCountContent buildingCountEntity) {
     List<String> errors = new ArrayList<>();
     errors = validateContent(buildingCountEntity);
-    
+
     if (buildingCountEntity.year() != null) {
         validateYearAsInput(buildingCountEntity.year()).ifPresent(errors::add);
     }
@@ -139,7 +139,8 @@ public class BuildingCountService {
     int currentYear = java.time.Year.now().getValue();
 
     if (year < earliestYear || year > currentYear) {
-        return Optional.of(String.format("'%d' is not a valid year. Year must be between %d and %d", year, earliestYear, currentYear));
+      return Optional.of(
+        String.format("'%d' is not a valid year. Year must be between %d and %d", year, earliestYear, currentYear));
     }
     return Optional.empty();
   }
