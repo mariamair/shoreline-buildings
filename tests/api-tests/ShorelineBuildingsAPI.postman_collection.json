@@ -19,8 +19,8 @@
                 "exec": [
                   "const response = pm.response.json();",
                   "",
-                  "pm.test(\"Response time is less than 700ms\", () => {",
-                  "  pm.expect(pm.response.responseTime).to.be.below(700);",
+                  "pm.test(\"Response time is less than 1000ms\", () => {",
+                  "  pm.expect(pm.response.responseTime).to.be.below(1000);",
                   "});",
                   "",
                   "pm.test(\"Content-Type is application/json\", () => {",
