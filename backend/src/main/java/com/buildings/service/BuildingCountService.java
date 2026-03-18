@@ -42,7 +42,7 @@ public class BuildingCountService {
       final Integer offset) {
 
     List<String> errors = new ArrayList<>();
-    
+
     if (filter != null) {
       errors = validateFilter(filter);
     }
@@ -58,7 +58,12 @@ public class BuildingCountService {
   }
 
   public BuildingCountEntity createBuildingCountEntity(final BuildingCountContent buildingCountEntity) {
-    List<String> errors = validateInput(buildingCountEntity);
+    List<String> errors = validateContent(buildingCountEntity);
+
+    if (buildingCountEntity.year() != null) {
+      errors.add(validateYearAsInput(buildingCountEntity.year()));
+    }
+
     if (!errors.isEmpty()) {
       throw new IllegalArgumentException("Invalid input value(s): " +  String.join("; ", errors));
     }
@@ -66,7 +71,12 @@ public class BuildingCountService {
   }
 
   public BuildingCountEntity updateBuildingCountEntity(final Long id, final BuildingCountContent buildingCountEntity) {
-    List<String> errors = validateInput(buildingCountEntity);
+    List<String> errors = validateContent(buildingCountEntity);
+    
+    if (buildingCountEntity.year() != null) {
+      errors.add(validateYearAsInput(buildingCountEntity.year()));
+    }
+
     if (!errors.isEmpty()) {
       throw new IllegalArgumentException("Invalid input value(s): " +  String.join("; ", errors));
     }
@@ -123,48 +133,47 @@ public class BuildingCountService {
     return errors;
   }
 
-  private List<String> validateInput(final BuildingCountContent input) {
+  private List<String> validateContent(final BuildingCountContent content) {
     List<String> errors = new ArrayList<>();
 
-    if (input.regionCode() != null) {
-      String regionCode = input.regionCode();
+    if (content.regionCode() != null) {
+      String regionCode = content.regionCode();
       if (!regionService.getRegionCodes().contains(regionCode)) {
         errors.add(String.format("'%s' is not a valid region code", regionCode));
       }
     }
 
-    if (input.areaTypeId() != null) {
-      int areaTypeId = input.areaTypeId();
+    if (content.areaTypeId() != null) {
+      int areaTypeId = content.areaTypeId();
       if (!areaTypeService.getAreaTypeIds().contains(areaTypeId)) {
         errors.add(String.format("'%d' is not a valid area type", areaTypeId));
       }
     }
 
-    if (input.buildingTypeId() != null) {
-      int buildingTypeId = input.buildingTypeId();
+    if (content.buildingTypeId() != null) {
+      int buildingTypeId = content.buildingTypeId();
       if (!buildingTypeService.getBuildingTypeIds().contains(buildingTypeId)) {
         errors.add(String.format("'%d' is not a valid building type", buildingTypeId));
       }
     }
 
-    if (input.shorelineTypeId() != null) {
-      int shorelineTypeId = input.shorelineTypeId();
+    if (content.shorelineTypeId() != null) {
+      int shorelineTypeId = content.shorelineTypeId();
       if (!shorelineTypeService.getShorelineTypeIds().contains(shorelineTypeId)) {
         errors.add(String.format("'%d' is not a valid shoreline type", shorelineTypeId));
       }
     }
 
-    if (input.year() != null) {
-      int year = input.year();
-      final int earliestYear = 1900;
-      int currentYear = java.time.Year.now().getValue();
-
-      if (year < earliestYear || year > currentYear) {
-        errors.add(
-          String.format("'%d' is not a valid year. Year must be between %d and %d", year, earliestYear, currentYear));
-      }
-    }
-
     return errors;
+  }
+
+  private String validateYearAsInput(final Integer year) {
+    final int earliestYear = 1900;
+    int currentYear = java.time.Year.now().getValue();
+
+    if (year < earliestYear || year > currentYear) {
+      return String.format("'%d' is not a valid year. Year must be between %d and %d", year, earliestYear, currentYear);
+    }
+    return null;
   }
 }
