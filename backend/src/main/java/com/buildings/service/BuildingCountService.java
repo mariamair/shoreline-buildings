@@ -40,8 +40,15 @@ public class BuildingCountService {
       final BuildingCountContent filter,
       final Integer limit,
       final Integer offset) {
+
+    List<String> errors = new ArrayList<>();
+    
     if (filter != null) {
-      validateFilter(filter);
+      errors = validateFilter(filter);
+    }
+
+    if (!errors.isEmpty()) {
+      throw new IllegalArgumentException("Invalid filter value(s): " +  String.join("; ", errors));
     }
     return buildingCountRepository.findBuildingCountEntities(filter, limit, offset);
   }
@@ -51,12 +58,18 @@ public class BuildingCountService {
   }
 
   public BuildingCountEntity createBuildingCountEntity(final BuildingCountContent buildingCountEntity) {
-    validateInput(buildingCountEntity);
+    List<String> errors = validateInput(buildingCountEntity);
+    if (!errors.isEmpty()) {
+      throw new IllegalArgumentException("Invalid input value(s): " +  String.join("; ", errors));
+    }
     return buildingCountRepository.saveBuildingCountEntity(buildingCountEntity);
   }
 
   public BuildingCountEntity updateBuildingCountEntity(final Long id, final BuildingCountContent buildingCountEntity) {
-    validateInput(buildingCountEntity);
+    List<String> errors = validateInput(buildingCountEntity);
+    if (!errors.isEmpty()) {
+      throw new IllegalArgumentException("Invalid input value(s): " +  String.join("; ", errors));
+    }
     return buildingCountRepository.updateBuildingCountEntity(id, buildingCountEntity);
   }
 
@@ -70,7 +83,7 @@ public class BuildingCountService {
     return rowsAffected == 1;
   }
 
-  private void validateFilter(final BuildingCountContent filter) {
+  private List<String> validateFilter(final BuildingCountContent filter) {
     List<String> errors = new ArrayList<>();
 
     if (filter.regionCode() != null) {
@@ -107,13 +120,10 @@ public class BuildingCountService {
         errors.add(String.format("'%d' is not a valid year", year));
       }
     }
-
-    if (!errors.isEmpty()) {
-      throw new IllegalArgumentException("Invalid filter value(s): " +  String.join("; ", errors));
-    }
+    return errors;
   }
 
-  private void validateInput(final BuildingCountContent input) {
+  private List<String> validateInput(final BuildingCountContent input) {
     List<String> errors = new ArrayList<>();
 
     if (input.regionCode() != null) {
@@ -155,8 +165,6 @@ public class BuildingCountService {
       }
     }
 
-    if (!errors.isEmpty()) {
-      throw new IllegalArgumentException("Invalid input value(s): " +  String.join("; ", errors));
-    }
+    return errors;
   }
 }
