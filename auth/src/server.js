@@ -5,20 +5,12 @@
  */
 
 import express from 'express'
-import dotenv from 'dotenv'
-import path from 'node:path'
-import { fileURLToPath } from 'url';
+import { logger } from './config/winston.js'
 import { connectToDatabase } from './config/mongoose.js'
 import { router } from './routes/router.js'
 import { ErrorHandler } from './utils/ErrorHandler.js'
 
 try {
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = path.dirname(__filename);
-
-  const envPath = path.join(__dirname, '../../.env');
-  dotenv.config({ path: envPath });
-
   await connectToDatabase(process.env.AUTH_DB_CONNECTION_STRING)
   
   const app = express()
@@ -41,6 +33,6 @@ try {
   })
   
 } catch (error) {
-  console.log(error)
+  logger.error(error)
   process.exitCode = 1
 }
