@@ -2,7 +2,6 @@
  * Defines the account router.
  *
  * @author Maria Mair <mm225mz@student.lnu.se>
- * @version 1.0.0
  */
 
 import express from 'express'
