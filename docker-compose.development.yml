@@ -1,5 +1,9 @@
 services:  
   auth-db:
+
+  auth-server:
+    build:
+      context: ./auth
   
   db:
 
