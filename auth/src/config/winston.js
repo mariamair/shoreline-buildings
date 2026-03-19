@@ -23,7 +23,10 @@ const fileFormat = combine(
 export const logger = createLogger({
   level: process.env.LOG_LEVEL || 'info',
   transports: [
-    new transports.Console({ format: consoleFormat }),
+    new transports.Console({ 
+      level: 'debug',
+      format: consoleFormat 
+    }),
     new DailyRotateFile({
       filename: './logs/%DATE%-app.log',
       datePattern: 'YYYY-MM-DD',
