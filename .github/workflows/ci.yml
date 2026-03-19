@@ -80,10 +80,10 @@ jobs:
           cache-dependency-path: 'auth/package-lock.json'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --prefix auth
 
       - name: Run ESLint
-        run: npx eslint . --ext .js
+        run: npx eslint auth/. --ext .js
 
   build:
     name: Build and Push Docker Images
