@@ -11,7 +11,7 @@ import { router } from './routes/router.js'
 import { ErrorHandler } from './utils/ErrorHandler.js'
 
 try {
-  await connectToDatabase(process.env.AUTH_DB_CONNECTION_STRING)
+  await connectToDatabase(process.env.AUTH_DB_URI)
   
   const app = express()
   
