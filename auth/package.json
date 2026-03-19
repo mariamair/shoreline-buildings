@@ -9,7 +9,7 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon --inspect --env-file=../.env src/server.js",
-    "lint": "npx eslint ."
+    "lint": "eslint ./src"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

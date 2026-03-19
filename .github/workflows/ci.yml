@@ -83,7 +83,7 @@ jobs:
         run: npm ci --prefix auth
 
       - name: Run ESLint
-        run: npx eslint auth/. --ext .js
+        run: npm run lint --prefix auth
 
   build:
     name: Build and Push Docker Images
