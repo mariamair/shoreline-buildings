@@ -21,7 +21,7 @@ const fileFormat = combine(
 )
 
 export const logger = createLogger({
-  level: process.env.LOG_LEVEL || 'info',
+  level: process.env.AUTH_LOG_LEVEL || 'info',
   transports: [
     new transports.Console({ 
       level: 'debug',
@@ -33,7 +33,7 @@ export const logger = createLogger({
       maxFiles: '7d',         // keep last 7 days
       maxSize: '20m',         // also rotate if file exceeds 20mb
       zippedArchive: true,    // gzip old logs
-      level: process.env.LOG_LEVEL || 'info',
+      level: process.env.AUTH_LOG_LEVEL || 'info',
       format: fileFormat
     })
   ],
