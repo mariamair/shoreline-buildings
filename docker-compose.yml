@@ -1,6 +1,8 @@
 services:  
   auth-db:
     image: mongo:8.0.20
+    env_file:
+      - .env
     ports:
     - "${AUTH_DB_PORT}:27017"
     volumes:
