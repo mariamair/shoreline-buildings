@@ -35,9 +35,9 @@ try {
 
   const PORT = process.env.AUTH_SERVER_PORT || 3000
   
-  const server = app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`)
-  console.log('Press Ctrl + C to terminate application')
+  app.listen(PORT, () => {
+    console.log(`Server running at http://localhost:${PORT}`)
+    console.log('Press Ctrl + C to terminate application')
   })
   
 } catch (error) {
