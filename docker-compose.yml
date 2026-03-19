@@ -1,4 +1,11 @@
 services:  
+  auth-db:
+    image: mongo:8.0.20
+    ports:
+    - "${AUTH_DB_PORT}:27017"
+    volumes:
+      - ./.volumes/mongodb:/data/db
+
   db:
     image: postgres:18.2
     restart: unless-stopped
