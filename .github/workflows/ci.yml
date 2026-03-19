@@ -77,6 +77,7 @@ jobs:
         with:
           node-version: '24'
           cache: 'npm'
+          cache-dependency-path: 'auth/package-lock.json'
 
       - name: Install dependencies
         run: npm ci
