@@ -25,11 +25,11 @@ try {
 
   app.use(ErrorHandler.handle)
 
-  const PORT = process.env.AUTH_SERVER_PORT || 3000
+  const PORT = process.env.AUTH_SERVER_PORT || 3001
   
   app.listen(PORT, () => {
-    logger.debug(`Server running at http://localhost:${PORT}`)
-    logger.debug('Press Ctrl + C to terminate application')
+    logger.info(`Server running at http://localhost:${PORT}`)
+    logger.info('Press Ctrl + C to terminate application')
   })
   
 } catch (error) {
