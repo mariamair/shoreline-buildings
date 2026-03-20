@@ -12,12 +12,14 @@ import ms from 'ms'
 import jwt from 'jsonwebtoken'
 
 export class TokenHandler {
-  #accessTokenLife = '3h'
-  #refreshTokenLife = '1d'
+  #accessTokenLife
+  #refreshTokenLife
   #privateKey
   #publicKey
 
   constructor() {
+    this.#accessTokenLife = process.env.ACCESS_TOKEN_LIFE
+    this.#refreshTokenLife = process.env.REFRESH_TOKEN_LIFE
     this.#privateKey = Buffer.from(process.env.ACCESS_TOKEN_PRIVATE_KEY, 'base64').toString('utf-8')
     this.#publicKey = Buffer.from(process.env.ACCESS_TOKEN_PUBLIC_KEY, 'base64').toString('utf-8')
   }
