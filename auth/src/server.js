@@ -21,7 +21,7 @@ try {
   // Parse incoming requests of content type 'application/json'.
   app.use(express.json())
   
-  app.use('/', router)
+  app.use('/api/auth', router)
 
   app.use(ErrorHandler.handle)
 

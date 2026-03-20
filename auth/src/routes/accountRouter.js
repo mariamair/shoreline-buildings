@@ -16,8 +16,6 @@ const controller = new AccountController()
 router.param('id', (req, res, next, id) => controller.loadAccount(req, res, next, id))
 
 // Map HTTP verbs and route paths to controller action methods.
-router.get('/', (req, res) => res.status(200).json({ message: 'Authentication API is running!' }))
-
 router.post('/register', (req, res, next) => controller.createAccount(req, res, next))
 
 router.post('/login', (req, res, next) => controller.login(req, res, next))

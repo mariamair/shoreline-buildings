@@ -9,6 +9,6 @@ import { router as accountRouter } from './accountRouter.js'
 
 export const router = express.Router()
 
-router.get('/', (req, res) => res.status(200).json({ message: 'Welcome to the Authentication API!' }))
+router.get('/', (req, res) => res.status(200).json({ message: 'Authentication API is running!' }))
 
-router.use('/api/auth', accountRouter)
+router.use('/', accountRouter)
