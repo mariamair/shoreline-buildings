@@ -52,6 +52,23 @@ export class UnauthorizedError extends AppError {
 export class ErrorHandler {
   // eslint-disable-next-line max-params, no-unused-vars
   static handle(error, req, res, next) {
+    // Convert Mongoose validation error to ValidationError
+    if (error.name === 'ValidationError') {
+      const errors = Object.values(error.errors).map(e => ({
+        field: e.path,
+        message: e.message
+      }))
+      error = new ValidationError('Validation failed.')
+      error.errors = errors
+    }
+
+    // Convert Mongoose duplicate key error to ConflictError
+    if (error.code === 11000) {
+      const field = Object.keys(error.keyValue)[0]
+      const fieldName = field.charAt(0).toUpperCase() + field.slice(1)
+      error = new ConflictError(`${fieldName} is already in use.`)
+    }
+
     const { statusCode = 500, message } = error
 
     if (process.env.NODE_ENV === 'development') {
