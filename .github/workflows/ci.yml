@@ -70,9 +70,11 @@ jobs:
     needs: [detect-changes]
     steps:
       - name: Checkout code
+        if: needs.detect-changes.outputs.authserver == 'true' || github.event.before == '0000000000000000000000000000000000000000'
         uses: actions/checkout@v5
 
       - name: Set up Node.js
+        if: needs.detect-changes.outputs.authserver == 'true' || github.event.before == '0000000000000000000000000000000000000000'
         uses: actions/setup-node@v5
         with:
           node-version: '24'
@@ -80,9 +82,11 @@ jobs:
           cache-dependency-path: 'auth/package-lock.json'
 
       - name: Install dependencies
+        if: needs.detect-changes.outputs.authserver == 'true' || github.event.before == '0000000000000000000000000000000000000000'
         run: npm ci --prefix auth
 
       - name: Run ESLint
+        if: needs.detect-changes.outputs.authserver == 'true' || github.event.before == '0000000000000000000000000000000000000000'
         run: npm run lint --prefix auth
 
   build:
@@ -117,7 +121,7 @@ jobs:
       - name: Log in to GitHub Container Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-      - name: Build and push auth server
+      - name: Build and push auth-server
         if: needs.detect-changes.outputs.authserver == 'true' || github.event.before == '0000000000000000000000000000000000000000' || github.event.inputs.force_rebuild == 'true'
         run: |
           docker compose build --no-cache auth-server
@@ -176,8 +180,8 @@ jobs:
       - name: Wait for auth server to be ready
         run: |
           for i in {1..30}; do
-            curl -sf http://localhost:3000/api/auth && break
-            echo "Waiting for backend... ($i/30)"
+            curl -sf http://localhost:3000 && break
+            echo "Waiting for auth server... ($i/30)"
             sleep 2
           done
 
