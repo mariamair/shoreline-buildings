@@ -113,15 +113,22 @@
               "listen": "prerequest",
               "script": {
                 "exec": [
-                  "let username = '';",
-                  "",
-                  "do {",
-                  "    username = pm.variables.replaceIn(\"{{$randomUserName}}\"); }",
-                  "while (username.length < 8) {",
-                  "    username = pm.variables.replaceIn(\"{{$randomUserName}}\")",
+                  "const randomUsername = () => {",
+                  "    const letters = 'abcdefghijklmnopqrstuvwxyz';",
+                  "    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-';",
+                  "    ",
+                  "    // Start with a letter",
+                  "    let username = letters.charAt(Math.floor(Math.random() * letters.length));",
+                  "    ",
+                  "    // Add 7 more characters to meet the 8 character minimum",
+                  "    for (let i = 0; i < 7; i++) {",
+                  "        username += chars.charAt(Math.floor(Math.random() * chars.length));",
+                  "    }",
+                  "    ",
+                  "    return username;",
                   "}",
                   "",
-                  "pm.collectionVariables.set(\"username\", username);",
+                  "pm.collectionVariables.set(\"username\", randomUsername());",
                   "pm.collectionVariables.set(\"password\", pm.variables.replaceIn(\"{{$randomPassword}}\"));"
                 ],
                 "type": "text/javascript",
@@ -466,7 +473,7 @@
                 "refresh"
               ]
             },
-            "description": "Login a user.\n\n- Use previously generated username and password.\n    \n- Save returned access and refresh token."
+            "description": "Login a user.\n\n- Use access and refresh token.\n    \n- Save refreshed access and refresh token."
           },
           "response": [
             {
@@ -535,7 +542,7 @@
                   "path": ""
                 }
               ],
-              "body": "{\n    \"status\": \"success\",\n    \"accessToken\": \"returnedAccessToken\",\n    \"refreshToken\": \"returnedRefreshToken\"\n}"
+              "body": "{\n    \"status\": \"success\",\n    \"accessToken\": \"refreshedAccessToken\",\n    \"refreshToken\": \"refreshedRefreshToken\"\n}"
             }
           ]
         }
@@ -816,7 +823,7 @@
           ]
         },
         {
-          "name": "Login user with invalid password",
+          "name": "Login user with incorrect password",
           "event": [
             {
               "listen": "test",
@@ -878,7 +885,7 @@
                 "login"
               ]
             },
-            "description": "Login a user.\n\n- Use previously generated username and password.\n    \n- Save returned access and refresh token."
+            "description": "Login a user with incorrect password.\n\n- Use previously generated username and incorrect password.\n    \n- Correct status code is returned.\n    \n- Descriptive error message is returned."
           },
           "response": [
             {
@@ -946,7 +953,7 @@
           ]
         },
         {
-          "name": "Login user with invalid username",
+          "name": "Login user with incorrect username",
           "event": [
             {
               "listen": "test",
@@ -1008,7 +1015,7 @@
                 "login"
               ]
             },
-            "description": "Login a user.\n\n- Use previously generated username and password.\n    \n- Save returned access and refresh token."
+            "description": "Login a user with incorrect username.\n\n- Use incorrect username and previously generated password.\n    \n- Correct status code is returned.\n    \n- Descriptive error message is returned."
           },
           "response": [
             {
@@ -1552,6 +1559,147 @@
     {
       "name": "Building Count Entities - Create, Update and Delete operations",
       "item": [
+        {
+          "name": "Authorize user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Content-Type is application/json\", () => {",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "});",
+                  "",
+                  "pm.test(\"Request was successful\", () => {",
+                  "    pm.expect(pm.response.json().status).to.equal(\"success\");",
+                  "});",
+                  "",
+                  "pm.test(\"Response has correct status code: 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response body contains tokens\", () => {",
+                  "    pm.response.to.have.jsonBody('accessToken');",
+                  "    pm.response.to.have.jsonBody('refreshToken');",
+                  "});",
+                  "",
+                  "pm.collectionVariables.set(\"accessToken\", pm.response.json().accessToken);",
+                  "pm.collectionVariables.set(\"refreshToken\", pm.response.json().refreshToken);",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"{{username}}\",\n    \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Login a user.\n\n- Use previously generated username and password.\n    \n- Save returned access and refresh token."
+          },
+          "response": [
+            {
+              "name": "Login user",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"username\": \"{{username}}\",\n    \"password\": \"{{password}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/auth/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "",
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "1085"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"43d-TdqXuyGK8P/KhXd3mbdMIz2+/S4\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Fri, 20 Mar 2026 10:38:07 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": "{\n    \"status\": \"success\",\n    \"accessToken\": \"returnedAccessToken\",\n    \"refreshToken\": \"returnedRefreshToken\"\n}"
+            }
+          ]
+        },
         {
           "name": "Get total count",
           "event": [
@@ -3463,91 +3611,15 @@
   ],
   "variable": [
     {
-      "key": "id",
-      "value": ""
-    },
-    {
-      "key": "areaTypeId",
-      "value": ""
-    },
-    {
-      "key": "regionCode",
-      "value": ""
-    },
-    {
-      "key": "buildingTypeId",
-      "value": ""
-    },
-    {
-      "key": "shorelineTypeId",
-      "value": ""
-    },
-    {
-      "key": "year",
-      "value": ""
-    },
-    {
-      "key": "buildingCount",
-      "value": ""
-    },
-    {
-      "key": "newRegionCode",
-      "value": ""
-    },
-    {
-      "key": "newYear",
-      "value": ""
-    },
-    {
-      "key": "newBuildingCount",
-      "value": ""
-    },
-    {
-      "key": "deletedEntityLimit",
-      "value": ""
-    },
-    {
-      "key": "deletedEntityOffset",
-      "value": ""
-    },
-    {
-      "key": "totalCount",
-      "value": ""
-    },
-    {
-      "key": "newTotalCount",
-      "value": ""
-    },
-    {
-      "key": "invalidAreaTypeId",
-      "value": ""
-    },
-    {
-      "key": "invalidBuildingTypeId",
-      "value": ""
-    },
-    {
-      "key": "invalidShorelineTypeId",
-      "value": ""
-    },
-    {
-      "key": "invalidRegionCode",
-      "value": ""
-    },
-    {
-      "key": "invalidYear",
-      "value": ""
-    },
-    {
-      "key": "entityId",
-      "value": ""
-    },
-    {
-      "key": "username",
+      "key": "shortUsername",
       "value": ""
     },
     {
       "key": "password",
+      "value": ""
+    },
+    {
+      "key": "username",
       "value": ""
     },
     {
@@ -3563,7 +3635,7 @@
       "value": ""
     },
     {
-      "key": "shortUsername",
+      "key": "incorrectUsername",
       "value": ""
     },
     {
@@ -3572,10 +3644,6 @@
     },
     {
       "key": "invalidUsername",
-      "value": ""
-    },
-    {
-      "key": "incorrectUsername",
       "value": ""
     }
   ]
