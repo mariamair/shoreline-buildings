@@ -12,6 +12,7 @@ export const router = express.Router()
 const controller = new AccountController()
 
 // Provide req.task to the route if :id is present in the route path.
+// eslint-disable-next-line max-params
 router.param('id', (req, res, next, id) => controller.loadAccount(req, res, next, id))
 
 // Map HTTP verbs and route paths to controller action methods.
