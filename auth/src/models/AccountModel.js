@@ -17,7 +17,8 @@ const schema = new mongoose.Schema({
     unique: true,
     minLength: [8, 'Username must be at least 8 characters.'],
     maxLength: [256, 'Username cannot be longer than 256 characters.'],
-    match: [/^[A-Za-z][A-Za-z0-9_-]{7,255}$/, 'Please provide a valid username.']
+    match: [/^[A-Za-z][A-Za-z0-9_-]{7,255}$/, 
+      'Username needs to start with a letter and can only contain letters and numbers.']
   },
   password: {
     type: String,
