@@ -1,5 +1,6 @@
 package com.buildings.graphql.resolver;
 
+import com.buildings.auth.Authenticated;
 import com.buildings.domain.AreaType;
 import com.buildings.domain.BuildingCountEntity;
 import com.buildings.domain.BuildingType;
@@ -125,12 +126,14 @@ public class BuildingCountEntityResolver {
   }
 
   @MutationMapping
+  @Authenticated
   public BuildingCountEntity createBuildingCountEntity(
       @Argument final BuildingCountContent input) {
     return buildingCountService.createBuildingCountEntity(input);
   }
 
   @MutationMapping
+  @Authenticated
   public BuildingCountEntity updateBuildingCountEntity(
       @Argument final Long id,
       @Argument final BuildingCountContent input) {
@@ -138,6 +141,7 @@ public class BuildingCountEntityResolver {
   }
 
   @MutationMapping
+  @Authenticated
   public boolean deleteBuildingCountEntity(@Argument final Long id) {
     return buildingCountService.deleteBuildingCountEntity(id);
   }

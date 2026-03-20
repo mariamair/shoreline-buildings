@@ -69,10 +69,14 @@
 			<optional>true</optional>
 		</dependency>
 
-		<!-- Spring Security (for password hashing) -->
+		<!-- Spring Security and JWT dependecies -->
 		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-crypto</artifactId>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
 		</dependency>
 
 		<!-- Resolve .env files -->
