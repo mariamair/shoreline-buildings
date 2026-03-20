@@ -21,7 +21,7 @@ export class AccountController {
       const accountDocument = await AccountModel.findById(id)
 
       if (!accountDocument) {
-        throw new NotFoundError('User not found')
+        throw new NotFoundError('User not found.')
       }
 
       req.doc = accountDocument
@@ -85,14 +85,15 @@ export class AccountController {
 
   async refreshToken (req, res, next) {
     try {
-      const [authenticationScheme, token] = req.headers.authorization?.split(' ') ?? []
+      const [ authenticationScheme, accessToken ] = req.headers.authorization?.split(' ') ?? []
+      const refreshToken = req.body.refreshToken
 
-      if (authenticationScheme !== 'Bearer' || !token) {
+      if (authenticationScheme !== 'Bearer' || !accessToken || !refreshToken) {
         throw new UnauthorizedError('Invalid or missing authorization token.')
       }
       logger.silly('Refreshing token')
 
-      const { accessToken, refreshToken } = await this.#tokenhandler.verifyRefreshToken(token)
+      const refreshed = await this.#tokenhandler.verifyRefreshToken(accessToken, refreshToken)
 
       logger.silly('Refreshed token')
 
@@ -100,8 +101,8 @@ export class AccountController {
         .status(201)
         .json({
           status: 'success',
-          accessToken,
-          refreshToken
+          accessToken: refreshed.accessToken,
+          refreshToken: refreshed.refreshToken
         })
     } catch (error) {
       next(error)
