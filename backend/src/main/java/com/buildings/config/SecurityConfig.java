@@ -40,6 +40,7 @@ public class SecurityConfig {
     http
       .csrf(csrf -> csrf.disable())
       .authorizeHttpRequests(auth -> auth
+        .requestMatchers("/", "/index.html", "/static/**", "/*.js", "/*.css").permitAll()
         .anyRequest().permitAll() // GraphQL endpoint open, handled at resolver level
       )
       .oauth2ResourceServer(oauth2 -> oauth2
