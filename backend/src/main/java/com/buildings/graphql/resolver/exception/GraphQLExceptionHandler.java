@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.graphql.execution.DataFetcherExceptionResolver;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +26,7 @@ public class GraphQLExceptionHandler implements DataFetcherExceptionResolver {
           .message(exception.getMessage())
           .path(environment.getExecutionStepInfo().getPath())
           .location(environment.getField().getSourceLocation())
-          .extensions(Map.of("code", "BAD_USER_INPUT"))
+          .extensions(Map.of("code", "BAD_REQUEST", "classification", "ValidationError"))
           .build();
 
       errors.add(error);
@@ -35,7 +36,7 @@ public class GraphQLExceptionHandler implements DataFetcherExceptionResolver {
           .message(exception.getMessage())
           .path(environment.getExecutionStepInfo().getPath())
           .location(environment.getField().getSourceLocation())
-          .extensions(Map.of("code", "CONFLICT"))
+          .extensions(Map.of("code", "CONFLICT", "classification", "ConflictError"))
           .build();
 
       errors.add(error);
@@ -45,7 +46,17 @@ public class GraphQLExceptionHandler implements DataFetcherExceptionResolver {
           .message(exception.getMessage())
           .path(environment.getExecutionStepInfo().getPath())
           .location(environment.getField().getSourceLocation())
-          .extensions(Map.of("code", "NOT_FOUND"))
+          .extensions(Map.of("code", "NOT_FOUND", "classification", "DataFetchingException"))
+          .build();
+
+      errors.add(error);
+
+    } else if (exception instanceof AccessDeniedException) {
+      GraphQLError error = GraphQLError.newError()
+          .message(exception.getMessage())
+          .path(environment.getExecutionStepInfo().getPath())
+          .location(environment.getField().getSourceLocation())
+          .extensions(Map.of("code", "UNAUTHORIZED", "classification", "AuthorizationError"))
           .build();
 
       errors.add(error);
@@ -55,7 +66,7 @@ public class GraphQLExceptionHandler implements DataFetcherExceptionResolver {
       GraphQLError error = GraphQLError.newError()
           .message("Internal server error")
           .path(environment.getExecutionStepInfo().getPath())
-          .extensions(Map.of("code", "INTERNAL_SERVER_ERROR"))
+          .extensions(Map.of("code", "INTERNAL_SERVER_ERROR", "classification", "InternalError"))
           .build();
 
       errors.add(error);
