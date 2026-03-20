@@ -113,6 +113,9 @@ jobs:
           AUTH_DB_PORT=27017
           AUTH_SERVER_PORT=3000
           AUTH_LOG_LEVEL=info
+          ACCESS_TOKEN_PRIVATE_KEY=${{ secrets.ACCESS_TOKEN_PRIVATE_KEY }}
+          ACCESS_TOKEN_PUBLIC_KEY=${{ secrets.ACCESS_TOKEN_PUBLIC_KEY }}
+          REFRESH_TOKEN_SECRET=${{ secrets.REFRESH_TOKEN_SECRET }}
           BACKEND_PORT=8080
           SESSION_SECRET=${{ secrets.SESSION_SECRET }}
           CSV_PATH=seed/data/shoreline_buildings.csv
@@ -166,6 +169,9 @@ jobs:
           AUTH_DB_PORT=27017
           AUTH_SERVER_PORT=3000
           AUTH_LOG_LEVEL=info
+          ACCESS_TOKEN_PRIVATE_KEY=${{ secrets.ACCESS_TOKEN_PRIVATE_KEY }}
+          ACCESS_TOKEN_PUBLIC_KEY=${{ secrets.ACCESS_TOKEN_PUBLIC_KEY }}
+          REFRESH_TOKEN_SECRET=${{ secrets.REFRESH_TOKEN_SECRET }}
           BACKEND_PORT=8080
           SESSION_SECRET=${{ secrets.SESSION_SECRET }}
           CSV_PATH=seed/data/shoreline_buildings.csv
