@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "55f4ce9a-6332-48df-98f3-bc94c7621a31",
     "name": "ShorelineBuildingsAPI",
-    "description": "Test documentation for the Shoreline Buildings GraphQL API.  \nPublic URL: [https://cu3156.camp.lnu.se/api/graphql](https://cu3156.camp.lnu.se/api/graphiql?path=/api/graphql)\n\nPlayground: [https://cu3156.camp.lnu.se/api/graphiql](https://cu3156.camp.lnu.se/api/graphiql)",
+    "description": "Test documentation for the Shoreline Buildings GraphQL API.  \n- URL to use the API: [https://cu3156.camp.lnu.se/api/graphql](https://cu3156.camp.lnu.se/api/graphql)\n- Playground to test the API: [https://cu3156.camp.lnu.se/api/graphiql](https://cu3156.camp.lnu.se/api/graphiql)\n\n🔐 Authentication is done via a separate authentication server, using JWT (JSON Web Tokens) and REST requests.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "39898331"
   },
@@ -49,7 +49,7 @@
                 "auth"
               ]
             },
-            "description": "Check that the auth server API can be reached."
+            "description": "Check that the authentication server can be reached."
           },
           "response": [
             {
@@ -255,7 +255,7 @@
           ]
         },
         {
-          "name": "Login user",
+          "name": "Authenticate user",
           "event": [
             {
               "listen": "test",
@@ -322,7 +322,7 @@
                 "login"
               ]
             },
-            "description": "Login a user.\n\n- Use previously generated username and password.\n    \n- Save returned access and refresh token."
+            "description": "Log in as user.\n\n- Use previously generated username and password.\n    \n- Save returned access and refresh token."
           },
           "response": [
             {
@@ -473,7 +473,7 @@
                 "refresh"
               ]
             },
-            "description": "Login a user.\n\n- Use access and refresh token.\n    \n- Save refreshed access and refresh token."
+            "description": "Log in as user and request a new token.\n\n- Add access token as Bearer Token to the Authorization header.\n    \n- Add refresh token to payload.\n    \n- Save refreshed access and refresh token."
           },
           "response": [
             {
@@ -546,7 +546,8 @@
             }
           ]
         }
-      ]
+      ],
+      "description": "Requests that test the authentication API."
     },
     {
       "name": "User - Invalid input",
@@ -885,7 +886,7 @@
                 "login"
               ]
             },
-            "description": "Login a user with incorrect password.\n\n- Use previously generated username and incorrect password.\n    \n- Correct status code is returned.\n    \n- Descriptive error message is returned."
+            "description": "Log in as user with incorrect password.\n\n- Use previously generated username and incorrect password.\n    \n- Correct status code is returned.\n    \n- Descriptive error message is returned."
           },
           "response": [
             {
@@ -1015,7 +1016,7 @@
                 "login"
               ]
             },
-            "description": "Login a user with incorrect username.\n\n- Use incorrect username and previously generated password.\n    \n- Correct status code is returned.\n    \n- Descriptive error message is returned."
+            "description": "Log in as user with incorrect username.\n\n- Use incorrect username and previously generated password.\n    \n- Correct status code is returned.\n    \n- Descriptive error message is returned."
           },
           "response": [
             {
@@ -1082,7 +1083,8 @@
             }
           ]
         }
-      ]
+      ],
+      "description": "Requests that test invalid operations on the authentication API."
     },
     {
       "name": "Building Count Entities - Read operations",
@@ -1212,7 +1214,7 @@
                 "{{queryUrl}}"
               ]
             },
-            "description": "Fetch building counts entities with all fields.\n\n- Use default limit and offset.\n    \n- Use no filters.\n    \n- Validate all fields."
+            "description": "Fetch building count entities with all fields.\n\n- Use default limit and offset.\n    \n- Use no filters.\n    \n- Validate all fields."
           },
           "response": [
             {
@@ -1507,7 +1509,7 @@
                 "{{queryUrl}}"
               ]
             },
-            "description": "Fetch the total number of building counts entities."
+            "description": "Fetch the total number of building count entities."
           },
           "response": [
             {
@@ -1659,7 +1661,7 @@
                 "{{queryUrl}}"
               ]
             },
-            "description": "Create a new building count entity.\n\n- Use randomly picked values for all input variables.\n    \n- Validate fields of the created entity.\n    \n- Authorization with JWT is required."
+            "description": "Create a new building count entity.\n\n- Use randomly picked values for all input variables.\n    \n- Validate fields of the created entity.\n    \n- Authentication with JWT is required. Add access token as Bearer Token to the Authorization header."
           },
           "response": [
             {
@@ -1774,7 +1776,7 @@
                 "{{queryUrl}}"
               ]
             },
-            "description": "Fetch the total number of building count entities after a new entity was created.\n\n- Total number should have increased by one compared to test \"Get total count\"."
+            "description": "Fetch the total number of building count entities after the new entity was created.\n\n- Validate that total number has increased by one compared to test \"Get total count\"."
           },
           "response": [
             {
@@ -2019,7 +2021,7 @@
                 "{{queryUrl}}"
               ]
             },
-            "description": "Update the new building count entity.\n\n- Use the ID of the entity created in the \"Create entity\" test.\n    \n- Use randomly picked values for all input variables.\n    \n- Validate fields of the created entity.\n    \n- Authorization with JWT is required."
+            "description": "Update the new building count entity.\n\n- Use the ID of the entity created in the \"Create entity\" test.\n    \n- Use randomly picked values for all input variables.\n    \n- Validate fields of the updated entity.\n    \n- Authentication with JWT is required. Add access token as Bearer Token to the Authorization header."
           },
           "response": [
             {
@@ -2140,7 +2142,7 @@
                 "{{queryUrl}}"
               ]
             },
-            "description": "Delete the new building count entity.\n\n- Use the ID of the entity created in the \"Create entity\" test.\n    \n- Validate that request returns true.\n    \n- Authorization with JWT is required."
+            "description": "Delete the new building count entity.\n\n- Use the ID of the entity created in the \"Create entity\" test.\n    \n- Validate that request returns true.\n    \n- Authentication with JWT is required. Add access token as Bearer Token to the Authorization header."
           },
           "response": [
             {
@@ -2315,7 +2317,7 @@
           ]
         }
       ],
-      "description": "Requests that test the create, update and delete operations on building count entities.\n\n- Authorization with JWT is required.",
+      "description": "Requests that test the create, update and delete operations on building count entities.\n\n- Authentication with JWT is required.\n    \n- Credentials from the User test requests are used.",
       "auth": {
         "type": "noauth"
       },
@@ -2546,6 +2548,16 @@
             }
           ],
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
             "header": [],
             "body": {
@@ -2561,7 +2573,7 @@
                 "{{queryUrl}}"
               ]
             },
-            "description": "Try to create a new building count entity with invalid values.\n\n- Use invalid values for all input variables that have boundaries.\n    \n- Validate error message.\n    \n- Authorization with JWT is required."
+            "description": "Try to create a new building count entity with invalid values.\n\n- Use invalid values for all input variables that have boundaries.\n    \n- Validate error message.\n    \n- Authentication with JWT is required. Add access token as Bearer Token to the Authorization header."
           },
           "response": [
             {
@@ -2616,14 +2628,7 @@
       ],
       "description": "Requests that test invalid read and create operations on building count entities.",
       "auth": {
-        "type": "bearer",
-        "bearer": [
-          {
-            "key": "token",
-            "value": "{{jwt}}",
-            "type": "string"
-          }
-        ]
+        "type": "noauth"
       },
       "event": [
         {
@@ -3189,7 +3194,7 @@
                 "{{queryUrl}}"
               ]
             },
-            "description": "Fetch building types with all fields.\n\n- No limit and offset because of the low number of building types."
+            "description": "Fetch building types with all fields.\n\n- No limit and offset because of the low number of building types.\n    \n- Validate all fields."
           },
           "response": [
             {
@@ -3311,7 +3316,7 @@
                 "{{queryUrl}}"
               ]
             },
-            "description": "Fetch one building type.\n\n- Use randomly picked id.\n    \n- Validate fields."
+            "description": "Fetch one building type.\n\n- Use randomly picked id.\n    \n- Validate all fields."
           },
           "response": []
         }
@@ -3353,7 +3358,8 @@
           },
           "response": []
         }
-      ]
+      ],
+      "description": "Contains a reset request to ensure no variables are saved between different test runs."
     }
   ]
 }
