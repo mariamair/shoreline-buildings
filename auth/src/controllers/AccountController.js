@@ -15,7 +15,7 @@ import { AccountModel } from '../models/AccountModel.js'
 export class AccountController {
   #tokenhandler = new TokenHandler()
 
-  // If :id is present, load the item and provide req.doc to the route.
+  // If :id is present, load the item and provide req.doc to the route
   // eslint-disable-next-line max-params
   async loadAccount (req, res, next, id) {
     try {
@@ -27,12 +27,10 @@ export class AccountController {
         throw new NotFoundError('User not found')
       }
 
-      // Provide the document to req.
       req.doc = accountDocument
 
       logger.silly(`Loaded acccount document: ${id}`)
 
-      // Next middleware.
       next()
     } catch (error) {
       next(error)
@@ -43,7 +41,6 @@ export class AccountController {
     try {
       logger.silly('Creating new account document')
 
-      // Destructure request object
       const { username, password } = req.body
 
       const accountDocument = await AccountModel.create({
@@ -72,7 +69,7 @@ export class AccountController {
       const accountDocument = await AccountModel.authenticate(username, password)
       const account = accountDocument.toObject()
       logger.info(account)
-      // Create access and refresh token
+
       const { accessToken, refreshToken } = await this.#tokenhandler.createTokens(account)
 
       logger.silly(`Authenticated user: ${accountDocument.id}`)
