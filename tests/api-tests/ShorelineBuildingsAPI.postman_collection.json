@@ -553,6 +553,137 @@
       "name": "User - Invalid input",
       "item": [
         {
+          "name": "Create user with existing username",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set(\"password\", pm.variables.replaceIn(\"{{$randomPassword}}\"));"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Content-Type is application/json\", () => {",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "});",
+                  "",
+                  "pm.test(\"Response body contains error\", () => {",
+                  "    pm.expect(pm.response.json().status).to.equal(\"error\");",
+                  "});",
+                  "",
+                  "pm.test(\"Response has correct status code: 409\", () => {",
+                  "    pm.response.to.have.status(409);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has correct message\", () => {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.message).to.equal(\"Username is already in use.\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"{{username}}\",\n    \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Create a new user with an existing username.\n\n- Correct status code is returned.\n    \n- Descriptive error message is returned."
+          },
+          "response": [
+            {
+              "name": "Create user with existing username",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"username\": \"{{username}}\",\n    \"password\": \"{{password}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/auth/register",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "register"
+                  ]
+                }
+              },
+              "status": "Conflict",
+              "code": 409,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "75"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"4b-78Q1BKdgL7DjNMzA3PYnwjQdtho\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Fri, 20 Mar 2026 21:33:34 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": \"error\",\n    \"statusCode\": 409,\n    \"message\": \"Username is already in use.\"\n}"
+            }
+          ]
+        },
+        {
           "name": "Create user with too short username",
           "event": [
             {
@@ -2317,7 +2448,7 @@
           ]
         }
       ],
-      "description": "Requests that test the create, update and delete operations on building count entities.\n\n- Authentication with JWT is required.\n    \n- Credentials from the User test requests are used.",
+      "description": "Requests that test the create, update and delete operations on building count entities.\n\n- Authentication with JWT is required.\n    \n- Credentials from the User test requests are used.\n    \n\n---\n\nIn GraphQL Playground add the Authorization header like this:\n\n```\n{\n   \"authorization\": \"Bearer yourAccessTokenHere\"\n}\n\n ```",
       "auth": {
         "type": "noauth"
       },
@@ -3360,6 +3491,28 @@
         }
       ],
       "description": "Contains a reset request to ensure no variables are saved between different test runs."
+    }
+  ],
+  "variable": [
+    {
+      "key": "username",
+      "value": ""
+    },
+    {
+      "key": "password",
+      "value": ""
+    },
+    {
+      "key": "userId",
+      "value": ""
+    },
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "refreshToken",
+      "value": ""
     }
   ]
 }
