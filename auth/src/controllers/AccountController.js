@@ -9,9 +9,6 @@ import { TokenHandler } from '../utils/TokenHandler.js'
 import { NotFoundError, UnauthorizedError } from '../utils/ErrorHandler.js'
 import { AccountModel } from '../models/AccountModel.js'
 
-/**
- * Encapsulates a controller.
- */
 export class AccountController {
   #tokenhandler = new TokenHandler()
 
