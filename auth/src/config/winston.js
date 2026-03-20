@@ -20,11 +20,21 @@ const fileFormat = combine(
   json()
 )
 
+const levels = {
+  error: 0,
+  warn: 1,
+  info: 2,
+  http: 3,
+  verbose: 4,
+  debug: 5,
+  silly: 6
+};
+
 export const logger = createLogger({
-  level: process.env.AUTH_LOG_LEVEL || 'info',
+  level: process.env.AUTH_LOG_LEVEL || levels.info,
   transports: [
     new transports.Console({ 
-      level: 'debug',
+      level: levels.debug,
       format: consoleFormat 
     }),
     new DailyRotateFile({
@@ -33,7 +43,7 @@ export const logger = createLogger({
       maxFiles: '7d',         // keep last 7 days
       maxSize: '20m',         // also rotate if file exceeds 20mb
       zippedArchive: true,    // gzip old logs
-      level: process.env.AUTH_LOG_LEVEL || 'info',
+      level: process.env.AUTH_LOG_LEVEL || levels.info,
       format: fileFormat
     })
   ],
