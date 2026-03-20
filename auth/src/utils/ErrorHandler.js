@@ -80,7 +80,8 @@ export class ErrorHandler {
       return res.status(statusCode).json({
         status: 'error',
         statusCode,
-        message
+        message,
+        ...(error.errors && { errors: error.errors })
       })
     }
 
@@ -89,7 +90,7 @@ export class ErrorHandler {
     res.status(500).json({
       status: 'error',
       statusCode: 500,
-      message: 'Internal server error'
+      message: 'Internal server error.'
     })
   }
 }
