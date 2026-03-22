@@ -46,7 +46,7 @@ public class GraphQLExceptionHandler implements DataFetcherExceptionResolver {
           .message(exception.getMessage())
           .path(environment.getExecutionStepInfo().getPath())
           .location(environment.getField().getSourceLocation())
-          .extensions(Map.of("code", "NOT_FOUND", "classification", "DataFetchingException"))
+          .extensions(Map.of("code", "NOT_FOUND", "classification", "DataFetchingError"))
           .build();
 
       errors.add(error);
