@@ -139,6 +139,11 @@ public class BuildingCountRepository {
       sql.append(" AND shoreline_type_id = :shorelineTypeId");
       params.addValue("shorelineTypeId", filter.shorelineTypeId());
     }
+
+    if (filter != null && filter.year() != null) {
+      sql.append(" AND year = :year");
+      params.addValue("year", filter.year());
+    }
     return new FilterQuery(sql.toString(), params);
   }
 
