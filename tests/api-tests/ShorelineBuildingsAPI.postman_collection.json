@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "55f4ce9a-6332-48df-98f3-bc94c7621a31",
     "name": "ShorelineBuildingsAPI",
-    "description": "Test documentation for the Shoreline Buildings GraphQL API.  \n- URL to use the API: [https://cu3156.camp.lnu.se/api/graphql](https://cu3156.camp.lnu.se/api/graphql)\n- Playground to test the API: [https://cu3156.camp.lnu.se/api/graphiql](https://cu3156.camp.lnu.se/api/graphiql)\n\n🔐 Authentication is done via a separate authentication server, using JWT (JSON Web Tokens) and REST requests.",
+    "description": "Test documentation for the Shoreline Buildings GraphQL API.\n\n- URL to use the API: [https://cu3156.camp.lnu.se/api/graphql](https://cu3156.camp.lnu.se/api/graphql)\n    \n- Playground to test the API: [https://cu3156.camp.lnu.se/api/graphiql](https://cu3156.camp.lnu.se/api/graphiql)\n    \n\n🔐 Authentication is done via a separate authentication server, using JWT (JSON Web Tokens) and REST requests.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "39898331"
   },
@@ -418,9 +418,6 @@
                   "    pm.response.to.have.jsonBody('accessToken');",
                   "    pm.response.to.have.jsonBody('refreshToken');",
                   "});",
-                  "",
-                  "pm.collectionVariables.set(\"accessToken\", pm.response.json().accessToken);",
-                  "pm.collectionVariables.set(\"refreshToken\", pm.response.json().refreshToken);",
                   ""
                 ],
                 "type": "text/javascript",
@@ -473,7 +470,7 @@
                 "refresh"
               ]
             },
-            "description": "Log in as user and request a new token.\n\n- Add access token as Bearer Token to the Authorization header.\n    \n- Add refresh token to payload.\n    \n- Save refreshed access and refresh token."
+            "description": "Log in as user and request a new token.\n\n- Add access token as Bearer Token to the Authorization header.\n    \n- Add refresh token to payload."
           },
           "response": [
             {
@@ -559,7 +556,25 @@
               "listen": "prerequest",
               "script": {
                 "exec": [
-                  "pm.collectionVariables.set(\"password\", pm.variables.replaceIn(\"{{$randomPassword}}\"));"
+                  "pm.collectionVariables.set(\"username\", \"existinguser\");",
+                  "pm.collectionVariables.set(\"password\", pm.variables.replaceIn(\"{{$randomPassword}}\"));",
+                  "",
+                  "const baseUrl = pm.variables.get(\"baseUrl\");",
+                  "",
+                  "pm.sendRequest({",
+                  "    url: baseUrl + \"/api/auth/register\",",
+                  "    method: \"POST\",",
+                  "    header: { \"Content-Type\": \"application/json\" },",
+                  "    body: {",
+                  "        mode: \"raw\",",
+                  "        raw: JSON.stringify({",
+                  "            username: pm.collectionVariables.get(\"username\"),",
+                  "            password: pm.collectionVariables.get(\"password\")",
+                  "        })",
+                  "    }",
+                  "}, (err, response) => {",
+                  "        // guarantees that the user exists before the actual test runs",
+                  "});"
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -616,7 +631,7 @@
                 "register"
               ]
             },
-            "description": "Create a new user with an existing username.\n\n- Correct status code is returned.\n    \n- Descriptive error message is returned."
+            "description": "Create a new user with an existing username.\n\n- Pre-request script creates a user before running the actual test.\n    \n- Correct status code is returned.\n    \n- Descriptive error message is returned."
           },
           "response": [
             {
@@ -1580,6 +1595,297 @@
     {
       "name": "Building Count Entities - Create, Update and Delete operations",
       "item": [
+        {
+          "name": "Create user",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.clear();",
+                  "",
+                  "const randomUsername = () => {",
+                  "    const letters = 'abcdefghijklmnopqrstuvwxyz';",
+                  "    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-';",
+                  "    ",
+                  "    // Start with a letter",
+                  "    let username = letters.charAt(Math.floor(Math.random() * letters.length));",
+                  "    ",
+                  "    // Add 7 more characters to meet the 8 character minimum",
+                  "    for (let i = 0; i < 7; i++) {",
+                  "        username += chars.charAt(Math.floor(Math.random() * chars.length));",
+                  "    }",
+                  "    ",
+                  "    return username;",
+                  "}",
+                  "",
+                  "pm.collectionVariables.set(\"username\", randomUsername());",
+                  "pm.collectionVariables.set(\"password\", pm.variables.replaceIn(\"{{$randomPassword}}\"));"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Content-Type is application/json\", () => {",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "});",
+                  "",
+                  "pm.test(\"Request was successful\", () => {",
+                  "    pm.expect(pm.response.json().status).to.equal(\"success\");",
+                  "});",
+                  "",
+                  "pm.test(\"Response has correct status code: 201\", () => {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Response body contains id\", () => {",
+                  "    pm.response.to.have.jsonBody('id');",
+                  "});",
+                  "",
+                  "pm.collectionVariables.set(\"userId\", pm.response.json().id);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"{{username}}\",\n    \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Create a new user for operations that require authentication.\n\n- Use random username.\n    \n- Use random password.\n    \n- Check that user was created."
+          },
+          "response": [
+            {
+              "name": "Create user",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"username\": \"{{username}}\",\n    \"password\": \"{{password}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/auth/register",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "register"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "52"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"34-pRlU+srATIfV89vqZvdWd+XjNAI\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Fri, 20 Mar 2026 10:37:54 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": \"success\",\n    \"id\": \"69bd2382634e24ae703cb997\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Authenticate user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Content-Type is application/json\", () => {",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "});",
+                  "",
+                  "pm.test(\"Request was successful\", () => {",
+                  "    pm.expect(pm.response.json().status).to.equal(\"success\");",
+                  "});",
+                  "",
+                  "pm.test(\"Response has correct status code: 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response body contains tokens\", () => {",
+                  "    pm.response.to.have.jsonBody('accessToken');",
+                  "    pm.response.to.have.jsonBody('refreshToken');",
+                  "});",
+                  "",
+                  "pm.collectionVariables.set(\"accessToken\", pm.response.json().accessToken);",
+                  "pm.collectionVariables.set(\"refreshToken\", pm.response.json().refreshToken);",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"{{username}}\",\n    \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Log in as user.\n\n- Use previously generated username and password.\n    \n- Save returned access and refresh token."
+          },
+          "response": [
+            {
+              "name": "Login user",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"username\": \"{{username}}\",\n    \"password\": \"{{password}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/auth/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "",
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "1085"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"43d-TdqXuyGK8P/KhXd3mbdMIz2+/S4\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Fri, 20 Mar 2026 10:38:07 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": "{\n    \"status\": \"success\",\n    \"accessToken\": \"returnedAccessToken\",\n    \"refreshToken\": \"returnedRefreshToken\"\n}"
+            }
+          ]
+        },
         {
           "name": "Get total count",
           "event": [
@@ -3491,28 +3797,6 @@
         }
       ],
       "description": "Contains a reset request to ensure no variables are saved between different test runs."
-    }
-  ],
-  "variable": [
-    {
-      "key": "username",
-      "value": ""
-    },
-    {
-      "key": "password",
-      "value": ""
-    },
-    {
-      "key": "userId",
-      "value": ""
-    },
-    {
-      "key": "accessToken",
-      "value": ""
-    },
-    {
-      "key": "refreshToken",
-      "value": ""
     }
   ]
 }
