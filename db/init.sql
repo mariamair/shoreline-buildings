@@ -64,7 +64,7 @@ CREATE INDEX IF NOT EXISTS idx_region_type_id ON region(type_id);
 
 -- Insert category data
 INSERT INTO region_type (name) VALUES
-    ('sverige'),
+    ('riket'),
     ('län'),
     ('kommun')
 ON CONFLICT DO NOTHING;
