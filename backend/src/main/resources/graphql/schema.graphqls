@@ -1,3 +1,4 @@
+  "Values that can be used to filter the search results."
   input BuildingCountFilter {
     regionCode: String
     areaTypeId: Int
@@ -6,6 +7,7 @@
     year: Int
   }
 
+  "Information necessary to add a new building count."
   input CreateBuildingCountEntity {
     regionCode: String!
     areaTypeId: Int!
@@ -15,6 +17,7 @@
     buildingCount: Int!
   }
 
+  "Information that can be updated for an existing building count."
   input UpdateBuildingCountEntity {
     regionCode: String
     areaTypeId: Int
@@ -25,11 +28,22 @@
   }
   
   type Query {
+    "Search for a building count entity by id."
     buildingCountEntity(id: Int!): BuildingCountEntity
+
+    "Search for all building count entities. Filtering by different variables is possible."
     buildingCountEntities(filter: BuildingCountFilter, limit: Int = 50, offset: Int = 0): BuildingCountPage
+
+    "Search for a region by region code."
     region(code: String!): Region
+
+    "Search for all regions. Filtering by region type is possible."
     regions(regionTypeId: Int, limit: Int = 50, offset: Int = 0): RegionPage
+
+    "Search for a building type by id."
     buildingType(id: Int!): BuildingType
+
+    "Search for all building types."
     buildingTypes: [BuildingType]
   }
 
@@ -39,6 +53,7 @@
     deleteBuildingCountEntity(id: Int!): Boolean!
   }
 
+  "Displays building count entities as well as metadeta for the search results."
   type BuildingCountPage {
     items: [BuildingCountEntity]
     totalCount: Int
@@ -47,6 +62,7 @@
     hasNextPage: Boolean
   }
 
+  "Displays regions as well as metadeta for the search results."
   type RegionPage {
     items: [Region]
     totalCount: Int
@@ -55,6 +71,9 @@
     hasNextPage: Boolean
   }
 
+  """
+  The buildings counted at shorelines in Sweden, reported per region, building type, shoreline type, area type and year.
+  """
   type BuildingCountEntity {
     id: Int!
     region: Region
@@ -67,27 +86,42 @@
     updatedAt: String
   }
 
+  """
+  The regions in Sweden, which can be municipalities, counties or the whole country.
+  """
   type Region {
     code: String!
     name: String!
     regionType: RegionType
   }
 
+  """
+  The region types can be `riket` (the whole country), `län` (county) or `kommun` (municipality).
+  """
   type RegionType {
     id: Int!
     name: String!
   }
 
+  """
+  The different building types found at shorelines in Sweden. Use the `buildingTypes` query to see all available types.
+  """
   type BuildingType {
     id: Int!
     name: String!
   }
 
+  """
+  The different types of shorelines in Sweden, which can be `inlandsvatten` (inland water) or `marine` (hav).
+  """
   type ShorelineType {
     id: Int!
     name: String!
   }
 
+  """
+  The different area types registered for shoreline buildings in Sweden. Only `inom tätort` (within locality) and `inom formellt skyddad natur` (in a protected area) are separately identified. All other areas types are included in the total amount without further specification.
+  """
   type AreaType {
     id: Int!
     name: String!
