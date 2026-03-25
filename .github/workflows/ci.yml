@@ -136,11 +136,6 @@ jobs:
           docker compose build --no-cache backend
           docker compose push backend
 
-      - name: Build and push db
-        run: |
-          docker compose build --no-cache db
-          docker compose push db
-
       - name: Build and push seed
         if: needs.detect-changes.outputs.seed == 'true' || github.event.before == '0000000000000000000000000000000000000000' || github.event.inputs.force_rebuild == 'true'
         run: |
