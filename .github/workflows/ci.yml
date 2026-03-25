@@ -105,8 +105,10 @@ jobs:
         run: |
           cat > .env << 'EOF'
           DB_NAME=${{ secrets.DB_NAME }}
+          DB_ADMIN=${{ secrets.DB_ADMIN }}
+          DB_ADMIN_PASSWORD=${{ secrets.DB_ADMIN_PASSWORD }}
           DB_USER=${{ secrets.DB_USER }}
-          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          DB_USER_PASSWORD=${{ secrets.DB_USER_PASSWORD }}
           DB_HOST=db
           DB_PORT=5432
           AUTH_DB_URI=${{ secrets.AUTH_DB_URI }}
@@ -163,8 +165,10 @@ jobs:
         run: |
           cat > .env << 'EOF'
           DB_NAME=${{ secrets.DB_NAME }}
+          DB_ADMIN=${{ secrets.DB_ADMIN }}
+          DB_ADMIN_PASSWORD=${{ secrets.DB_ADMIN_PASSWORD }}
           DB_USER=${{ secrets.DB_USER }}
-          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          DB_USER_PASSWORD=${{ secrets.DB_USER_PASSWORD }}
           DB_HOST=db
           DB_PORT=5432
           AUTH_DB_URI=${{ secrets.AUTH_DB_URI }}
