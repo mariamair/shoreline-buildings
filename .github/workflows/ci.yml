@@ -99,7 +99,7 @@ jobs:
 
       - name: Create .env
         run: |
-          cat > .env << 'EOF'
+          cat > .env << EOF
           DB_NAME=${{ secrets.DB_NAME }}
           DB_ADMIN=${{ secrets.DB_ADMIN }}
           DB_ADMIN_PASSWORD=${{ secrets.DB_ADMIN_PASSWORD }}
@@ -158,7 +158,7 @@ jobs:
 
       - name: Create .env
         run: |
-          cat > .env << 'EOF'
+          cat > .env << EOF
           DB_NAME=${{ secrets.DB_NAME }}
           DB_ADMIN=${{ secrets.DB_ADMIN }}
           DB_ADMIN_PASSWORD=${{ secrets.DB_ADMIN_PASSWORD }}
