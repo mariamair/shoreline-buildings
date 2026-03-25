@@ -1,0 +1,13 @@
+# init-db.sh
+#!/bin/bash
+set -e
+
+# Create an app user with restricted database access
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
+    CREATE USER ${DB_USER} WITH PASSWORD '${DB_USER_PASSWORD}';
+    GRANT CONNECT ON DATABASE ${POSTGRES_DB} TO ${DB_USER};
+    GRANT USAGE ON SCHEMA public TO ${DB_USER};
+    GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO ${DB_USER};
+    ALTER DEFAULT PRIVILEGES IN SCHEMA public
+        GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO ${DB_USER};
+EOSQL
