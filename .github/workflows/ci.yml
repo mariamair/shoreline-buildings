@@ -185,6 +185,10 @@ jobs:
 
       - name: Start services
         run: docker compose pull && docker compose up -d --wait
+      
+      - name: Show container logs
+        if: failure()
+        run: docker compose logs
 
       - name: Wait for auth server to be ready
         run: |
