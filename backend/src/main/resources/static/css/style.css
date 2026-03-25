@@ -3,6 +3,10 @@ body {
   margin: 30px;
 }
 
+h2 {
+  padding-top: 20px;
+}
+
 th, td {
   padding: 5px 10px;
 }
@@ -13,5 +17,19 @@ th {
 
 tr:nth-child(even) {
   background-color: #ccd4d4;
+}
+
+.emphasize {
+  font-style: italic;
+}
+
+.emphasize > img {
+  width: 10px;
+  height: 10px;
+}
+
+.emphasize > p {
+  display: inline;
+  margin-left: 5px;
 }
 

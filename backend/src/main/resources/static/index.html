@@ -10,9 +10,9 @@
 
 <body>
   <h1>Shoreline Buildings API</h1>
-  <p>This application holds data about shoreline buildings in Sweden. It contains the number of shoreline buildings per
-    region, building type, shoreline type, area type and year.</p>
+  <p>This application holds data about shoreline buildings in Sweden. It contains the number of buildings counted at shorelines in Sweden and reported per region, building type, shoreline type, area type and year.</p>
   <p>It exposes a GraphQL API to search for the data.</p>
+  <div class="emphasize"><img src="https://github.githubassets.com/images/icons/emoji/unicode/270f.png?v8" alt="pen"><p>Please note that the application only provides the data in Swedish.</p></div>
 
   <h2>Links</h2>
   <p>URL for querying the API: https://cu3156.camp.lnu.se/api/graphql</p>
@@ -38,7 +38,7 @@
       <td>The current item's region, specified with region code, name and region type.</td>
       <td>
         <ul>
-          <li>sverige</li>
+          <li>riket</li>
           <li>län</li>
           <li>kommun</li>
         </ul>
@@ -73,7 +73,7 @@
           <li>totalt</li>
         </ul>
       </td>
-      <td>The numbers for "hav" and "inlandsvatten" will not add upp to "totalt".</td>
+      <td></td>
     </tr>
     <tr>
       <td>areaType</td>
@@ -85,7 +85,7 @@
           <li>totalt</li>
         </ul>
       </td>
-      <td>The numbers for "inom tätort" and "inom formellt skyddad natur" will not add upp to "totalt".</td>
+      <td>Only the area types "inom tätort" and "inom formellt skyddad natur" are separately identified. All other areas types are included in the total amount without further specification. Therefore, the numbers for "inom tätort" and "inom formellt skyddad natur" will not add upp to "totalt".</td>
     </tr>
     <tr>
       <td>year</td>
