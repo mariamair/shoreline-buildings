@@ -1,5 +1,6 @@
 body {
   font-family: sans-serif;
+  font-size: 16px;
   margin: 30px;
 }
 
@@ -19,17 +20,8 @@ tr:nth-child(even) {
   background-color: #ccd4d4;
 }
 
-.emphasize {
-  font-style: italic;
-}
-
-.emphasize > img {
+em > img {
+  margin: 0 5px 0 20px;
   width: 10px;
   height: 10px;
 }
-
-.emphasize > p {
-  display: inline;
-  margin-left: 5px;
-}
-
