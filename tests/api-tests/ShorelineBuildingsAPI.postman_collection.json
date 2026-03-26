@@ -1,8 +1,8 @@
 {
   "info": {
     "_postman_id": "55f4ce9a-6332-48df-98f3-bc94c7621a31",
-    "name": "ShorelineBuildingsAPI",
-    "description": "Test documentation for the Shoreline Buildings GraphQL API.\n\n- URL to use the API: [https://cu3156.camp.lnu.se/api/graphql](https://cu3156.camp.lnu.se/api/graphql)\n    \n- Playground to test the API: [https://cu3156.camp.lnu.se/api/graphiql](https://cu3156.camp.lnu.se/api/graphiql)\n    \n\n🔐 Authentication is done via a separate authentication server, using JWT (JSON Web Tokens) and REST requests.",
+    "name": "Shoreline Buildings API",
+    "description": "Documentation for the Shoreline Buildings GraphQL API, showing requests that can be used to test the API.\n\n- URL to use the API: [https://cu3156.camp.lnu.se/api/graphql](https://cu3156.camp.lnu.se/api/graphql)\n    \n- Playground to test the API (for authentication, see link in next section): [https://cu3156.camp.lnu.se/api/graphiql](https://cu3156.camp.lnu.se/api/graphiql)\n    \n\n## 🔐 Authentication\n\nAuthentication is done via a separate authentication server, using JWT (JSON Web Tokens) and REST requests. Use [Authentication for the Shoreline Buildings API](https://documenter.getpostman.com/view/39898331/2sBXikoB8y) to authorize when using the GraphQL Playground.\n\n## 💥 Error handling\n\n### Shoreline Buildings API (GraphQL)\n\nErrors are returned in the `extensions` field of the GraphQL error response, with a `code` and `classification`.\n\n| Exception | Code | Classification | Message |\n| --- | --- | --- | --- |\n| `IllegalArgumentException` | `BAD_REQUEST` | `ValidationError` | Exception message |\n| `IllegalStateException` | `CONFLICT` | `ConflictError` | Exception message |\n| `EntityNotFoundException` | `NOT_FOUND` | `DataFetchingError` | Exception message |\n| `AccessDeniedException` | `UNAUTHORIZED` | `AuthorizationError` | Exception message |\n| _(any other exception)_ | `INTERNAL_SERVER_ERROR` | `InternalError` | `\"Internal server error\"` |\n\n---\n\n### Authentication API (REST)\n\nErrors are returned as JSON with a `status`, `statusCode`, and `message`. Operational errors (expected, handled errors) use the shapes below. Unhandled errors always return `500`.\n\n| Error Class | HTTP Status | Trigger |\n| --- | --- | --- |\n| `ValidationError` | `400` | Invalid input |\n| `UnauthorizedError` | `401` | Authentication or authorization failures |\n| `NotFoundError` | `404` | Resource not found |\n| `ConflictError` | `409` | Duplicate resource |\n| _(unhandled exception)_ | `500` | Any non-operational or unexpected error |\n\n---\n\n### Cross-API Error mapping\n\n| Concept | GraphQL Code | REST Status |\n| --- | --- | --- |\n| Invalid input | `BAD_REQUEST` | `400` |\n| Unauthorized | `UNAUTHORIZED` | `401` |\n| Not found | `NOT_FOUND` | `404` |\n| Conflict / duplicate | `CONFLICT` | `409` |\n| Server error | `INTERNAL_SERVER_ERROR` | `500` |",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "39898331"
   },
@@ -113,23 +113,12 @@
               "listen": "prerequest",
               "script": {
                 "exec": [
-                  "const randomUsername = () => {",
-                  "    const letters = 'abcdefghijklmnopqrstuvwxyz';",
-                  "    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-';",
-                  "    ",
-                  "    // Start with a letter",
-                  "    let username = letters.charAt(Math.floor(Math.random() * letters.length));",
-                  "    ",
-                  "    // Add 7 more characters to meet the 8 character minimum",
-                  "    for (let i = 0; i < 7; i++) {",
-                  "        username += chars.charAt(Math.floor(Math.random() * chars.length));",
-                  "    }",
-                  "    ",
-                  "    return username;",
-                  "}",
+                  "// Start with a generic word meeting the 8 character minimum and add a random name",
+                  "let randomUsername = 'testuser-';",
+                  "randomUsername += pm.variables.replaceIn(\"{{$randomUserName}}\");",
                   "",
-                  "pm.collectionVariables.set(\"username\", randomUsername());",
-                  "pm.collectionVariables.set(\"password\", pm.variables.replaceIn(\"{{$randomPassword}}\"));"
+                  "pm.collectionVariables.set(\"username\", randomUsername)    ",
+                  "pm.collectionVariables.set(\"password\", pm.variables.replaceIn(\"{{$randomPassword}}\"))"
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -2892,6 +2881,30 @@
               "_postman_previewlanguage": null,
               "header": [
                 {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "X-XSS-Protection",
+                  "value": "0"
+                },
+                {
+                  "key": "Cache-Control",
+                  "value": "no-cache, no-store, max-age=0, must-revalidate"
+                },
+                {
+                  "key": "Pragma",
+                  "value": "no-cache"
+                },
+                {
+                  "key": "Expires",
+                  "value": "0"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
                   "key": "Content-Type",
                   "value": "application/json"
                 },
@@ -2901,7 +2914,7 @@
                 },
                 {
                   "key": "Date",
-                  "value": "Wed, 18 Mar 2026 10:46:33 GMT"
+                  "value": "Thu, 26 Mar 2026 11:35:13 GMT"
                 },
                 {
                   "key": "Keep-Alive",
@@ -2913,7 +2926,7 @@
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"errors\": [\n        {\n            \"message\": \"Invalid filter value(s): '99' is not a valid region code; '51' is not a valid area type; '52' is not a valid building type; '53' is not a valid shoreline type; '20' is not a valid year\",\n            \"locations\": [\n                {\n                    \"line\": 6,\n                    \"column\": 5\n                }\n            ],\n            \"path\": [\n                \"buildingCountEntities\"\n            ],\n            \"extensions\": {\n                \"code\": \"BAD_USER_INPUT\",\n                \"classification\": \"DataFetchingException\"\n            }\n        }\n    ],\n    \"data\": {\n        \"buildingCountEntities\": null\n    }\n}"
+              "body": "{\n    \"errors\": [\n        {\n            \"message\": \"Invalid filter value(s): '99' is not a valid region code; '51' is not a valid area type; '52' is not a valid building type; '53' is not a valid shoreline type; '20' is not a valid year\",\n            \"locations\": [\n                {\n                    \"line\": 6,\n                    \"column\": 5\n                }\n            ],\n            \"path\": [\n                \"buildingCountEntities\"\n            ],\n            \"extensions\": {\n                \"code\": \"BAD_REQUEST\",\n                \"classification\": \"ValidationError\"\n            }\n        }\n    ],\n    \"data\": {\n        \"buildingCountEntities\": null\n    }\n}"
             }
           ]
         },
@@ -3035,6 +3048,30 @@
               "_postman_previewlanguage": null,
               "header": [
                 {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "X-XSS-Protection",
+                  "value": "0"
+                },
+                {
+                  "key": "Cache-Control",
+                  "value": "no-cache, no-store, max-age=0, must-revalidate"
+                },
+                {
+                  "key": "Pragma",
+                  "value": "no-cache"
+                },
+                {
+                  "key": "Expires",
+                  "value": "0"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
                   "key": "Content-Type",
                   "value": "application/json"
                 },
@@ -3044,7 +3081,7 @@
                 },
                 {
                   "key": "Date",
-                  "value": "Wed, 18 Mar 2026 10:46:42 GMT"
+                  "value": "Thu, 26 Mar 2026 11:45:21 GMT"
                 },
                 {
                   "key": "Keep-Alive",
@@ -3056,7 +3093,7 @@
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"errors\": [\n        {\n            \"message\": \"Invalid input value(s): '99' is not a valid region code; '51' is not a valid area type; '52' is not a valid building type; '53' is not a valid shoreline type; '20' is not a valid year. Year must be between 1900 and 2026\",\n            \"locations\": [\n                {\n                    \"line\": 7,\n                    \"column\": 5\n                }\n            ],\n            \"path\": [\n                \"createBuildingCountEntity\"\n            ],\n            \"extensions\": {\n                \"code\": \"BAD_USER_INPUT\",\n                \"classification\": \"DataFetchingException\"\n            }\n        }\n    ],\n    \"data\": {\n        \"createBuildingCountEntity\": null\n    }\n}"
+              "body": "{\n    \"errors\": [\n        {\n            \"message\": \"Invalid input value(s): '99' is not a valid region code; '51' is not a valid area type; '52' is not a valid building type; '53' is not a valid shoreline type; '20' is not a valid year. Year must be between 1900 and 2026\",\n            \"locations\": [\n                {\n                    \"line\": 7,\n                    \"column\": 5\n                }\n            ],\n            \"path\": [\n                \"createBuildingCountEntity\"\n            ],\n            \"extensions\": {\n                \"code\": \"BAD_REQUEST\",\n                \"classification\": \"ValidationError\"\n            }\n        }\n    ],\n    \"data\": {\n        \"createBuildingCountEntity\": null\n    }\n}"
             }
           ]
         }
@@ -3795,6 +3832,48 @@
         }
       ],
       "description": "Contains a reset request to ensure no variables are saved between different test runs."
+    }
+  ],
+  "variable": [
+    {
+      "key": "invalidAreaTypeId",
+      "value": ""
+    },
+    {
+      "key": "invalidBuildingTypeId",
+      "value": ""
+    },
+    {
+      "key": "invalidShorelineTypeId",
+      "value": ""
+    },
+    {
+      "key": "invalidRegionCode",
+      "value": ""
+    },
+    {
+      "key": "invalidYear",
+      "value": ""
+    },
+    {
+      "key": "buildingCount",
+      "value": ""
+    },
+    {
+      "key": "username",
+      "value": ""
+    },
+    {
+      "key": "password",
+      "value": ""
+    },
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "refreshToken",
+      "value": ""
     }
   ]
 }
