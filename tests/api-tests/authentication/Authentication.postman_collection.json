@@ -17,9 +17,18 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"User was created\", () => {",
+                  "if (pm.response.code === 201) {",
+                  "    pm.test(\"User was created\", () => {",
                   "    pm.expect(pm.response.json().status).to.equal(\"success\");",
-                  "});"
+                  "});",
+                  "}",
+                  "",
+                  "if (pm.response.code === 409) {",
+                  "    pm.test(\"User exists\", () => {",
+                  "    pm.expect(pm.response.json().status).to.equal(\"error\");",
+                  "});",
+                  "}",
+                  ""
                 ],
                 "type": "text/javascript",
                 "packages": {},
