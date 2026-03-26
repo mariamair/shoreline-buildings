@@ -1,0 +1,430 @@
+{
+  "info": {
+    "_postman_id": "015003d8-93d1-4fa0-b183-938436fc88ab",
+    "name": "Authentication for the Shoreline Buildings API",
+    "description": "1. Register a new user with the [Register user request](https://go.postman.co/workspace/b951b2d1-d6e9-4402-85ec-f51333512a7c/documentation/39898331-015003d8-93d1-4fa0-b183-938436fc88ab?entity=request-4d2c2622-a456-4adc-8793-a33968737ee3).\n    \n2. Log in as this user with the [Authenticate user request](https://go.postman.co/workspace/b951b2d1-d6e9-4402-85ec-f51333512a7c/documentation/39898331-015003d8-93d1-4fa0-b183-938436fc88ab?entity=request-c14e5218-4df5-4fbe-892f-f44ffc4fc5ab).\n    \n3. Take note of the _accessToken_ and add it to the following code snippet, replacing _yourAccessTokenHere_:\n    \n\n```\njson\n{\n  \"authorization\" : \"Bearer yourAccessTokenHere\"\n}\n\n ```\n\n3\\. Copy the snippet and add it in the _Headers_ section of the GraphQL Playground.\n\n<img src=\"https://content.pstmn.io/706ab027-3717-4563-957e-f66d9178bf8e/QXV0aG9yaXphdGlvbkhlYWRlci5wbmc=\">\n\n#### Please note!\n\nThe token is valid for 5 minutes. If it has expired you can use the [Refresh token request](https://go.postman.co/workspace/b951b2d1-d6e9-4402-85ec-f51333512a7c/documentation/39898331-015003d8-93d1-4fa0-b183-938436fc88ab?entity=request-53237dc3-5a8b-4bcf-b736-5f02410ce5dd) to get a new one.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "39898331"
+  },
+  "item": [
+    {
+      "name": "Authenticate",
+      "item": [
+        {
+          "name": "Register user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Request was successful\", () => {",
+                  "    pm.expect(pm.response.json().status).to.equal(\"success\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"yourUsername\",\n    \"password\": \"yourPassword\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Enter a _username_ (minimum of 8 characters) and a _password_."
+          },
+          "response": [
+            {
+              "name": "Register user",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"username\": \"yourUsername\",\n    \"password\": \"yourPassword\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/auth/register",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "register"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Server",
+                  "value": "nginx/1.24.0 (Ubuntu)"
+                },
+                {
+                  "key": "Date",
+                  "value": "Thu, 26 Mar 2026 16:00:05 GMT"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "46"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"2e-lhqd/LB7Yesj7K1+oTY6n7vvPtY\""
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"status\": \"success\",\n    \"username\": \"yourUsername\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Authenticate user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Request was successful\", () => {",
+                  "    pm.expect(pm.response.json().status).to.equal(\"success\");",
+                  "});",
+                  "",
+                  "pm.environment.set(\"accessToken\", pm.response.json().accessToken);",
+                  "pm.environment.set(\"refreshToken\", pm.response.json().refreshToken);",
+                  "",
+                  "console.log(\"accessToken: \" + pm.response.json().accessToken);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"yourUsername\",\n    \"password\": \"yourPassword\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Enter the _username_ and _password_ you used in the [Register user](https://go.postman.co/workspace/b951b2d1-d6e9-4402-85ec-f51333512a7c/documentation/39898331-015003d8-93d1-4fa0-b183-938436fc88ab?entity=request-4d2c2622-a456-4adc-8793-a33968737ee3) request.\n\nTake note of the _accessToken_ that is returned."
+          },
+          "response": [
+            {
+              "name": "Authenticate user",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"username\": \"yourUsername\",\n    \"password\": \"yourPassword\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/auth/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "",
+              "header": [
+                {
+                  "key": "Server",
+                  "value": "nginx/1.24.0 (Ubuntu)"
+                },
+                {
+                  "key": "Date",
+                  "value": "Thu, 26 Mar 2026 16:01:58 GMT"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "1081"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"439-+KfMvbr5GzFPvuA/TZq8iu2mj7E\""
+                }
+              ],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": "{\n    \"status\": \"success\",\n    \"accessToken\": \"yourAccessToken\",\n    \"refreshToken\": \"yourRefreshToken\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "On demand: Refresh token",
+      "item": [
+        {
+          "name": "Refresh token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Request was successful\", () => {",
+                  "    pm.expect(pm.response.json().status).to.equal(\"success\");",
+                  "});",
+                  "",
+                  "pm.environment.set(\"accessToken\", pm.response.json().accessToken);",
+                  "pm.environment.set(\"refreshToken\", pm.response.json().refreshToken);",
+                  "",
+                  "console.log(\"accessToken: \" + pm.response.json().accessToken);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/refresh",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "refresh"
+              ]
+            },
+            "description": "Add the expired _accessToken_ to the Header and the _refreshToken_ to the Body."
+          },
+          "response": [
+            {
+              "name": "Refresh token",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"refreshToken\": \"yourRefreshToken\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/auth/refresh",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "refresh"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "",
+              "header": [
+                {
+                  "key": "Server",
+                  "value": "nginx/1.24.0 (Ubuntu)"
+                },
+                {
+                  "key": "Date",
+                  "value": "Thu, 26 Mar 2026 16:03:10 GMT"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "70"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"46-LHki9W58Z29p/2E7pjcOK8AszwY\""
+                }
+              ],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": "{\n    \"status\": \"success\",\n    \"accessToken\": \"yourNewAccessToken\",\n    \"refreshToken\": \"yourNewRefreshToken\"\n}"
+            }
+          ]
+        }
+      ],
+      "description": "Used to request a new token when the access token has expired."
+    }
+  ],
+  "variable": [
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "refreshToken",
+      "value": ""
+    },
+    {
+      "key": "username",
+      "value": ""
+    },
+    {
+      "key": "password",
+      "value": ""
+    },
+    {
+      "key": "userId",
+      "value": ""
+    }
+  ]
+}
