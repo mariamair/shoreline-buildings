@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "015003d8-93d1-4fa0-b183-938436fc88ab",
     "name": "Authentication for the Shoreline Buildings API",
-    "description": "1. Register a new user with the [Register user request](https://go.postman.co/workspace/b951b2d1-d6e9-4402-85ec-f51333512a7c/documentation/39898331-015003d8-93d1-4fa0-b183-938436fc88ab?entity=request-4d2c2622-a456-4adc-8793-a33968737ee3).\n    \n2. Log in as this user with the [Authenticate user request](https://go.postman.co/workspace/b951b2d1-d6e9-4402-85ec-f51333512a7c/documentation/39898331-015003d8-93d1-4fa0-b183-938436fc88ab?entity=request-c14e5218-4df5-4fbe-892f-f44ffc4fc5ab).\n    \n3. Take note of the _accessToken_ and add it to the following code snippet, replacing _yourAccessTokenHere_:\n    \n\n```\njson\n{\n  \"authorization\" : \"Bearer yourAccessTokenHere\"\n}\n\n ```\n\n3\\. Copy the snippet and add it in the _Headers_ section of the GraphQL Playground.\n\n<img src=\"https://content.pstmn.io/706ab027-3717-4563-957e-f66d9178bf8e/QXV0aG9yaXphdGlvbkhlYWRlci5wbmc=\">\n\n#### Please note!\n\nThe token is valid for 5 minutes. If it has expired you can use the [Refresh token request](https://go.postman.co/workspace/b951b2d1-d6e9-4402-85ec-f51333512a7c/documentation/39898331-015003d8-93d1-4fa0-b183-938436fc88ab?entity=request-53237dc3-5a8b-4bcf-b736-5f02410ce5dd) to get a new one.",
+    "description": "# Using Postman\n\n1. Register a new user account with the [Register user request](https://go.postman.co/workspace/b951b2d1-d6e9-4402-85ec-f51333512a7c/documentation/39898331-015003d8-93d1-4fa0-b183-938436fc88ab?entity=request-4d2c2622-a456-4adc-8793-a33968737ee3).\n    \n2. Log in as this user with the [Authenticate user request](https://go.postman.co/workspace/b951b2d1-d6e9-4402-85ec-f51333512a7c/documentation/39898331-015003d8-93d1-4fa0-b183-938436fc88ab?entity=request-c14e5218-4df5-4fbe-892f-f44ffc4fc5ab).\n    \n3. Take note of the _accessToken_.\n    \n4. Copy the following json snippet and paste it into the _Headers_ section of the GraphQL Playground, replacing _yourAccessTokenHere_ with the access token you just received:\n    \n\n```\njson\n{\n  \"authorization\" : \"Bearer yourAccessTokenHere\"\n}\n\n ```\n\nScreenshot of the GraphQL Playground with the _Headers_ section:\n\n<img src=\"https://content.pstmn.io/706ab027-3717-4563-957e-f66d9178bf8e/QXV0aG9yaXphdGlvbkhlYWRlci5wbmc=\">\n\n#### Please note!\n\nThe token is valid for 5 minutes. If it has expired you can use the [Refresh token request](https://go.postman.co/workspace/b951b2d1-d6e9-4402-85ec-f51333512a7c/documentation/39898331-015003d8-93d1-4fa0-b183-938436fc88ab?entity=request-53237dc3-5a8b-4bcf-b736-5f02410ce5dd) to get a new one.\n\n# Using Newman from the command line\n\nIf you prefer to authenticate from the command line, you can follow these steps:\n\n1. Copy the four files from the [tests/api-tests/authentication folder](https://github.com/mariamair/shoreline-buildings/tree/main/tests/api-tests/authentication) to a folder on your computer:  \n    [Authentication.postman_collection.json](https://github.com/mariamair/shoreline-buildings/blob/main/tests/api-tests/authentication/Authentication.postman_collection.json)  \n    [authentication.postman_environment.json](https://github.com/mariamair/shoreline-buildings/blob/main/tests/api-tests/authentication/authentication.postman_environment.json)  \n    [get-token.sh](https://github.com/mariamair/shoreline-buildings/blob/main/tests/api-tests/authentication/get-token.sh)  \n    [refresh-token.sh](https://github.com/mariamair/shoreline-buildings/blob/main/tests/api-tests/authentication/refresh-token.sh)\n    \n2. Open a terminal in that folder.\n    \n3. Run the following command to create a user and log in, replacing _yourUsername_ and _yourPassword_ with your credentials: `./get-token.sh yourUsername yourPassword`. If the user already exists, you will simply be logged in.\n    \n4. Copy the json response and paste it into the _Headers_ section of the GraphQL Playground (see step 4 in the _Using Postman_ section above for a screenshot).\n    \n5. Run the following command to refresh the token if it has expired: `./refresh-token.sh`. Then paste it into the GraphQL Playground.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "39898331"
   },
@@ -17,7 +17,7 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Request was successful\", () => {",
+                  "pm.test(\"User was created\", () => {",
                   "    pm.expect(pm.response.json().status).to.equal(\"success\");",
                   "});"
                 ],
@@ -43,7 +43,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"username\": \"yourUsername\",\n    \"password\": \"yourPassword\"\n}",
+              "raw": "{\n    \"username\": \"{{username}}\",\n    \"password\": \"{{password}}\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -141,8 +141,7 @@
                   "",
                   "pm.environment.set(\"accessToken\", pm.response.json().accessToken);",
                   "pm.environment.set(\"refreshToken\", pm.response.json().refreshToken);",
-                  "",
-                  "console.log(\"accessToken: \" + pm.response.json().accessToken);"
+                  ""
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -166,7 +165,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"username\": \"yourUsername\",\n    \"password\": \"yourPassword\"\n}",
+              "raw": "{\n    \"username\": \"{{username}}\",\n    \"password\": \"{{password}}\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -274,9 +273,7 @@
                   "});",
                   "",
                   "pm.environment.set(\"accessToken\", pm.response.json().accessToken);",
-                  "pm.environment.set(\"refreshToken\", pm.response.json().refreshToken);",
-                  "",
-                  "console.log(\"accessToken: \" + pm.response.json().accessToken);"
+                  "pm.environment.set(\"refreshToken\", pm.response.json().refreshToken);"
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -335,7 +332,13 @@
               "name": "Refresh token",
               "originalRequest": {
                 "method": "POST",
-                "header": [],
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer yourAccessTokenHere",
+                    "type": "text"
+                  }
+                ],
                 "body": {
                   "mode": "raw",
                   "raw": "{\n  \"refreshToken\": \"yourRefreshToken\"\n}",
