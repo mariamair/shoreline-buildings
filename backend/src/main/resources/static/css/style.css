@@ -20,8 +20,8 @@ tr:nth-child(even) {
   background-color: #ccd4d4;
 }
 
-em > img {
+.icon {
   margin: 0 5px 0 20px;
-  width: 10px;
-  height: 10px;
+  width: 15px;
+  height: 15px;
 }
