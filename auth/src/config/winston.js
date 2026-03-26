@@ -20,15 +20,15 @@ const fileFormat = combine(
   json()
 )
 
+// Available log levels
 const levels = {
-  error: 0,
-  warn: 1,
-  info: 2,
-  http: 3,
-  verbose: 4,
-  debug: 5,
-  silly: 6
-};
+  error: 'error',
+  warn: 'warn',
+  info: 'info',
+  http: 'http',
+  debug: 'debug',
+  silly: 'silly'
+}
 
 export const logger = createLogger({
   level: process.env.AUTH_LOG_LEVEL || levels.info,
