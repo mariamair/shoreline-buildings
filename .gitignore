@@ -2,6 +2,7 @@
 .env
 .env.*
 !.env.example
+/tests/api-tests/dev.postman_environment.json
 
 # Dependencies
 node_modules/
