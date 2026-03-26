@@ -152,11 +152,9 @@
                   "    pm.response.to.have.status(201);",
                   "});",
                   "",
-                  "pm.test(\"Response body contains id\", () => {",
-                  "    pm.response.to.have.jsonBody('id');",
-                  "});",
-                  "",
-                  "pm.collectionVariables.set(\"userId\", pm.response.json().id);"
+                  "pm.test(\"Response body contains username\", () => {",
+                  "    pm.response.to.have.jsonBody('username');",
+                  "});"
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -230,15 +228,15 @@
                 },
                 {
                   "key": "Content-Length",
-                  "value": "52"
+                  "value": "42"
                 },
                 {
                   "key": "ETag",
-                  "value": "W/\"34-pRlU+srATIfV89vqZvdWd+XjNAI\""
+                  "value": "W/\"2a-hdwAFnGpSdtKAEFFVXT0IiCswRc\""
                 },
                 {
                   "key": "Date",
-                  "value": "Fri, 20 Mar 2026 10:37:54 GMT"
+                  "value": "Thu, 26 Mar 2026 08:38:34 GMT"
                 },
                 {
                   "key": "Connection",
@@ -250,7 +248,7 @@
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"status\": \"success\",\n    \"id\": \"69bd2382634e24ae703cb997\"\n}"
+              "body": "{\n    \"status\": \"success\",\n    \"username\": \"e-yLijSs\"\n}"
             }
           ]
         },
@@ -418,7 +416,9 @@
                   "    pm.response.to.have.jsonBody('accessToken');",
                   "    pm.response.to.have.jsonBody('refreshToken');",
                   "});",
-                  ""
+                  "",
+                  "pm.collectionVariables.set(\"accessToken\", pm.response.json().accessToken);",
+                  "pm.collectionVariables.set(\"refreshToken\", pm.response.json().refreshToken);"
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -1643,11 +1643,9 @@
                   "    pm.response.to.have.status(201);",
                   "});",
                   "",
-                  "pm.test(\"Response body contains id\", () => {",
-                  "    pm.response.to.have.jsonBody('id');",
-                  "});",
-                  "",
-                  "pm.collectionVariables.set(\"userId\", pm.response.json().id);"
+                  "pm.test(\"Response body contains username\", () => {",
+                  "    pm.response.to.have.jsonBody('username');",
+                  "});"
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -1721,15 +1719,15 @@
                 },
                 {
                   "key": "Content-Length",
-                  "value": "52"
+                  "value": "42"
                 },
                 {
                   "key": "ETag",
-                  "value": "W/\"34-pRlU+srATIfV89vqZvdWd+XjNAI\""
+                  "value": "W/\"2a-bSdR6X6VnWL/6EJfEN2d9Y1uKNI\""
                 },
                 {
                   "key": "Date",
-                  "value": "Fri, 20 Mar 2026 10:37:54 GMT"
+                  "value": "Thu, 26 Mar 2026 08:39:48 GMT"
                 },
                 {
                   "key": "Connection",
@@ -1741,7 +1739,7 @@
                 }
               ],
               "cookie": [],
-              "body": "{\n    \"status\": \"success\",\n    \"id\": \"69bd2382634e24ae703cb997\"\n}"
+              "body": "{\n    \"status\": \"success\",\n    \"username\": \"u_K9Tm8n\"\n}"
             }
           ]
         },

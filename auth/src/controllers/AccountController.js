@@ -51,7 +51,7 @@ export class AccountController {
         .status(201)
         .json({ 
           status: 'success',
-          id: accountDocument.id 
+          username: accountDocument.username
         })
     } catch (error) {
       next(error)
