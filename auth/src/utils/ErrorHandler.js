@@ -27,13 +27,6 @@ export class NotFoundError extends AppError {
   }
 }
 
-export class DatabaseError extends AppError {
-  constructor(message) {
-    super(message, 500)
-    this.name = 'DatabaseError'
-  }
-}
-
 export class ConflictError extends AppError {
   constructor(message) {
     super(message, 409)
