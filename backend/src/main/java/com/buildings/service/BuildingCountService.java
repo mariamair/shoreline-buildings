@@ -50,10 +50,6 @@ public class BuildingCountService {
       errors = validationService.validateContent(filter);
     }
 
-    if (filter != null && filter.year() != null) {
-      validateYearAsSearchFilter(filter.year()).ifPresent(errors::add);
-    }
-
     if (!errors.isEmpty()) {
       throw new IllegalArgumentException("Invalid filter value(s): " +  String.join("; ", errors));
     }
@@ -68,10 +64,6 @@ public class BuildingCountService {
     List<String> errors = new ArrayList<>();
     errors = validationService.validateContent(buildingCountEntity);
 
-    if (buildingCountEntity.year() != null) {
-        validateYearAsInput(buildingCountEntity.year()).ifPresent(errors::add);
-    }
-
     if (!errors.isEmpty()) {
       throw new IllegalArgumentException("Invalid input value(s): " +  String.join("; ", errors));
     }
@@ -81,10 +73,6 @@ public class BuildingCountService {
   public BuildingCountEntity updateBuildingCountEntity(final Long id, final BuildingCountContent buildingCountEntity) {
     List<String> errors = new ArrayList<>();
     errors = validationService.validateContent(buildingCountEntity);
-
-    if (buildingCountEntity.year() != null) {
-        validateYearAsInput(buildingCountEntity.year()).ifPresent(errors::add);
-    }
 
     if (!errors.isEmpty()) {
       throw new IllegalArgumentException("Invalid input value(s): " +  String.join("; ", errors));
@@ -100,24 +88,5 @@ public class BuildingCountService {
         String.format("Expected to delete 1 row, but deleted %d rows for id %d", rowsAffected, id));
     }
     return rowsAffected == 1;
-  }
-
-  private Optional<String> validateYearAsInput(final Integer year) {
-    final int earliestYear = 1900;
-    int currentYear = java.time.Year.now().getValue();
-
-    if (year < earliestYear || year > currentYear) {
-      return Optional.of(
-        String.format("'%d' is not a valid year. Year must be between %d and %d", year, earliestYear, currentYear));
-    }
-    return Optional.empty();
-  }
-
-
-  private Optional<String> validateYearAsSearchFilter(final Integer year) {
-    if (!buildingCountRepository.getYears().contains(year)) {
-      return Optional.of(String.format("'%d' is not a valid year", year));
-    }
-    return Optional.empty();
   }
 }
