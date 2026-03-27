@@ -3,7 +3,6 @@ package com.buildings.service;
 import com.buildings.dto.BuildingCountContent;
 import com.buildings.dto.BuildingCountFilter;
 import com.buildings.repository.BuildingCountRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,18 +74,11 @@ public class ValidationService {
 
 
   private Optional<String> validateYearAsSearchFilter(final Integer year) {
-    if (!getYears().contains(year)) {
+    List<Integer> yearsInDatabase = buildingCountRepository.getYears();
+
+    if (!yearsInDatabase.isEmpty() && !yearsInDatabase.contains(year)) {
       return Optional.of(String.format("'%d' is not a valid year", year));
     }
     return Optional.empty();
-  }
-
-  public List<Integer> getYears() {
-    List<Integer> years = buildingCountRepository.getYears();
-    if (years.isEmpty()) {
-      log.warn("No years available");
-      throw new EntityNotFoundException("Found no years");
-    }
-    return years;
   }
 }

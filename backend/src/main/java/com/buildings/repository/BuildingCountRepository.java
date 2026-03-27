@@ -2,6 +2,8 @@ package com.buildings.repository;
 
 import com.buildings.domain.BuildingCountEntity;
 import com.buildings.dto.BuildingCountContent;
+import com.buildings.dto.BuildingCountFilter;
+
 import java.util.List;
 import java.util.Optional;
 import org.springframework.jdbc.core.RowMapper;
@@ -39,7 +41,7 @@ public class BuildingCountRepository {
         .optional();
   }
 
-  public List<BuildingCountEntity> findBuildingCountEntities(final BuildingCountContent filter, final int limit,
+  public List<BuildingCountEntity> findBuildingCountEntities(final BuildingCountFilter filter, final int limit,
       final int offset) {
     FilterQuery filterQuery = buildFilterQuery(filter);
     String sql = baseSql
@@ -56,7 +58,7 @@ public class BuildingCountRepository {
         .list();
   }
 
-  public int countBuildingCountEntities(final BuildingCountContent filter) {
+  public int countBuildingCountEntities(final BuildingCountFilter filter) {
     FilterQuery filterQuery = buildFilterQuery(filter);
     String sql = "SELECT COUNT(*) FROM building_count"
         + filterQuery.sql();
@@ -116,7 +118,7 @@ public class BuildingCountRepository {
   private record FilterQuery(String sql, MapSqlParameterSource params) {
   }
 
-  private FilterQuery buildFilterQuery(final BuildingCountContent filter) {
+  private FilterQuery buildFilterQuery(final BuildingCountFilter filter) {
     StringBuilder sql = new StringBuilder(" WHERE 1=1");
     MapSqlParameterSource params = new MapSqlParameterSource();
 

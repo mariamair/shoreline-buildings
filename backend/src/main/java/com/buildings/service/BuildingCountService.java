@@ -2,6 +2,7 @@ package com.buildings.service;
 
 import com.buildings.domain.BuildingCountEntity;
 import com.buildings.dto.BuildingCountContent;
+import com.buildings.dto.BuildingCountFilter;
 import com.buildings.repository.BuildingCountRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public class BuildingCountService {
   }
 
   public List<BuildingCountEntity> getBuildingCountEntities(
-      final BuildingCountContent filter,
+      final BuildingCountFilter filter,
       final Integer limit,
       final Integer offset) {
 
@@ -56,7 +57,7 @@ public class BuildingCountService {
     return buildingCountRepository.findBuildingCountEntities(filter, limit, offset);
   }
 
-  public int getTotalCount(final BuildingCountContent filter) {
+  public int getTotalCount(final BuildingCountFilter filter) {
     return buildingCountRepository.countBuildingCountEntities(filter);
   }
 
