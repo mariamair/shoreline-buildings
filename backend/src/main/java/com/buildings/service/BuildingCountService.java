@@ -7,7 +7,6 @@ import com.buildings.repository.BuildingCountRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -16,23 +15,11 @@ import org.springframework.stereotype.Service;
 public class BuildingCountService {
   private final BuildingCountRepository buildingCountRepository;
   private final ValidationService validationService;
-  private final RegionService regionService;
-  private final AreaTypeService areaTypeService;
-  private final BuildingTypeService buildingTypeService;
-  private final ShorelineTypeService shorelineTypeService;
 
   public BuildingCountService(
-    final BuildingCountRepository buildingCountRepository, final ValidationService validationService,
-    final RegionService regionService,
-    final AreaTypeService areaTypeService,
-    final BuildingTypeService buildingTypeService,
-    final ShorelineTypeService shorelineTypeService) {
+    final BuildingCountRepository buildingCountRepository, final ValidationService validationService) {
         this.buildingCountRepository = buildingCountRepository;
         this.validationService = validationService;
-        this.regionService = regionService;
-        this.areaTypeService = areaTypeService;
-        this.buildingTypeService = buildingTypeService;
-        this.shorelineTypeService = shorelineTypeService;
     }
 
   public BuildingCountEntity getBuildingCountEntityById(final Long id) {
