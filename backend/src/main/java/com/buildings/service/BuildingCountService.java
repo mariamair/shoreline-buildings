@@ -14,18 +14,20 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class BuildingCountService {
   private final BuildingCountRepository buildingCountRepository;
+  private final ValidationService validationService;
   private final RegionService regionService;
   private final AreaTypeService areaTypeService;
   private final BuildingTypeService buildingTypeService;
   private final ShorelineTypeService shorelineTypeService;
 
   public BuildingCountService(
-    final BuildingCountRepository buildingCountRepository,
+    final BuildingCountRepository buildingCountRepository, final ValidationService validationService,
     final RegionService regionService,
     final AreaTypeService areaTypeService,
     final BuildingTypeService buildingTypeService,
     final ShorelineTypeService shorelineTypeService) {
         this.buildingCountRepository = buildingCountRepository;
+        this.validationService = validationService;
         this.regionService = regionService;
         this.areaTypeService = areaTypeService;
         this.buildingTypeService = buildingTypeService;
@@ -45,7 +47,7 @@ public class BuildingCountService {
     List<String> errors = new ArrayList<>();
 
     if (filter != null) {
-      errors = validateContent(filter);
+      errors = validationService.validateContent(filter);
     }
 
     if (filter != null && filter.year() != null) {
@@ -64,7 +66,7 @@ public class BuildingCountService {
 
   public BuildingCountEntity createBuildingCountEntity(final BuildingCountContent buildingCountEntity) {
     List<String> errors = new ArrayList<>();
-    errors = validateContent(buildingCountEntity);
+    errors = validationService.validateContent(buildingCountEntity);
 
     if (buildingCountEntity.year() != null) {
         validateYearAsInput(buildingCountEntity.year()).ifPresent(errors::add);
@@ -78,7 +80,7 @@ public class BuildingCountService {
 
   public BuildingCountEntity updateBuildingCountEntity(final Long id, final BuildingCountContent buildingCountEntity) {
     List<String> errors = new ArrayList<>();
-    errors = validateContent(buildingCountEntity);
+    errors = validationService.validateContent(buildingCountEntity);
 
     if (buildingCountEntity.year() != null) {
         validateYearAsInput(buildingCountEntity.year()).ifPresent(errors::add);
@@ -98,40 +100,6 @@ public class BuildingCountService {
         String.format("Expected to delete 1 row, but deleted %d rows for id %d", rowsAffected, id));
     }
     return rowsAffected == 1;
-  }
-
-  private List<String> validateContent(final BuildingCountContent content) {
-    List<String> errors = new ArrayList<>();
-
-    if (content.regionCode() != null) {
-      String regionCode = content.regionCode();
-      if (!regionService.getRegionCodes().contains(regionCode)) {
-        errors.add(String.format("'%s' is not a valid region code", regionCode));
-      }
-    }
-
-    if (content.areaTypeId() != null) {
-      int areaTypeId = content.areaTypeId();
-      if (!areaTypeService.getAreaTypeIds().contains(areaTypeId)) {
-        errors.add(String.format("'%d' is not a valid area type", areaTypeId));
-      }
-    }
-
-    if (content.buildingTypeId() != null) {
-      int buildingTypeId = content.buildingTypeId();
-      if (!buildingTypeService.getBuildingTypeIds().contains(buildingTypeId)) {
-        errors.add(String.format("'%d' is not a valid building type", buildingTypeId));
-      }
-    }
-
-    if (content.shorelineTypeId() != null) {
-      int shorelineTypeId = content.shorelineTypeId();
-      if (!shorelineTypeService.getShorelineTypeIds().contains(shorelineTypeId)) {
-        errors.add(String.format("'%d' is not a valid shoreline type", shorelineTypeId));
-      }
-    }
-
-    return errors;
   }
 
   private Optional<String> validateYearAsInput(final Integer year) {
