@@ -1,0 +1,32 @@
+name: Deploy to Production (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Git ref to deploy"
+        required: true
+        default: "main"
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.inputs.ref }}
+
+      - name: Show commit
+        run: echo "Deploying ${{ github.sha }}"
+
+      - name: Deployment instructions
+        run: |
+          echo "✅ Deployment approved"
+          echo "Run the following command locally:"
+          echo "./deploy.sh ${{ github.event.inputs.ref }}"
