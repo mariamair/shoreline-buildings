@@ -51,11 +51,13 @@ public class ValidationService {
       errors.add(String.format("'%d' is not a valid area type", record.areaTypeId()));
     }
 
-    if (record.buildingTypeId() != null && !buildingTypeService.getBuildingTypeIds().contains(record.buildingTypeId())) {
+    if (record.buildingTypeId() != null
+      && !buildingTypeService.getBuildingTypeIds().contains(record.buildingTypeId())) {
       errors.add(String.format("'%d' is not a valid building type", record.buildingTypeId()));
     }
 
-    if (record.shorelineTypeId() != null && !shorelineTypeService.getShorelineTypeIds().contains(record.shorelineTypeId())) {
+    if (record.shorelineTypeId() != null
+      && !shorelineTypeService.getShorelineTypeIds().contains(record.shorelineTypeId())) {
       errors.add(String.format("'%d' is not a valid shoreline type", record.shorelineTypeId()));
     }
 

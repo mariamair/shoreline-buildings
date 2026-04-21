@@ -10,4 +10,4 @@ public record BuildingCountFilter(
   Integer shorelineTypeId,
   Integer year,
   Integer buildingCount) implements Validatable {
-} 
+}

@@ -45,8 +45,8 @@ public class BuildingCountRepository {
   public List<BuildingCountEntity> findBuildingCountEntities(final BuildingCountFilter filter, final int limit,
       final int offset) {
     FilterQuery filterQuery = buildFilterQuery(filter);
-    Boolean addJoinStatement = filter != null && filter.regionTypeId() != null; 
-    
+    Boolean addJoinStatement = filter != null && filter.regionTypeId() != null;
+
     String sql = baseSql
         + (addJoinStatement ? joinRegionSql : "")
         + filterQuery.sql()
@@ -64,7 +64,7 @@ public class BuildingCountRepository {
 
   public int countBuildingCountEntities(final BuildingCountFilter filter) {
     FilterQuery filterQuery = buildFilterQuery(filter);
-    Boolean addJoinStatement = filter != null && filter.regionTypeId() != null; 
+    Boolean addJoinStatement = filter != null && filter.regionTypeId() != null;
 
     String sql = "SELECT COUNT(*) FROM building_count"
         + (addJoinStatement ? joinRegionSql : "")
