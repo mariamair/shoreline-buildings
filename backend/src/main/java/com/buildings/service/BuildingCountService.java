@@ -35,7 +35,7 @@ public class BuildingCountService {
     List<String> errors = new ArrayList<>();
 
     if (filter != null) {
-      errors = validationService.validateContent(filter);
+      errors = validationService.validate(filter);
     }
 
     if (!errors.isEmpty()) {
@@ -50,7 +50,7 @@ public class BuildingCountService {
 
   public BuildingCountEntity createBuildingCountEntity(final BuildingCountContent buildingCountEntity) {
     List<String> errors = new ArrayList<>();
-    errors = validationService.validateContent(buildingCountEntity);
+    errors = validationService.validate(buildingCountEntity);
 
     if (!errors.isEmpty()) {
       throw new IllegalArgumentException("Invalid input value(s): " +  String.join("; ", errors));
@@ -60,7 +60,7 @@ public class BuildingCountService {
 
   public BuildingCountEntity updateBuildingCountEntity(final Long id, final BuildingCountContent buildingCountEntity) {
     List<String> errors = new ArrayList<>();
-    errors = validationService.validateContent(buildingCountEntity);
+    errors = validationService.validate(buildingCountEntity);
 
     if (!errors.isEmpty()) {
       throw new IllegalArgumentException("Invalid input value(s): " +  String.join("; ", errors));

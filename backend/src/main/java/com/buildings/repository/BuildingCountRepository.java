@@ -23,6 +23,7 @@ public class BuildingCountRepository {
         updated_at
       FROM building_count
       """;
+  private final String joinRegionSql = " JOIN region ON building_count.region_code = region.code";
 
   public BuildingCountRepository(final JdbcClient jdbcClient) {
     this.jdbcClient = jdbcClient;
@@ -44,7 +45,10 @@ public class BuildingCountRepository {
   public List<BuildingCountEntity> findBuildingCountEntities(final BuildingCountFilter filter, final int limit,
       final int offset) {
     FilterQuery filterQuery = buildFilterQuery(filter);
+    Boolean addJoinStatement = filter != null && filter.regionTypeId() != null; 
+    
     String sql = baseSql
+        + (addJoinStatement ? joinRegionSql : "")
         + filterQuery.sql()
         + " ORDER BY id ASC LIMIT :limit OFFSET :offset";
 
@@ -60,7 +64,10 @@ public class BuildingCountRepository {
 
   public int countBuildingCountEntities(final BuildingCountFilter filter) {
     FilterQuery filterQuery = buildFilterQuery(filter);
+    Boolean addJoinStatement = filter != null && filter.regionTypeId() != null; 
+
     String sql = "SELECT COUNT(*) FROM building_count"
+        + (addJoinStatement ? joinRegionSql : "")
         + filterQuery.sql();
 
     return jdbcClient.sql(sql)
@@ -125,6 +132,11 @@ public class BuildingCountRepository {
     if (filter != null && filter.regionCode() != null) {
       sql.append(" AND region_code = :regionCode");
       params.addValue("regionCode", filter.regionCode());
+    }
+
+    if (filter != null && filter.regionTypeId() != null) {
+      sql.append(" AND region.type_id = :regionTypeId");
+      params.addValue("regionTypeId", filter.regionTypeId());
     }
 
     if (filter != null && filter.areaTypeId() != null) {

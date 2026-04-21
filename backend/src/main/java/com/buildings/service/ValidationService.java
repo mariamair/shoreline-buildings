@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 public class ValidationService {
   private final BuildingCountRepository buildingCountRepository;
   private final RegionService regionService;
+  private final RegionTypeService regionTypeService;
   private final AreaTypeService areaTypeService;
   private final BuildingTypeService buildingTypeService;
   private final ShorelineTypeService shorelineTypeService;
@@ -21,41 +22,49 @@ public class ValidationService {
   public ValidationService(
     final BuildingCountRepository buildingCountRepository,
     final RegionService regionService,
+    final RegionTypeService regionTypeService,
     final AreaTypeService areaTypeService,
     final BuildingTypeService buildingTypeService,
     final ShorelineTypeService shorelineTypeService) {
       this.buildingCountRepository = buildingCountRepository;
       this.regionService = regionService;
+      this.regionTypeService = regionTypeService;
       this.areaTypeService = areaTypeService;
       this.buildingTypeService = buildingTypeService;
       this.shorelineTypeService = shorelineTypeService;
     }
 
-  public List<String> validateContent(final Validatable content) {
+  public List<String> validate(final Validatable record) {
     List<String> errors = new ArrayList<>();
 
-    if (content.regionCode() != null && !regionService.getRegionCodes().contains(content.regionCode())) {
-      errors.add(String.format("'%s' is not a valid region code", content.regionCode()));
+    if (record.regionCode() != null && !regionService.getRegionCodes().contains(record.regionCode())) {
+      errors.add(String.format("'%s' is not a valid region code", record.regionCode()));
     }
 
-    if (content.areaTypeId() != null && !areaTypeService.getAreaTypeIds().contains(content.areaTypeId())) {
-      errors.add(String.format("'%d' is not a valid area type", content.areaTypeId()));
+    if (record instanceof BuildingCountFilter filter) {
+      if (filter.regionTypeId() != null && !regionTypeService.getRegionTypeIds().contains(filter.regionTypeId())) {
+        errors.add(String.format("'%s' is not a valid region type id", filter.regionTypeId()));
+      }
     }
 
-    if (content.buildingTypeId() != null && !buildingTypeService.getBuildingTypeIds().contains(content.buildingTypeId())) {
-      errors.add(String.format("'%d' is not a valid building type", content.buildingTypeId()));
+    if (record.areaTypeId() != null && !areaTypeService.getAreaTypeIds().contains(record.areaTypeId())) {
+      errors.add(String.format("'%d' is not a valid area type", record.areaTypeId()));
     }
 
-    if (content.shorelineTypeId() != null && !shorelineTypeService.getShorelineTypeIds().contains(content.shorelineTypeId())) {
-      errors.add(String.format("'%d' is not a valid shoreline type", content.shorelineTypeId()));
+    if (record.buildingTypeId() != null && !buildingTypeService.getBuildingTypeIds().contains(record.buildingTypeId())) {
+      errors.add(String.format("'%d' is not a valid building type", record.buildingTypeId()));
     }
 
-    if (content.year() != null && content instanceof BuildingCountContent) {
-      validateYearAsInput(content.year()).ifPresent(errors::add);
+    if (record.shorelineTypeId() != null && !shorelineTypeService.getShorelineTypeIds().contains(record.shorelineTypeId())) {
+      errors.add(String.format("'%d' is not a valid shoreline type", record.shorelineTypeId()));
     }
 
-    if (content.year() != null && content instanceof BuildingCountFilter) {
-      validateYearAsSearchFilter(content.year()).ifPresent(errors::add);
+    if (record.year() != null && record instanceof BuildingCountContent) {
+      validateYearAsInput(record.year()).ifPresent(errors::add);
+    }
+
+    if (record.year() != null && record instanceof BuildingCountFilter) {
+      validateYearAsSearchFilter(record.year()).ifPresent(errors::add);
     }
 
     return errors;

@@ -1,6 +1,7 @@
   "Values that can be used to filter the search results."
   input BuildingCountFilter {
     regionCode: String
+    regionTypeId: Int
     areaTypeId: Int
     buildingTypeId: Int
     shorelineTypeId: Int
