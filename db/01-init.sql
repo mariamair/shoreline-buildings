@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS region (
     type_id INT,
     FOREIGN KEY (type_id)
         REFERENCES region_type (id)
-        ON DELETE SET NULL ON UPDATE CASCADE
+        ON DELETE SET NULL ON UPDATE CASCADE,
+    parent_code VARCHAR(2)
 );
 
 CREATE TABLE IF NOT EXISTS building_type (
@@ -61,6 +62,7 @@ CREATE INDEX IF NOT EXISTS idx_building_count_area_type_id ON building_count(are
 
 CREATE INDEX IF NOT EXISTS idx_region_code ON region(code ASC);
 CREATE INDEX IF NOT EXISTS idx_region_type_id ON region(type_id);
+CREATE INDEX IF NOT EXISTS idx_region_parent_code ON region(parent_code);
 
 -- Insert category data
 INSERT INTO region_type (name) VALUES
@@ -69,14 +71,18 @@ INSERT INTO region_type (name) VALUES
     ('kommun')
 ON CONFLICT DO NOTHING;
 
-INSERT INTO shoreline_type (name) VALUES
-    ('totalt'),
-    ('hav'),
-    ('inlandsvatten')
-ON CONFLICT DO NOTHING;
-
 INSERT INTO area_type (name) VALUES
     ('totalt'),
     ('inom tätort'),
     ('inom formellt skyddad natur')
+ON CONFLICT DO NOTHING;
+
+INSERT INTO building_type (name) VALUES
+    ('totalt')
+ON CONFLICT DO NOTHING;
+
+INSERT INTO shoreline_type (name) VALUES
+    ('totalt'),
+    ('hav'),
+    ('inlandsvatten')
 ON CONFLICT DO NOTHING;

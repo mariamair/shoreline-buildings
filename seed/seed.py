@@ -44,20 +44,23 @@ def populate_reference_tables(conn, csv_file):
             if region_code:
                 if region_code == "00":
                     region_type = 1
+                    parent_code = None
                 elif len(region_code) == 2:
                     region_type = 2
+                    parent_code = "00"
                 elif len(region_code) == 4:
                     region_type = 3
+                    parent_code = region_code[:2]
                 else:
                     print(f"  Warning: Could not set region_type for region_code '{region_code}'")
-                region_data.append((region_code, region_name, region_type))
+                region_data.append((region_code, region_name, region_type, parent_code))
             else:
                 print(f"  Warning: Could not parse region '{region_str}'")
         
         if region_data:
             execute_values(
                 cur,
-                "INSERT INTO region (code, name, type_id) VALUES %s ON CONFLICT (code) DO NOTHING",
+                "INSERT INTO region (code, name, type_id, parent_code) VALUES %s ON CONFLICT (code) DO NOTHING",
                 region_data,
                 page_size=1000
             )
