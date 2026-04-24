@@ -8,6 +8,7 @@ import com.buildings.domain.Region;
 import com.buildings.domain.ShorelineType;
 import com.buildings.dto.BuildingCountPageDto;
 import com.buildings.dto.BuildingCountContent;
+import com.buildings.dto.BuildingCountFilter;
 import com.buildings.service.AreaTypeService;
 import com.buildings.service.BuildingCountService;
 import com.buildings.service.RegionService;
@@ -58,7 +59,7 @@ public class BuildingCountEntityResolver {
 
   @QueryMapping
   public BuildingCountPageDto buildingCountEntities(
-      @Argument final BuildingCountContent filter,
+      @Argument final BuildingCountFilter filter,
       @Argument final Integer limit,
       @Argument final Integer offset,
       final DataFetchingEnvironment env) {

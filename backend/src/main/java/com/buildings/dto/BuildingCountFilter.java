@@ -2,8 +2,10 @@ package com.buildings.dto;
 
 import com.buildings.service.Validatable;
 
-public record BuildingCountContent(
+public record BuildingCountFilter(
   String regionCode,
+  String parentRegionCode,
+  Integer regionTypeId,
   Integer areaTypeId,
   Integer buildingTypeId,
   Integer shorelineTypeId,

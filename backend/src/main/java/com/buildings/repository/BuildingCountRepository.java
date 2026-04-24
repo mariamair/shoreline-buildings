@@ -2,6 +2,8 @@ package com.buildings.repository;
 
 import com.buildings.domain.BuildingCountEntity;
 import com.buildings.dto.BuildingCountContent;
+import com.buildings.dto.BuildingCountFilter;
+
 import java.util.List;
 import java.util.Optional;
 import org.springframework.jdbc.core.RowMapper;
@@ -21,6 +23,7 @@ public class BuildingCountRepository {
         updated_at
       FROM building_count
       """;
+  private final String joinRegionSql = " JOIN region ON building_count.region_code = region.code";
 
   public BuildingCountRepository(final JdbcClient jdbcClient) {
     this.jdbcClient = jdbcClient;
@@ -39,10 +42,12 @@ public class BuildingCountRepository {
         .optional();
   }
 
-  public List<BuildingCountEntity> findBuildingCountEntities(final BuildingCountContent filter, final int limit,
+  public List<BuildingCountEntity> findBuildingCountEntities(final BuildingCountFilter filter, final int limit,
       final int offset) {
     FilterQuery filterQuery = buildFilterQuery(filter);
+
     String sql = baseSql
+        + (addJoinStatement(filter) ? joinRegionSql : "")
         + filterQuery.sql()
         + " ORDER BY id ASC LIMIT :limit OFFSET :offset";
 
@@ -56,9 +61,11 @@ public class BuildingCountRepository {
         .list();
   }
 
-  public int countBuildingCountEntities(final BuildingCountContent filter) {
+  public int countBuildingCountEntities(final BuildingCountFilter filter) {
     FilterQuery filterQuery = buildFilterQuery(filter);
+
     String sql = "SELECT COUNT(*) FROM building_count"
+        + (addJoinStatement(filter) ? joinRegionSql : "")
         + filterQuery.sql();
 
     return jdbcClient.sql(sql)
@@ -116,13 +123,23 @@ public class BuildingCountRepository {
   private record FilterQuery(String sql, MapSqlParameterSource params) {
   }
 
-  private FilterQuery buildFilterQuery(final BuildingCountContent filter) {
+  private FilterQuery buildFilterQuery(final BuildingCountFilter filter) {
     StringBuilder sql = new StringBuilder(" WHERE 1=1");
     MapSqlParameterSource params = new MapSqlParameterSource();
 
     if (filter != null && filter.regionCode() != null) {
       sql.append(" AND region_code = :regionCode");
       params.addValue("regionCode", filter.regionCode());
+    }
+
+    if (filter != null && filter.regionTypeId() != null) {
+      sql.append(" AND region.type_id = :regionTypeId");
+      params.addValue("regionTypeId", filter.regionTypeId());
+    }
+
+    if (filter != null && filter.parentRegionCode() != null) {
+      sql.append(" AND region.parent_code = :parentRegionCode");
+      params.addValue("parentRegionCode", filter.parentRegionCode());
     }
 
     if (filter != null && filter.areaTypeId() != null) {
@@ -181,6 +198,20 @@ public class BuildingCountRepository {
       params.addValue("count", buildingCountEntity.buildingCount());
     }
     return new FilterQuery(sql.toString(), params);
+  }
+
+  private Boolean addJoinStatement(final BuildingCountFilter filter) {
+    Boolean addJoinStatement = false;
+
+    if (filter != null && filter.regionTypeId() != null) {
+      addJoinStatement = true;
+    }
+
+    if (filter != null && filter.parentRegionCode() != null) {
+      addJoinStatement = true;
+    }
+
+    return addJoinStatement;
   }
 
   private RowMapper<BuildingCountEntity> mapRowsToEntity() {
