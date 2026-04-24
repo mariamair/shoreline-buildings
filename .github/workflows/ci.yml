@@ -98,6 +98,9 @@ jobs:
       contents: read
     env:
       COMPOSE_FILE: docker-compose.yml:docker-compose.development.yml
+      IMAGE_TAG: ${{ github.sha }}
+    outputs:
+      image_tag: ${{ github.sha }}
     steps:
       - uses: actions/checkout@v5
 
@@ -113,7 +116,7 @@ jobs:
           DB_PORT=5432
           AUTH_DB_URI=${{ secrets.AUTH_DB_URI }}
           AUTH_DB_PORT=27017
-          AUTH_SERVER_PORT=3000
+          AUTH_SERVER_PORT=3001
           AUTH_LOG_LEVEL=info
           ACCESS_TOKEN_LIFE=1h
           REFRESH_TOKEN_LIFE=1d
@@ -128,23 +131,41 @@ jobs:
       - name: Log in to GitHub Container Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-      - name: Build and push auth-server
+      - name: Build, tag and push auth-server
         if: needs.detect-changes.outputs.authserver == 'true' || github.event.before == '0000000000000000000000000000000000000000' || github.event.inputs.force_rebuild == 'true'
         run: |
-          docker compose build --no-cache auth-server
-          docker compose push auth-server
+          docker build \
+            -t ghcr.io/${{ github.repository }}/auth-server:${IMAGE_TAG} \
+            -t ghcr.io/${{ github.repository }}/auth-server:latest \
+            -t ghcr.io/${{ github.repository }}/auth-server:main \
+            auth
+          docker push ghcr.io/${{ github.repository }}/auth-server:${IMAGE_TAG}
+          docker push ghcr.io/${{ github.repository }}/auth-server:latest
+          docker push ghcr.io/${{ github.repository }}/auth-server:main
 
-      - name: Build and push backend
+      - name: Build, tag and push backend
         if: needs.detect-changes.outputs.backend == 'true' || github.event.before == '0000000000000000000000000000000000000000' || github.event.inputs.force_rebuild == 'true'
         run: |
-          docker compose build --no-cache backend
-          docker compose push backend
+          docker build \
+            -t ghcr.io/${{ github.repository }}/backend:${IMAGE_TAG} \
+            -t ghcr.io/${{ github.repository }}/backend:latest \
+            -t ghcr.io/${{ github.repository }}/backend:main \
+            backend
+          docker push ghcr.io/${{ github.repository }}/backend:${IMAGE_TAG}
+          docker push ghcr.io/${{ github.repository }}/backend:latest
+          docker push ghcr.io/${{ github.repository }}/backend:main
 
-      - name: Build and push seed
+      - name: Build, tag and push seed
         if: needs.detect-changes.outputs.seed == 'true' || github.event.before == '0000000000000000000000000000000000000000' || github.event.inputs.force_rebuild == 'true'
         run: |
-          docker compose build --no-cache seed
-          docker compose push seed
+          docker build \
+            -t ghcr.io/${{ github.repository }}/seed:${IMAGE_TAG} \
+            -t ghcr.io/${{ github.repository }}/seed:latest \
+            -t ghcr.io/${{ github.repository }}/seed:main \
+            backend
+          docker push ghcr.io/${{ github.repository }}/seed:${IMAGE_TAG}
+          docker push ghcr.io/${{ github.repository }}/seed:latest
+          docker push ghcr.io/${{ github.repository }}/seed:main
 
   test:
     name: Run API Tests
@@ -167,7 +188,7 @@ jobs:
           DB_PORT=5432
           AUTH_DB_URI=${{ secrets.AUTH_DB_URI }}
           AUTH_DB_PORT=27017
-          AUTH_SERVER_PORT=3000
+          AUTH_SERVER_PORT=3001
           AUTH_LOG_LEVEL=info
           ACCESS_TOKEN_LIFE=1h
           REFRESH_TOKEN_LIFE=1d

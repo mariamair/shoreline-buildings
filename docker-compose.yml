@@ -16,7 +16,7 @@ services:
       start_period: 10s
   
   auth-server:
-    image: ghcr.io/mariamair/shorelinebuildings/auth-server:latest
+    image: ghcr.io/mariamair/shorelinebuildings/auth-server:${IMAGE_TAG:-latest}
     restart: unless-stopped
     env_file:
       - .env
@@ -62,7 +62,7 @@ services:
       start_period: 30s
 
   backend:
-    image: ghcr.io/mariamair/shorelinebuildings/backend:latest
+    image: ghcr.io/mariamair/shorelinebuildings/backend:${IMAGE_TAG:-latest}
     restart: unless-stopped
     env_file:
       - .env
@@ -80,7 +80,7 @@ services:
         condition: service_healthy
 
   seed:
-    image: ghcr.io/mariamair/shorelinebuildings/seed:latest
+    image: ghcr.io/mariamair/shorelinebuildings/seed:${IMAGE_TAG:-latest}
     environment:
       DATABASE_URL: postgresql://${DB_USER}:${DB_USER_PASSWORD}@db:${DB_PORT}/${DB_NAME}
       CSV_PATH: ${CSV_PATH}
