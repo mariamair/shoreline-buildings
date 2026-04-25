@@ -99,61 +99,7 @@ jobs:
       contents: read
     env:
       COMPOSE_FILE: docker-compose.yml:docker-compose.development.yml
-    steps:
-      - uses: actions/checkout@v5
-
-      - name: Create .env
-        run: |
-          cat > .env << EOF
-          DB_NAME=${{ secrets.DB_NAME }}
-          DB_ADMIN=${{ secrets.DB_ADMIN }}
-          DB_ADMIN_PASSWORD=${{ secrets.DB_ADMIN_PASSWORD }}
-          DB_USER=${{ secrets.DB_USER }}
-          DB_USER_PASSWORD=${{ secrets.DB_USER_PASSWORD }}
-          DB_HOST=db
-          DB_PORT=5432
-          AUTH_DB_URI=${{ secrets.AUTH_DB_URI }}
-          AUTH_DB_PORT=27017
-          AUTH_SERVER_PORT=3001
-          AUTH_LOG_LEVEL=info
-          ACCESS_TOKEN_LIFE=1h
-          REFRESH_TOKEN_LIFE=1d
-          ACCESS_TOKEN_PRIVATE_KEY=${{ secrets.ACCESS_TOKEN_PRIVATE_KEY }}
-          ACCESS_TOKEN_PUBLIC_KEY=${{ secrets.ACCESS_TOKEN_PUBLIC_KEY }}
-          REFRESH_TOKEN_SECRET=${{ secrets.REFRESH_TOKEN_SECRET }}
-          BACKEND_PORT=8080
-          SESSION_SECRET=${{ secrets.SESSION_SECRET }}
-          CSV_PATH=seed/data/shoreline_buildings.csv
-          EOF
-
-      - name: Log in to GitHub Container Registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-
-      - name: Build and push auth-server
-        if: needs.detect-changes.outputs.authserver == 'true' || github.event.before == '0000000000000000000000000000000000000000' || github.event.inputs.force_rebuild == 'true'
-        run: |
-          docker compose build --no-cache auth-server
-          docker compose push auth-server
-
-      - name: Build and push backend
-        if: needs.detect-changes.outputs.backend == 'true' || github.event.before == '0000000000000000000000000000000000000000' || github.event.inputs.force_rebuild == 'true'
-        run: |
-          docker compose build --no-cache backend
-          docker compose push backend
-
-      - name: Build and push seed
-        if: needs.detect-changes.outputs.seed == 'true' || github.event.before == '0000000000000000000000000000000000000000' || github.event.inputs.force_rebuild == 'true'
-        run: |
-          docker compose build --no-cache seed
-          docker compose push seed
-
-  test:
-    name: Run API Tests
-    runs-on: ubuntu-latest
-    needs: [build]
-    permissions:
-      packages: read
-    env:
+      REGISTRY: ghcr.io/${{ github.repository }}
       IMAGE_TAG: ${{ github.sha }}
     steps:
       - uses: actions/checkout@v5
@@ -184,6 +130,123 @@ jobs:
 
       - name: Log in to GitHub Container Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      
+      # ----------------------
+      # AUTH SERVER
+      # ----------------------
+      - name: Build auth-server (if changed)
+        if: needs.detect-changes.outputs.authserver == 'true' || github.event.inputs.force_rebuild == 'true'
+        run: |
+          docker build \
+            -t $REGISTRY/auth-server:${IMAGE_TAG} \
+            -t $REGISTRY/auth-server:main \
+            -t $REGISTRY/auth-server:latest \
+            auth-server
+
+      - name: Retag auth-server (if unchanged)
+        if: needs.detect-changes.outputs.authserver != 'true' && github.event.inputs.force_rebuild != 'true'
+        run: |
+          docker pull $REGISTRY/auth-server:main
+          docker tag $REGISTRY/auth-server:main $REGISTRY/auth-server:${IMAGE_TAG}
+          docker tag $REGISTRY/auth-server:main $REGISTRY/auth-server:latest
+
+      - name: Push auth-server
+        run: |
+          docker push $REGISTRY/auth-server:${IMAGE_TAG}
+          docker push $REGISTRY/auth-server:main
+          docker push $REGISTRY/auth-server:latest
+
+      # ----------------------
+      # BACKEND
+      # ----------------------
+      - name: Build backend (if changed)
+        if: needs.detect-changes.outputs.backend == 'true' || github.event.inputs.force_rebuild == 'true'
+        run: |
+          docker build \
+            -t $REGISTRY/backend:${IMAGE_TAG} \
+            -t $REGISTRY/backend:main \
+            -t $REGISTRY/backend:latest \
+            backend
+
+      - name: Retag backend (if unchanged)
+        if: needs.detect-changes.outputs.backend != 'true' && github.event.inputs.force_rebuild != 'true'
+        run: |
+          docker pull $REGISTRY/backend:main
+          docker tag $REGISTRY/backend:main $REGISTRY/backend:${IMAGE_TAG}
+          docker tag $REGISTRY/backend:main $REGISTRY/backend:latest
+
+      - name: Push backend
+        run: |
+          docker push $REGISTRY/backend:${IMAGE_TAG}
+          docker push $REGISTRY/backend:main
+          docker push $REGISTRY/backend:latest
+
+      # ----------------------
+      # SEED
+      # ----------------------
+      - name: Build seed (if changed)
+        if: needs.detect-changes.outputs.seed == 'true' || github.event.inputs.force_rebuild == 'true'
+        run: |
+          docker build \
+            -t $REGISTRY/seed:${IMAGE_TAG} \
+            -t $REGISTRY/seed:main \
+            -t $REGISTRY/seed:latest \
+            seed
+
+      - name: Retag seed (if unchanged)
+        if: needs.detect-changes.outputs.seed != 'true' && github.event.inputs.force_rebuild != 'true'
+        run: |
+          docker pull $REGISTRY/seed:main
+          docker tag $REGISTRY/seed:main $REGISTRY/seed:${IMAGE_TAG}
+          docker tag $REGISTRY/seed:main $REGISTRY/seed:latest
+
+      - name: Push seed
+        run: |
+          docker push $REGISTRY/seed:${IMAGE_TAG}
+          docker push $REGISTRY/seed:main
+          docker push $REGISTRY/seed:latest
+
+  test:
+    name: Run API Tests
+    runs-on: ubuntu-latest
+    needs: [build]
+    permissions:
+      packages: read
+    env:
+      IMAGE_TAG: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Create .env
+        run: |
+          cat > .env << EOF
+          IMAGE_TAG=${{ github.sha }}
+          DB_NAME=${{ secrets.DB_NAME }}
+          DB_ADMIN=${{ secrets.DB_ADMIN }}
+          DB_ADMIN_PASSWORD=${{ secrets.DB_ADMIN_PASSWORD }}
+          DB_USER=${{ secrets.DB_USER }}
+          DB_USER_PASSWORD=${{ secrets.DB_USER_PASSWORD }}
+          DB_HOST=db
+          DB_PORT=5432
+          AUTH_DB_URI=${{ secrets.AUTH_DB_URI }}
+          AUTH_DB_PORT=27017
+          AUTH_SERVER_PORT=3001
+          AUTH_LOG_LEVEL=info
+          ACCESS_TOKEN_LIFE=1h
+          REFRESH_TOKEN_LIFE=1d
+          ACCESS_TOKEN_PRIVATE_KEY=${{ secrets.ACCESS_TOKEN_PRIVATE_KEY }}
+          ACCESS_TOKEN_PUBLIC_KEY=${{ secrets.ACCESS_TOKEN_PUBLIC_KEY }}
+          REFRESH_TOKEN_SECRET=${{ secrets.REFRESH_TOKEN_SECRET }}
+          BACKEND_PORT=8080
+          SESSION_SECRET=${{ secrets.SESSION_SECRET }}
+          CSV_PATH=seed/data/shoreline_buildings.csv
+          EOF
+
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      
+      - name: Set image tag
+        run: echo "IMAGE_TAG=${{ github.sha }}" >> $GITHUB_ENV
 
       - name: Start services
         run: docker compose pull && docker compose up -d --wait
@@ -218,7 +281,7 @@ jobs:
         run: |
           newman run tests/api-tests/ShorelineBuildingsAPI.postman_collection.json \
             --environment tests/api-tests/ci.postman_environment.json \
-            --reporters cli
+            --reporters cli \
             --verbose
 
       - name: Tear down services
