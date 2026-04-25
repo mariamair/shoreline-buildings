@@ -65,9 +65,10 @@ def populate_reference_tables(conn, csv_file):
                 page_size=1000
             )
         
-        # Batch insert building types
+        # Batch insert building types, sorting with "totalt" first
         print(f"Inserting {len(building_types_set)} building types...")
-        building_type_data = [(name,) for name in building_types_set]
+        sorted_building_types = sorted(building_types_set, key=lambda x: (x != "totalt", x))
+        building_type_data = [(name,) for name in sorted_building_types]
         if building_type_data:
             execute_values(
                 cur,

@@ -77,10 +77,6 @@ INSERT INTO area_type (name) VALUES
     ('inom formellt skyddad natur')
 ON CONFLICT DO NOTHING;
 
-INSERT INTO building_type (name) VALUES
-    ('totalt')
-ON CONFLICT DO NOTHING;
-
 INSERT INTO shoreline_type (name) VALUES
     ('totalt'),
     ('hav'),
