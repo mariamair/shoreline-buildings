@@ -176,10 +176,13 @@ jobs:
       IMAGE_TAG: ${{ github.sha }}
     steps:
       - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.sha }} 
 
       - name: Create .env
         run: |
           cat > .env << EOF
+          IMAGE_TAG=${{ github.sha }}
           DB_NAME=${{ secrets.DB_NAME }}
           DB_ADMIN=${{ secrets.DB_ADMIN }}
           DB_ADMIN_PASSWORD=${{ secrets.DB_ADMIN_PASSWORD }}
@@ -241,6 +244,7 @@ jobs:
           newman run tests/api-tests/ShorelineBuildingsAPI.postman_collection.json \
             --environment tests/api-tests/ci.postman_environment.json \
             --reporters cli
+            --verbose
 
       - name: Tear down services
         if: always()
