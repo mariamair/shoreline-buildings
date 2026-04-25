@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "55f4ce9a-6332-48df-98f3-bc94c7621a31",
     "name": "Shoreline Buildings API",
-    "description": "Documentation for the Shoreline Buildings GraphQL API, showing requests that can be used to test the API.\n\n- URL to use the API: [https://cu3156.camp.lnu.se/api/graphql](https://cu3156.camp.lnu.se/api/graphql)\n    \n- Playground to test the API (for authentication, see link in next section): [https://cu3156.camp.lnu.se/api/graphiql](https://cu3156.camp.lnu.se/api/graphiql)\n    \n\n## 🔐 Authentication\n\nAuthentication is done via a separate authentication server, using JWT (JSON Web Tokens) and REST requests. Use [Authentication for the Shoreline Buildings API](https://documenter.getpostman.com/view/39898331/2sBXikoB8y) to authorize when using the GraphQL Playground.\n\n## 💥 Error handling\n\n### Shoreline Buildings API (GraphQL)\n\nErrors are returned in the `extensions` field of the GraphQL error response, with a `code` and `classification`.\n\n| Exception | Code | Classification | Message |\n| --- | --- | --- | --- |\n| `IllegalArgumentException` | `BAD_REQUEST` | `ValidationError` | Exception message |\n| `IllegalStateException` | `CONFLICT` | `ConflictError` | Exception message |\n| `EntityNotFoundException` | `NOT_FOUND` | `DataFetchingError` | Exception message |\n| `AccessDeniedException` | `UNAUTHORIZED` | `AuthorizationError` | Exception message |\n| _(any other exception)_ | `INTERNAL_SERVER_ERROR` | `InternalError` | `\"Internal server error\"` |\n\n---\n\n### Authentication API (REST)\n\nErrors are returned as JSON with a `status`, `statusCode`, and `message`. Operational errors (expected, handled errors) use the shapes below. Unhandled errors always return `500`.\n\n| Error Class | HTTP Status | Trigger |\n| --- | --- | --- |\n| `ValidationError` | `400` | Invalid input |\n| `UnauthorizedError` | `401` | Authentication or authorization failures |\n| `NotFoundError` | `404` | Resource not found |\n| `ConflictError` | `409` | Duplicate resource |\n| _(unhandled exception)_ | `500` | Any non-operational or unexpected error |\n\n---\n\n### Cross-API Error mapping\n\n| Concept | GraphQL Code | REST Status |\n| --- | --- | --- |\n| Invalid input | `BAD_REQUEST` | `400` |\n| Unauthorized | `UNAUTHORIZED` | `401` |\n| Not found | `NOT_FOUND` | `404` |\n| Conflict / duplicate | `CONFLICT` | `409` |\n| Server error | `INTERNAL_SERVER_ERROR` | `500` |",
+    "description": "Documentation for the Shoreline Buildings GraphQL API, showing requests that can be used to test the API.\n\n- URL to use the API: [https://cu3156.camp.lnu.se/api/graphql](https://cu3156.camp.lnu.se/api/graphql)\n    \n- Playground to test the API (for authentication, see link in next section): [https://cu3156.camp.lnu.se/api/graphiql](https://cu3156.camp.lnu.se/api/graphiql)\n    \n\n## 🔐 Authentication\n\nAuthentication is done via a separate authentication server, using JWT (JSON Web Tokens) and REST requests. Use [Authentication for the Shoreline Buildings API](https://documenter.getpostman.com/view/39898331/2sBXikoB8y) to authorize when using the GraphQL Playground.\n\n## 💥 Error handling\n\n### Shoreline Buildings API (GraphQL)\n\nErrors are returned in the `extensions` field of the GraphQL error response, with a `code` and `classification`.\n\n| Exception | Code | Classification | Message |\n| --- | --- | --- | --- |\n| `IllegalArgumentException` | `BAD_REQUEST` | `ValidationError` | Exception message |\n| `IllegalStateException` | `CONFLICT` | `ConflictError` | Exception message |\n| `EntityNotFoundException` | `NOT_FOUND` | `DataFetchingError` | Exception message |\n| `AccessDeniedException` | `UNAUTHORIZED` | `AuthorizationError` | Exception message |\n| _(any other exception)_ | `INTERNAL_SERVER_ERROR` | `InternalError` | `\"Internal server error\"` |\n\n---\n\n### Authentication API (REST)\n\nErrors are returned as JSON with a `status`, `statusCode`, and `message`. Operational errors (expected, handled errors) use the shapes below. Unhandled errors always return `500`.\n\n| Error Class | HTTP Status | Trigger |\n| --- | --- | --- |\n| `ValidationError` | `400` | Invalid input |\n| `UnauthorizedError` | `401` | Authentication or authorization failures |\n| `NotFoundError` | `404` | Resource not found |\n| `ConflictError` | `409` | Duplicate resource |\n| _(unhandled exception)_ | `500` | Any non-operational or unexpected error |\n\n---\n\n### Cross-API Error mapping\n\nThis table shows which REST Status codes the GraphQL codes correspond to.\n\n| Concept | GraphQL Code | REST Status |\n| --- | --- | --- |\n| Invalid input | `BAD_REQUEST` | `400` |\n| Unauthorized | `UNAUTHORIZED` | `401` |\n| Not found | `NOT_FOUND` | `404` |\n| Conflict / duplicate | `CONFLICT` | `409` |\n| Server error | `INTERNAL_SERVER_ERROR` | `500` |",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "39898331"
   },
@@ -114,10 +114,19 @@
               "script": {
                 "exec": [
                   "// Start with a generic word meeting the 8 character minimum and add a random name",
-                  "let randomUsername = 'testuser-';",
-                  "randomUsername += pm.variables.replaceIn(\"{{$randomUserName}}\");",
+                  "const randomUsername = () => {",
+                  "    let username = 'testuser-'",
+                  "    ",
+                  "    // Add more valid characters to create a random username",
+                  "    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-'",
+                  "    for (let i = 0; i < 15; i++) {",
+                  "        username += chars.charAt(Math.floor(Math.random() * chars.length))",
+                  "    }",
                   "",
-                  "pm.collectionVariables.set(\"username\", randomUsername)    ",
+                  "    return username",
+                  "}",
+                  "",
+                  "pm.collectionVariables.set(\"username\", randomUsername())    ",
                   "pm.collectionVariables.set(\"password\", pm.variables.replaceIn(\"{{$randomPassword}}\"))"
                 ],
                 "type": "text/javascript",
@@ -1593,19 +1602,17 @@
                 "exec": [
                   "pm.collectionVariables.clear();",
                   "",
+                  "// Start with a generic word meeting the 8 character minimum and add a random name",
                   "const randomUsername = () => {",
-                  "    const letters = 'abcdefghijklmnopqrstuvwxyz';",
-                  "    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-';",
+                  "    let username = 'testuser-'",
                   "    ",
-                  "    // Start with a letter",
-                  "    let username = letters.charAt(Math.floor(Math.random() * letters.length));",
-                  "    ",
-                  "    // Add 7 more characters to meet the 8 character minimum",
-                  "    for (let i = 0; i < 7; i++) {",
-                  "        username += chars.charAt(Math.floor(Math.random() * chars.length));",
+                  "    // Add more valid characters to create a random username",
+                  "    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-'",
+                  "    for (let i = 0; i < 15; i++) {",
+                  "        username += chars.charAt(Math.floor(Math.random() * chars.length))",
                   "    }",
-                  "    ",
-                  "    return username;",
+                  "",
+                  "    return username",
                   "}",
                   "",
                   "pm.collectionVariables.set(\"username\", randomUsername());",
@@ -1993,11 +2000,12 @@
               "script": {
                 "exec": [
                   "const min = 1;",
+                  "const max = 8;",
                   "",
                   "const generatedAreaTypeId = Math.floor(Math.random() * (3 - min + 1)) + min;",
                   "pm.collectionVariables.set(\"areaTypeId\", generatedAreaTypeId);",
                   "",
-                  "const generatedBuildingTypeId = Math.floor(Math.random() * (8 - min + 1)) + min;",
+                  "const generatedBuildingTypeId = Math.floor(Math.random() * (max - min + 1)) + min;",
                   "pm.collectionVariables.set(\"buildingTypeId\", generatedBuildingTypeId);",
                   "",
                   "const generatedShorelineTypeId = Math.floor(Math.random() * (3 - min + 1)) + min;",
@@ -3832,48 +3840,6 @@
         }
       ],
       "description": "Contains a reset request to ensure no variables are saved between different test runs."
-    }
-  ],
-  "variable": [
-    {
-      "key": "invalidAreaTypeId",
-      "value": ""
-    },
-    {
-      "key": "invalidBuildingTypeId",
-      "value": ""
-    },
-    {
-      "key": "invalidShorelineTypeId",
-      "value": ""
-    },
-    {
-      "key": "invalidRegionCode",
-      "value": ""
-    },
-    {
-      "key": "invalidYear",
-      "value": ""
-    },
-    {
-      "key": "buildingCount",
-      "value": ""
-    },
-    {
-      "key": "username",
-      "value": ""
-    },
-    {
-      "key": "password",
-      "value": ""
-    },
-    {
-      "key": "accessToken",
-      "value": ""
-    },
-    {
-      "key": "refreshToken",
-      "value": ""
     }
   ]
 }
