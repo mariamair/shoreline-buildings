@@ -100,8 +100,6 @@ jobs:
     env:
       COMPOSE_FILE: docker-compose.yml:docker-compose.development.yml
       IMAGE_TAG: ${{ github.sha }}
-    outputs:
-      image_tag: ${{ github.sha }}
     steps:
       - uses: actions/checkout@v5
 
@@ -174,6 +172,8 @@ jobs:
     needs: [build]
     permissions:
       packages: read
+    env:
+      IMAGE_TAG: ${{ github.sha }}
     steps:
       - uses: actions/checkout@v5
 
