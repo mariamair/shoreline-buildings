@@ -33,11 +33,6 @@ public class RegionService {
 
   public List<Region> getRegions(final Integer regionTypeId, final Integer limit, final Integer offset) {
     List<Region> regions = regionRepository.findRegions(regionTypeId, limit, offset);
-
-    if (regions.isEmpty()) {
-      throw new EntityNotFoundException(String.format("Found no regions with type id '%d'", regionTypeId));
-    }
-
     return regions;
   }
 

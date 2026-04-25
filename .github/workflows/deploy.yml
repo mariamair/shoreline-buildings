@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       ref:
-        description: "Git ref to deploy"
+        description: "Paste the commit SHA that should be deployed"
         required: true
         default: "main"
 
