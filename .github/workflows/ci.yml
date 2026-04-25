@@ -141,7 +141,7 @@ jobs:
             -t $REGISTRY/auth-server:${IMAGE_TAG} \
             -t $REGISTRY/auth-server:main \
             -t $REGISTRY/auth-server:latest \
-            auth-server
+            auth
 
       - name: Retag auth-server (if unchanged)
         if: needs.detect-changes.outputs.authserver != 'true' && github.event.inputs.force_rebuild != 'true'
