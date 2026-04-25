@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
+    branches: [main]
   workflow_dispatch:
     inputs:
       force_rebuild:
@@ -205,6 +206,12 @@ jobs:
 
       - name: Start services
         run: docker compose pull && docker compose up -d --wait
+
+      - name: Show image digests
+        run: docker compose images
+
+      - name: Show image tag
+        run: echo "Using image tag ${IMAGE_TAG}"
       
       - name: Show container logs
         if: failure()
