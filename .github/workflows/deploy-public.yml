@@ -42,13 +42,19 @@ jobs:
       
       - name: Copy docker compose and init files to server
         run: |
-          scp -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 \
-          "mkdir -p $DEPLOY_PATH/db $DEPLOY_PATH/seed/data"  \
-          scp docker-compose.yml $DO_PRODUCTION_HOST_USER@$DO_PRODUCTION_HOST:$DO_PRODUCTION_HOST_DEPLOY_PATH  \
-          scp ../db/01-init.sql $DO_PRODUCTION_HOST_USER@$DO_PRODUCTION_HOST:$DO_PRODUCTION_HOST_DEPLOY_PATH/db  \
-          scp ../db/02-init-db.sh $DO_PRODUCTION_HOST_USER@$DO_PRODUCTION_HOST:$DO_PRODUCTION_HOST_DEPLOY_PATH/db  \
-          chmod +x ../db/02-init-db.sh  \
-          scp ../seed/data/shoreline_buildings.csv $DO_PRODUCTION_HOST_USER@$DO_PRODUCTION_HOST:$DO_PRODUCTION_HOST_DEPLOY_PATH/seed/data
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 \
+          $DO_PRODUCTION_HOST_USER@$DO_PRODUCTION_HOST << EOF
+            mkdir -p $DO_PRODUCTION_HOST_DEPLOY_PATH/db
+            mkdir -p $DO_PRODUCTION_HOST_DEPLOY_PATH/seed/data
+            exit
+          EOF
+          
+          scp -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 -r \
+          docker-compose.yml \
+          ../db/01-init.sql \
+          ../db/02-init-db.sh \
+          ../seed/data/shoreline_buildings.csv \
+          $DO_PRODUCTION_HOST_USER@$DO_PRODUCTION_HOST:$DO_PRODUCTION_HOST_DEPLOY_PATH/
 
       - name: Pull Docker images
         run: |
