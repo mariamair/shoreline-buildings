@@ -56,15 +56,6 @@ jobs:
           ./seed/data/shoreline_buildings.csv \
           $DO_PRODUCTION_HOST_USER@$DO_PRODUCTION_HOST:$DO_PRODUCTION_HOST_DEPLOY_PATH/
 
-      - name: Pull Docker images
-        run: |
-          ssh -i ~/.ssh/id_ed25519 $DO_PRODUCTION_HOST_USER@$DO_PRODUCTION_HOST << EOF
-            echo "${{ secrets.GITHUB_TOKEN }}" | sudo docker login ghcr.io -u "${{ github.actor }}" --password-stdin
-            cd $DO_PRODUCTION_HOST_DEPLOY_PATH
-            IMAGE_TAG=${{ github.sha }} sudo docker compose pull
-            exit
-          EOF
-
       - name: Create .env on server and deploy application
         run: |
           ssh -i ~/.ssh/id_ed25519 $DO_PRODUCTION_HOST_USER@$DO_PRODUCTION_HOST << EOF
@@ -101,7 +92,7 @@ jobs:
             CSV_PATH=seed/data/shoreline_buildings.csv
             ENVEOF
             
-            # Use it immediately
-            docker compose --env-file .env up -d
+            # Use .env file for docker compose
+            sudo docker compose --env-file .env up -d
             exit
           EOF
