@@ -32,7 +32,7 @@ export default function BarChart({ data }) {
       tooltip: {
         trigger: 'item',
         formatter: (params) =>
-        `${params.seriesName}<br/>${params.marker}${params.name}: ${params.value.toLocaleString()}`
+          `${params.seriesName}<br/>${params.marker}${params.name}: ${params.value.toLocaleString()}`
       },
       xAxis: {
         data: regionNames,
