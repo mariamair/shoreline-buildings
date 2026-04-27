@@ -49,12 +49,21 @@ jobs:
             exit
           EOF
           
-          scp -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 -r \
-          docker-compose.yml \
-          ./db/01-init.sql \
-          ./db/02-init-db.sh \
-          ./seed/data/shoreline_buildings.csv \
-          $DO_PRODUCTION_HOST_USER@$DO_PRODUCTION_HOST:$DO_PRODUCTION_HOST_DEPLOY_PATH/
+          scp -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 \
+            docker-compose.yml \
+            $DO_PRODUCTION_HOST_USER@$DO_PRODUCTION_HOST:$DO_PRODUCTION_HOST_DEPLOY_PATH/
+            
+            scp -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 \
+            ./db/01-init.sql \
+            $DO_PRODUCTION_HOST_USER@$DO_PRODUCTION_HOST:$DO_PRODUCTION_HOST_DEPLOY_PATH/db/
+            
+            scp -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 \
+            ./db/02-init-db.sh \
+            $DO_PRODUCTION_HOST_USER@$DO_PRODUCTION_HOST:$DO_PRODUCTION_HOST_DEPLOY_PATH/db/
+            
+            scp -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 \
+            ./seed/data/shoreline_buildings.csv \
+            $DO_PRODUCTION_HOST_USER@$DO_PRODUCTION_HOST:$DO_PRODUCTION_HOST_DEPLOY_PATH/seed/data/
 
       - name: Create .env on server and deploy application
         run: |
@@ -62,7 +71,7 @@ jobs:
             cd $DO_PRODUCTION_HOST_DEPLOY_PATH
             
             # Create .env file directly on server
-            cat > .env << 'ENVEOF'
+            cat > .env << ENVEOF
             IMAGE_TAG=$IMAGE_TAG
             DO_PRODUCTION_HOST=${{ secrets.DO_PRODUCTION_HOST }}
             DO_PRODUCTION_HOST_USER=$DO_PRODUCTION_HOST_USER
