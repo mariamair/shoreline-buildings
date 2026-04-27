@@ -8,12 +8,19 @@
 node_modules/
 .npm
 
+# next.js
+/.next/
+/out/
+/build
+.vercel
+
 # .volumes
 .volumes
 
-# Scripts
+# Miscellaneous
 /seed/generate_csv.py
 deploy/
+*.pem
 
 # MacOS and VSCode settings
 .DS_Store
@@ -29,6 +36,7 @@ deploy/
 # Log files
 *.log
 logs/
+npm-debug.log*
 
 # BlueJ files
 *.ctxt
