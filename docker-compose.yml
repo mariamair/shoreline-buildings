@@ -89,7 +89,7 @@ services:
       QUERY_URL: http://backend:${BACKEND_PORT}/api/graphql
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
-      NEXTAUTH_URL: http://localhost:${FRONTEND_PORT}
+      NEXTAUTH_URL: ${NEXTAUTH_URL}
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
     ports:
       - "${FRONTEND_PORT}:${FRONTEND_PORT}"
