@@ -1,0 +1,100 @@
+name: Deploy to Production (automated)  
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Paste the commit SHA that should be deployed"
+        required: true
+        default: "main"
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    env:
+      DO_PRODUCTION_HOST: ${{ secrets.DO_PRODUCTION_HOST }}
+      DO_PRODUCTION_HOST_USER: ${{ secrets.DO_PRODUCTION_HOST_USER }}
+      DO_PRODUCTION_HOST_DEPLOY_PATH: /home/${{ secrets.DO_PRODUCTION_HOST_USER }}/shorelinebuildings/
+      REGISTRY: ghcr.io/${{ github.repository }}
+      IMAGE_TAG: ${{ github.sha }}
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.inputs.ref }}
+
+      - name: Set up SSH
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y openssh-client   
+          eval "$(ssh-agent -s)"
+          echo "$DO_SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DO_SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H $DO_PRODUCTION_HOST >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+      
+      - name: Copy docker compose and init files to server
+        run: |
+          scp -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 \
+          "mkdir -p $DEPLOY_PATH/db $DEPLOY_PATH/seed/data"  \
+          scp docker-compose.yml $DO_PRODUCTION_HOST_USER@$DO_PRODUCTION_HOST:$DO_PRODUCTION_HOST_DEPLOY_PATH  \
+          scp ../db/01-init.sql $DO_PRODUCTION_HOST_USER@$DO_PRODUCTION_HOST:$DO_PRODUCTION_HOST_DEPLOY_PATH/db  \
+          scp ../db/02-init-db.sh $DO_PRODUCTION_HOST_USER@$DO_PRODUCTION_HOST:$DO_PRODUCTION_HOST_DEPLOY_PATH/db  \
+          chmod +x ../db/02-init-db.sh  \
+          scp ../seed/data/shoreline_buildings.csv $DO_PRODUCTION_HOST_USER@$DO_PRODUCTION_HOST:$DO_PRODUCTION_HOST_DEPLOY_PATH/seed/data
+
+      - name: Pull Docker images
+        run: |
+            ssh -i ~/.ssh/id_ed25519 $PRODUCTION_HOST_USER@$PRODUCTION_HOST << EOF
+              echo "${{ secrets.GITHUB_TOKEN }}" | sudo docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+              sudo IMAGE_TAG=$IMAGE_TAG docker compose pull
+              exit
+            EOF
+
+      - name: Create .env on server and deploy application
+        run: |
+          ssh -i ~/.ssh/id_ed25519 $DO_PRODUCTION_HOST_USER@$DO_PRODUCTION_HOST << EOF
+            cd $DO_PRODUCTION_HOST_DEPLOY_PATH
+            
+            # Create .env file directly on server
+            cat > .env << 'ENVEOF'
+            IMAGE_TAG=$IMAGE_TAG
+            DO_PRODUCTION_HOST=${{ secrets.DO_PRODUCTION_HOST }}
+            DO_PRODUCTION_HOST_USER=$DO_PRODUCTION_HOST_USER
+            DO_PRODUCTION_HOST_DEPLOY_PATH=$DO_PRODUCTION_HOST_DEPLOY_PATH
+            DB_NAME=${{ secrets.DB_NAME }}
+            DB_ADMIN=${{ secrets.DB_ADMIN }}
+            DB_ADMIN_PASSWORD=${{ secrets.DB_ADMIN_PASSWORD }}
+            DB_USER=${{ secrets.DB_USER }}
+            DB_USER_PASSWORD=${{ secrets.DB_USER_PASSWORD }}
+            DB_HOST=db
+            DB_PORT=5432
+            AUTH_DB_URI=${{ secrets.AUTH_DB_URI }}
+            AUTH_DB_PORT=27017
+            AUTH_SERVER_PORT=3001
+            AUTH_LOG_LEVEL=info
+            ACCESS_TOKEN_LIFE=1h
+            REFRESH_TOKEN_LIFE=1d
+            ACCESS_TOKEN_PRIVATE_KEY=${{ secrets.ACCESS_TOKEN_PRIVATE_KEY }}
+            ACCESS_TOKEN_PUBLIC_KEY=${{ secrets.ACCESS_TOKEN_PUBLIC_KEY }}
+            REFRESH_TOKEN_SECRET=${{ secrets.REFRESH_TOKEN_SECRET }}
+            BACKEND_PORT=8080
+            FRONTEND_PORT=3000
+            NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
+            NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
+            GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
+            GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
+            CSV_PATH=seed/data/shoreline_buildings.csv
+            ENVEOF
+            
+            # Use it immediately
+            docker compose --env-file .env up -d
+            exit
+          EOF
