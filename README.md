@@ -2,7 +2,17 @@
 
 This application exposes an API to query for data about shoreline buildings in Sweden.
 
+It also has a client application that shows some of the data from the API on a dashboard.
+
+## Demo
+### Video
+Watch a demo of the application: [Demo of the Shoreline Buildings application (Youtube, 1:20 min)](https://youtu.be/GV7vf3J9VeY)
+
+### Screenshots
+<img width="300" height="300" alt="Sweden Map" src=".readme/ShorelineBuildings_Sweden.png" /> <img width="300" height="300" alt="Region Map" src=".readme/ShorelineBuildings_Region.png" /> <img width="300" height="300" alt="Protected Areas" src=".readme/ShorelineBuildings_ProtectedAreas.png" />
+
 ## Usage
+To use the dashboard, visit [https://cu3156.camp.lnu.se/](https://cu3156.camp.lnu.se/) and log in with Google.
 
 To use the API, use the production URL: [https://cu3156.camp.lnu.se/api/graphql](https://cu3156.camp.lnu.se/api/graphql)
 
@@ -26,6 +36,10 @@ The application uses
 - a REST API for authentication with
   - a MongoDB database
   - a Node.js/Express backend
+- an interactive dashboard for data visualization with
+  - React/Next.js
+  - Apache ECharts
+  - OAuth 2.0 / OpenID Connect with Google
 - a CI/CD pipeline (Github Actions) with automated API tests (Postman/Newman)
 
 ## Usage

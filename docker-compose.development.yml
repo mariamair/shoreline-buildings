@@ -4,15 +4,26 @@ services:
   auth-server:
     build:
       context: ./auth
+      platforms:
+        - linux/arm64/v8
   
   db:
 
   backend:
     build:
       context: ./backend
+      platforms:
+        - linux/arm64/v8
+  
+  frontend:
+    build:
+      context: ./frontend
+      platforms:
+        - linux/arm64/v8
 
   seed:
     build:
       context: ./seed
-      dockerfile: Dockerfile
+      platforms:
+        - linux/arm64/v8
 

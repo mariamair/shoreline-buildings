@@ -16,7 +16,7 @@ services:
       start_period: 10s
   
   auth-server:
-    image: ghcr.io/mariamair/shoreline-buildings/auth-server:${IMAGE_TAG}
+    image: ghcr.io/mariamair/shoreline-buildings/auth-server:${IMAGE_TAG:-latest}
     restart: unless-stopped
     env_file:
       - .env
@@ -62,7 +62,7 @@ services:
       start_period: 30s
 
   backend:
-    image: ghcr.io/mariamair/shoreline-buildings/backend:${IMAGE_TAG}
+    image: ghcr.io/mariamair/shoreline-buildings/backend:${IMAGE_TAG:-latest}
     restart: unless-stopped
     env_file:
       - .env
@@ -79,8 +79,26 @@ services:
       db:
         condition: service_healthy
 
+  frontend:
+    image: ghcr.io/mariamair/shoreline-buildings/frontend:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      FRONTEND_PORT: ${FRONTEND_PORT}
+      QUERY_URL: http://backend:${BACKEND_PORT}/api/graphql
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      NEXTAUTH_URL: http://localhost:${FRONTEND_PORT}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+    ports:
+      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
+    depends_on:
+      backend:
+        condition: service_started
+
   seed:
-    image: ghcr.io/mariamair/shoreline-buildings/seed:${IMAGE_TAG}
+    image: ghcr.io/mariamair/shoreline-buildings/seed:${IMAGE_TAG:-latest}
     environment:
       DATABASE_URL: postgresql://${DB_USER}:${DB_USER_PASSWORD}@db:${DB_PORT}/${DB_NAME}
       CSV_PATH: ${CSV_PATH}

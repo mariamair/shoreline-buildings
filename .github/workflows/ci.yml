@@ -27,6 +27,7 @@ jobs:
     outputs:
       authserver: ${{ steps.filter.outputs.authserver }}
       backend: ${{ steps.filter.outputs.backend }}
+      frontend: ${{ steps.filter.outputs.frontend }}
       seed: ${{ steps.filter.outputs.seed }}
     steps:
       - uses: actions/checkout@v5
@@ -41,6 +42,9 @@ jobs:
               - 'docker-compose.yml'
             backend:
               - 'backend/**'
+              - 'docker-compose.yml'
+            frontend:
+              - 'frontend/**'
               - 'docker-compose.yml'
             seed:
               - 'seed/**'
@@ -65,17 +69,42 @@ jobs:
         if: needs.detect-changes.outputs.backend == 'true' || github.event.before == '0000000000000000000000000000000000000000'
         run: mvn checkstyle:check 
 
+  lint-frontend:
+    name: ESLint
+    runs-on: ubuntu-latest
+    needs: [detect-changes]
+    steps:
+      - name: Checkout code
+        if: needs.detect-changes.outputs.frontend == 'true'
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        if: needs.detect-changes.outputs.frontend == 'true'
+        uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: 'frontend/package-lock.json'
+
+      - name: Install dependencies
+        if: needs.detect-changes.outputs.frontend == 'true'
+        run: npm ci --prefix frontend
+
+      - name: Run ESLint
+        if: needs.detect-changes.outputs.frontend == 'true'
+        run: npm run lint --prefix frontend
+  
   lint-auth-server:
     name: ESLint
     runs-on: ubuntu-latest
     needs: [detect-changes]
     steps:
       - name: Checkout code
-        if: needs.detect-changes.outputs.authserver == 'true' || github.event.before == '0000000000000000000000000000000000000000'
+        if: needs.detect-changes.outputs.authserver == 'true'
         uses: actions/checkout@v5
 
       - name: Set up Node.js
-        if: needs.detect-changes.outputs.authserver == 'true' || github.event.before == '0000000000000000000000000000000000000000'
+        if: needs.detect-changes.outputs.authserver == 'true'
         uses: actions/setup-node@v5
         with:
           node-version: '24'
@@ -83,17 +112,17 @@ jobs:
           cache-dependency-path: 'auth/package-lock.json'
 
       - name: Install dependencies
-        if: needs.detect-changes.outputs.authserver == 'true' || github.event.before == '0000000000000000000000000000000000000000'
+        if: needs.detect-changes.outputs.authserver == 'true'
         run: npm ci --prefix auth
 
       - name: Run ESLint
-        if: needs.detect-changes.outputs.authserver == 'true' || github.event.before == '0000000000000000000000000000000000000000'
+        if: needs.detect-changes.outputs.authserver == 'true'
         run: npm run lint --prefix auth
 
   build:
     name: Build and Push Docker Images
     runs-on: ubuntu-latest
-    needs: [detect-changes, lint-backend, lint-auth-server]
+    needs: [detect-changes, lint-backend, lint-frontend, lint-auth-server]
     permissions:
       packages: write
       contents: read
@@ -124,7 +153,11 @@ jobs:
           ACCESS_TOKEN_PUBLIC_KEY=${{ secrets.ACCESS_TOKEN_PUBLIC_KEY }}
           REFRESH_TOKEN_SECRET=${{ secrets.REFRESH_TOKEN_SECRET }}
           BACKEND_PORT=8080
-          SESSION_SECRET=${{ secrets.SESSION_SECRET }}
+          FRONTEND_PORT=3000
+          NEXTAUTH_URL=http://localhost:3000
+          NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
+          GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
           CSV_PATH=seed/data/shoreline_buildings.csv
           EOF
 
@@ -180,6 +213,31 @@ jobs:
           docker push $REGISTRY/backend:${IMAGE_TAG}
           docker push $REGISTRY/backend:main
           docker push $REGISTRY/backend:latest
+
+      # ----------------------
+      # FRONTEND
+      # ----------------------
+      - name: Build frontend (if changed)
+        if: needs.detect-changes.outputs.frontend == 'true' || github.event.inputs.force_rebuild == 'true'
+        run: |
+          docker build \
+            -t $REGISTRY/frontend:${IMAGE_TAG} \
+            -t $REGISTRY/frontend:main \
+            -t $REGISTRY/frontend:latest \
+            frontend
+
+      - name: Retag frontend (if unchanged)
+        if: needs.detect-changes.outputs.frontend != 'true' && github.event.inputs.force_rebuild != 'true'
+        run: |
+          docker pull $REGISTRY/frontend:main
+          docker tag $REGISTRY/frontend:main $REGISTRY/frontend:${IMAGE_TAG}
+          docker tag $REGISTRY/frontend:main $REGISTRY/frontend:latest
+
+      - name: Push frontend
+        run: |
+          docker push $REGISTRY/frontend:${IMAGE_TAG}
+          docker push $REGISTRY/frontend:main
+          docker push $REGISTRY/frontend:latest
 
       # ----------------------
       # SEED
@@ -238,7 +296,11 @@ jobs:
           ACCESS_TOKEN_PUBLIC_KEY=${{ secrets.ACCESS_TOKEN_PUBLIC_KEY }}
           REFRESH_TOKEN_SECRET=${{ secrets.REFRESH_TOKEN_SECRET }}
           BACKEND_PORT=8080
-          SESSION_SECRET=${{ secrets.SESSION_SECRET }}
+          FRONTEND_PORT=3000
+          NEXTAUTH_URL=http://localhost:3000
+          NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
+          GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
           CSV_PATH=seed/data/shoreline_buildings.csv
           EOF
 
