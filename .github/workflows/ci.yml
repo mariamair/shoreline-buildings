@@ -154,7 +154,6 @@ jobs:
           REFRESH_TOKEN_SECRET=${{ secrets.REFRESH_TOKEN_SECRET }}
           BACKEND_PORT=8080
           FRONTEND_PORT=3000
-          NEXTAUTH_URL=http://localhost:3000
           NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
           GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
@@ -297,7 +296,6 @@ jobs:
           REFRESH_TOKEN_SECRET=${{ secrets.REFRESH_TOKEN_SECRET }}
           BACKEND_PORT=8080
           FRONTEND_PORT=3000
-          NEXTAUTH_URL=http://localhost:3000
           NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
           GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
