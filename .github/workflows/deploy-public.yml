@@ -58,7 +58,7 @@ jobs:
 
       - name: Pull Docker images
         run: |
-            ssh -i ~/.ssh/id_ed25519 $PRODUCTION_HOST_USER@$PRODUCTION_HOST << EOF
+            ssh -i ~/.ssh/id_ed25519 $DO_PRODUCTION_HOST_USER@$DO_PRODUCTION_HOST << EOF
               echo "${{ secrets.GITHUB_TOKEN }}" | sudo docker login ghcr.io -u "${{ github.actor }}" --password-stdin
               sudo IMAGE_TAG=$IMAGE_TAG docker compose pull
               exit
