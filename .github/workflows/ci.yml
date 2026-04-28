@@ -156,6 +156,8 @@ jobs:
           FRONTEND_PORT=3000
           NEXTAUTH_URL=http://localhost:3000
           NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
+          GITLAB_CLIENT_ID=${{ secrets.GITLAB_CLIENT_ID }}
+          GITLAB_CLIENT_SECRET=${{ secrets.GITLAB_CLIENT_SECRET }}
           GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
           CSV_PATH=seed/data/shoreline_buildings.csv
@@ -299,6 +301,8 @@ jobs:
           FRONTEND_PORT=3000
           NEXTAUTH_URL=http://localhost:3000
           NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
+          GITLAB_CLIENT_ID=${{ secrets.GITLAB_CLIENT_ID }}
+          GITLAB_CLIENT_SECRET=${{ secrets.GITLAB_CLIENT_SECRET }}
           GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
           CSV_PATH=seed/data/shoreline_buildings.csv

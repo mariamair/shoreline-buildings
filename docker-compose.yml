@@ -86,12 +86,19 @@ services:
       - .env
     environment:
       FRONTEND_PORT: ${FRONTEND_PORT}
-      BACKEND_URL: ${BACKEND_URL}
-      QUERY_URL: ${BACKEND_URL}/api/graphql
+      QUERY_URL: http://backend:${BACKEND_PORT}/api/graphql
+      GITLAB_CLIENT_ID: ${GITLAB_CLIENT_ID}
+      GITLAB_CLIENT_SECRET: ${GITLAB_CLIENT_SECRET}    
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
       NEXTAUTH_URL: ${NEXTAUTH_URL}
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+    ports:
+      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
+    depends_on:
+      backend:
+        condition: service_started
+
     ports:
       - "${FRONTEND_PORT}:${FRONTEND_PORT}"
 
