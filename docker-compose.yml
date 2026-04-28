@@ -99,9 +99,6 @@ services:
       backend:
         condition: service_started
 
-    ports:
-      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
-
   seed:
     image: ghcr.io/mariamair/shoreline-buildings/seed:${IMAGE_TAG:-latest}
     environment:
