@@ -1,5 +1,5 @@
 /**
- * Defines the sign in and sign out button.
+ * Defines the sign in and sign out buttons.
  * 
  * @author Maria Mair <mm225mz@student.lnu.se>
  */
@@ -7,6 +7,17 @@
 import { signIn, signOut } from '@/auth'
 
 export function SignInButton() {
+  return (
+    <form action={async () => { 
+      'use server'
+      await signIn('gitlab', { redirectTo: '/dashboard' }) 
+    }}>
+      <button type="submit">Sign in with GitLab</button>
+    </form>
+  )
+}
+
+export function SignInButtonGoogle() {
   return (
     <form action={async () => { 
       'use server'
