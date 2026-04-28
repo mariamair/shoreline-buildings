@@ -86,6 +86,7 @@ services:
       - .env
     environment:
       FRONTEND_PORT: ${FRONTEND_PORT}
+      BACKEND_PORT: ${BACKEND_PORT}
       QUERY_URL: http://backend:${BACKEND_PORT}/api/graphql
       GITLAB_CLIENT_ID: ${GITLAB_CLIENT_ID}
       GITLAB_CLIENT_SECRET: ${GITLAB_CLIENT_SECRET}    
